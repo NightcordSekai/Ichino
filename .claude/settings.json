@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell -NoProfile -Command \"[Environment]::GetEnvironmentVariable\\('Path','Machine'\\)\")",
+      "Bash(ls -la \"D:/fluttersdk\" 2>&1 | head -20)",
+      "Read(//d/fluttersdk/**)",
+      "Bash(\"D:/fluttersdk/bin/flutter.bat\" doctor *)",
+      "Bash(\"D:/fluttersdk/bin/flutter.bat\" devices *)"
+    ]
+  }
+}
