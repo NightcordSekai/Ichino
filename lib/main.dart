@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'config/responsive.dart';
 import 'config/strings.dart';
 import 'config/title_server_config.dart';
 import 'services/api_service.dart';
@@ -161,7 +162,7 @@ class _LoginPageState extends State<LoginPage> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 48),
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 440),
+            constraints: BoxConstraints(maxWidth: responsiveMaxWidth(context)),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [

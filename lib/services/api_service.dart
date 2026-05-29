@@ -27,19 +27,13 @@ class ApiService {
   ApiService([this._config]);
 
   TitleServerConfig? get _cfg => _config ?? TitleServerConfigHolder().config;
-  String get _chipId {
-    final v = _cfg?.keychipId;
-    return (v != null && v.isNotEmpty) ? v : 'A63E-01C28055905';
+  String get _chipId => _cfg?.keychipId ?? '';
+  String get _aimeSalt => _cfg?.aimeSalt ?? '';
+  String get _aimeUrl => _cfg?.aimeUrl ?? '';
+  String get _openGameID {
+    final v = _cfg?.openGameID;
+    return (v != null && v.isNotEmpty) ? v : 'MAID';
   }
-  String get _aimeSalt {
-    final v = _cfg?.aimeSalt;
-    return (v != null && v.isNotEmpty) ? v : 'XcW5FW4cPArBXEk4vzKz3CIrMuA5EVVW';
-  }
-  String get _aimeUrl {
-    final v = _cfg?.aimeUrl;
-    return (v != null && v.isNotEmpty) ? v : 'http://ai.sys-allnet.cn/wc_aime/api/get_data';
-  }
-  String get _openGameID => _cfg?.openGameID ?? 'MAID';
 
   String _formatTimestamp() {
     final tokyo = DateTime.now().toUtc().add(const Duration(hours: 9));

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../config/responsive.dart';
 import '../config/strings.dart';
 import '../config/title_server_config.dart';
 import '../models/user_data.dart';
@@ -343,7 +344,7 @@ class _HomePageState extends State<HomePage> {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 500),
+        constraints: BoxConstraints(maxWidth: responsiveMaxWidth(context)),
         child: Column(
           children: [
             if (preview.errorId != 0) _ErrorIdBanner(theme: theme, errorId: preview.errorId),
@@ -387,9 +388,13 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 12),
             _ProfileFromPreviewCard(theme: theme, preview: preview),
             const SizedBox(height: 12),
-            _PreviewGameInfoCard(theme: theme, preview: preview),
-            const SizedBox(height: 12),
-            _PreviewStatusCard(theme: theme, preview: preview),
+            ...responsiveGrid(
+              context: context,
+              children: [
+                _PreviewGameInfoCard(theme: theme, preview: preview),
+                _PreviewStatusCard(theme: theme, preview: preview),
+              ],
+            ),
             if (TitleApiService.lastRawResponse != null) ...[
               const SizedBox(height: 12),
               _DebugRawJsonCard(
@@ -411,22 +416,22 @@ class _HomePageState extends State<HomePage> {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 500),
+        constraints: BoxConstraints(maxWidth: responsiveMaxWidth(context)),
         child: Column(
           children: [
             _ProfileFromUserDataCard(theme: theme, data: data),
             const SizedBox(height: 12),
-            _RatingBreakdownCard(theme: theme, data: data),
-            const SizedBox(height: 12),
-            _FirstPlayCard(theme: theme, data: data),
-            const SizedBox(height: 12),
-            _GameInfoFromUserDataCard(theme: theme, data: data),
-            const SizedBox(height: 12),
-            _PlayStatsCard(theme: theme, data: data),
-            const SizedBox(height: 12),
-            _StatusFromUserDataCard(theme: theme, preview: preview, data: data),
-            const SizedBox(height: 12),
-            _UserDataDetailCard(theme: theme, data: data),
+            ...responsiveGrid(
+              context: context,
+              children: [
+                _RatingBreakdownCard(theme: theme, data: data),
+                _FirstPlayCard(theme: theme, data: data),
+                _GameInfoFromUserDataCard(theme: theme, data: data),
+                _PlayStatsCard(theme: theme, data: data),
+                _StatusFromUserDataCard(theme: theme, preview: preview, data: data),
+                _UserDataDetailCard(theme: theme, data: data),
+              ],
+            ),
             if (TitleApiService.lastRawResponse != null) ...[
               const SizedBox(height: 12),
               _DebugRawJsonCard(

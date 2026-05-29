@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../config/responsive.dart';
 import '../config/strings.dart';
 import '../config/title_server_config.dart';
 
@@ -73,7 +74,7 @@ class ConfigExportImportPage extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 400),
+            constraints: BoxConstraints(maxWidth: responsiveMaxWidth(context)),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,

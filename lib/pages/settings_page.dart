@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../config/responsive.dart';
 import '../config/strings.dart';
 import '../config/title_server_config.dart';
 import 'config_export_import_page.dart';
@@ -103,7 +104,7 @@ class _SettingsPageState extends State<SettingsPage> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 500),
+          constraints: BoxConstraints(maxWidth: responsiveMaxWidth(context)),
           child: Form(
             key: _formKey,
             child: Column(

@@ -11,6 +11,7 @@ class AppStrings {
   static const appTitle = 'Project Ichino';
   static const loginSubtitle = '扫描或输入二维码进行登录';
   static const qrCodeToken = 'QR Code 令牌';
+  static const qrHint = '粘贴二维码解析内容...';
   static const qrParsedResult = '解析结果（截取后 64 位）';
   static const uploadQR = '上传二维码';
   static const login = '登录';
@@ -123,18 +124,31 @@ class AppStrings {
   static const machineSettings = '机器信息';
   static const save = '保存';
   static const labelTitleServerUrl = 'Title Server URL';
+  static const hintTitleServerUrl = 'https://maimai-gm.wahlap.com:42081/Maimai2Servlet/';
   static const labelAesKey = 'AES Key';
+  static const hintAesKey = 'your aes key string';
   static const labelAesIv = 'AES IV';
+  static const hintAesIv = 'your aes iv string';
   static const labelClientId = 'Client ID';
+  static const hintClientId = 'A63E01C2805';
   static const labelRegionId = 'Region ID';
+  static const hintRegionId = '1';
   static const labelPlaceId = 'Place ID';
+  static const hintPlaceId = '1403';
   static const labelObfuscateParam = 'Obfuscate Param';
+  static const hintObfuscateParam = 'LatuAa81';
   static const labelApiVersion = 'API Version (Mai-Encoding)';
+  static const hintApiVersion = '1.53';
   static const labelRegionName = 'Region 名称';
+  static const hintRegionName = '北京';
   static const labelPlaceName = 'Place 名称';
+  static const hintPlaceName = 'Place name';
   static const labelKeychipId = 'Keychip ID';
+  static const hintKeychipId = 'ID';
   static const labelAimeUrl = 'Aime URL';
+  static const hintAimeUrl = 'http://ai.sys-allnet.cn/wc_aime/api/get_data';
   static const labelAimeSalt = 'Aime Salt';
+  static const hintAimeSalt = 'API Key 派生用 Salt';
   static String fieldRequired(String label) => '$label 不能为空';
 
   // Config Export/Import

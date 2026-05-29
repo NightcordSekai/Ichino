@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../config/responsive.dart';
 import '../config/strings.dart';
 import '../config/title_server_config.dart';
 import '../services/title_api_service.dart';
@@ -251,7 +252,7 @@ class _TicketPageState extends State<TicketPage> {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 500),
+        constraints: BoxConstraints(maxWidth: responsiveMaxWidth(context)),
         child: Column(
           children: [
             if (widget.loginDateTime == null) _buildNotLoggedInBanner(theme),

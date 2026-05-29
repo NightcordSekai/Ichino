@@ -33,7 +33,7 @@ class TitleServerConfig {
     this.aimeUrl = '',
     this.aimeSalt = '',
     String? openGameID,
-  }) : openGameID = openGameID ?? '';
+  }) : openGameID = openGameID ?? 'MAID';
 
   List<int> get aesKeyBytes => utf8.encode(aesKey);
   List<int> get aesIvBytes => utf8.encode(aesIv);
@@ -70,7 +70,7 @@ class TitleServerConfig {
       keychipId: json['keychipId'] as String? ?? '',
       aimeUrl: json['aimeUrl'] as String? ?? '',
       aimeSalt: json['aimeSalt'] as String? ?? '',
-      openGameID: json['openGameID'] as String? ?? '',
+      openGameID: json['openGameID'] as String? ?? 'MAID',
     );
   }
 }

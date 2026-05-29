@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../config/responsive.dart';
 import '../config/strings.dart';
 
 class AboutPage extends StatelessWidget {
@@ -12,7 +13,7 @@ class AboutPage extends StatelessWidget {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 500),
+        constraints: BoxConstraints(maxWidth: responsiveMaxWidth(context)),
         child: Column(
           children: [
             const SizedBox(height: 32),
