@@ -227,12 +227,6 @@ class _LoginPageState extends State<LoginPage> {
                             letterSpacing: 0.5,
                           ),
                           decoration: InputDecoration(
-                            hintText: AppStrings.qrHint,
-                            hintStyle: theme.textTheme.bodyMedium?.copyWith(
-                              color: theme.colorScheme.onSurfaceVariant
-                                  .withValues(alpha: 0.5),
-                              fontFamily: 'monospace',
-                            ),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),

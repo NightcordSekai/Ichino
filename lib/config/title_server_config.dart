@@ -22,18 +22,18 @@ class TitleServerConfig {
     required this.titleServerUrl,
     required this.aesKey,
     required this.aesIv,
-    this.obfuscateParam = 'LatuAa81',
-    this.apiVersion = '1.53',
+    this.obfuscateParam = '',
+    this.apiVersion = '',
     required this.clientId,
-    this.regionId = 1,
-    this.placeId = 1403,
+    this.regionId = 0,
+    this.placeId = 0,
     this.regionName = '',
     this.placeName = '',
     this.keychipId = '',
     this.aimeUrl = '',
     this.aimeSalt = '',
     String? openGameID,
-  }) : openGameID = openGameID ?? 'MAID';
+  }) : openGameID = openGameID ?? '';
 
   List<int> get aesKeyBytes => utf8.encode(aesKey);
   List<int> get aesIvBytes => utf8.encode(aesIv);
@@ -60,17 +60,17 @@ class TitleServerConfig {
       titleServerUrl: json['titleServerUrl'] as String? ?? '',
       aesKey: json['aesKey'] as String? ?? '',
       aesIv: json['aesIv'] as String? ?? '',
-      obfuscateParam: json['obfuscateParam'] as String? ?? 'LatuAa81',
-      apiVersion: json['apiVersion'] as String? ?? '1.53',
+      obfuscateParam: json['obfuscateParam'] as String? ?? '',
+      apiVersion: json['apiVersion'] as String? ?? '',
       clientId: json['clientId'] as String? ?? '',
-      regionId: json['regionId'] as int? ?? 1,
-      placeId: json['placeId'] as int? ?? 1403,
+      regionId: json['regionId'] as int? ?? 0,
+      placeId: json['placeId'] as int? ?? 0,
       regionName: json['regionName'] as String? ?? '',
       placeName: json['placeName'] as String? ?? '',
       keychipId: json['keychipId'] as String? ?? '',
       aimeUrl: json['aimeUrl'] as String? ?? '',
       aimeSalt: json['aimeSalt'] as String? ?? '',
-      openGameID: json['openGameID'] as String? ?? 'MAID',
+      openGameID: json['openGameID'] as String? ?? '',
     );
   }
 }

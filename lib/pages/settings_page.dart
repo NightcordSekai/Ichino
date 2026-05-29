@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../config/strings.dart';
 import '../config/title_server_config.dart';
+import 'config_export_import_page.dart';
 
 class SettingsPage extends StatefulWidget {
   final bool showAppBar;
@@ -18,10 +19,10 @@ class _SettingsPageState extends State<SettingsPage> {
   final _aesKeyController = TextEditingController();
   final _aesIvController = TextEditingController();
   final _clientIdController = TextEditingController();
-  final _regionIdController = TextEditingController(text: '1');
-  final _placeIdController = TextEditingController(text: '1403');
-  final _obfuscateController = TextEditingController(text: 'LatuAa81');
-  final _apiVersionController = TextEditingController(text: '1.53');
+  final _regionIdController = TextEditingController();
+  final _placeIdController = TextEditingController();
+  final _obfuscateController = TextEditingController();
+  final _apiVersionController = TextEditingController();
   final _regionNameController = TextEditingController();
   final _placeNameController = TextEditingController();
   final _keychipIdController = TextEditingController();
@@ -75,8 +76,8 @@ class _SettingsPageState extends State<SettingsPage> {
       aesKey: _aesKeyController.text.trim(),
       aesIv: _aesIvController.text.trim(),
       clientId: _clientIdController.text.trim(),
-      regionId: int.tryParse(_regionIdController.text.trim()) ?? 1,
-      placeId: int.tryParse(_placeIdController.text.trim()) ?? 1403,
+      regionId: int.tryParse(_regionIdController.text.trim()) ?? 0,
+      placeId: int.tryParse(_placeIdController.text.trim()) ?? 0,
       obfuscateParam: _obfuscateController.text.trim(),
       apiVersion: _apiVersionController.text.trim(),
       regionName: _regionNameController.text.trim(),
@@ -109,35 +110,35 @@ class _SettingsPageState extends State<SettingsPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _buildSection(theme, AppStrings.titleServerSection, [
-                  _buildField(controller: _urlController, label: AppStrings.labelTitleServerUrl, hint: AppStrings.hintTitleServerUrl),
+                  _buildField(controller: _urlController, label: AppStrings.labelTitleServerUrl),
                   const SizedBox(height: 14),
-                  _buildField(controller: _aesKeyController, label: AppStrings.labelAesKey, hint: AppStrings.hintAesKey),
+                  _buildField(controller: _aesKeyController, label: AppStrings.labelAesKey),
                   const SizedBox(height: 14),
-                  _buildField(controller: _aesIvController, label: AppStrings.labelAesIv, hint: AppStrings.hintAesIv),
+                  _buildField(controller: _aesIvController, label: AppStrings.labelAesIv),
                   const SizedBox(height: 14),
-                  _buildField(controller: _clientIdController, label: AppStrings.labelClientId, hint: AppStrings.hintClientId),
+                  _buildField(controller: _clientIdController, label: AppStrings.labelClientId),
                   const SizedBox(height: 14),
-                  _buildField(controller: _obfuscateController, label: AppStrings.labelObfuscateParam, hint: AppStrings.hintObfuscateParam),
+                  _buildField(controller: _obfuscateController, label: AppStrings.labelObfuscateParam),
                   const SizedBox(height: 14),
-                  _buildField(controller: _apiVersionController, label: AppStrings.labelApiVersion, hint: AppStrings.hintApiVersion),
+                  _buildField(controller: _apiVersionController, label: AppStrings.labelApiVersion),
                 ]),
                 const SizedBox(height: 24),
                 _buildSection(theme, AppStrings.machineSettings, [
-                  _buildField(controller: _regionIdController, label: AppStrings.labelRegionId, hint: AppStrings.hintRegionId),
+                  _buildField(controller: _regionIdController, label: AppStrings.labelRegionId),
                   const SizedBox(height: 14),
-                  _buildField(controller: _regionNameController, label: AppStrings.labelRegionName, hint: AppStrings.hintRegionName),
+                  _buildField(controller: _regionNameController, label: AppStrings.labelRegionName),
                   const SizedBox(height: 14),
-                  _buildField(controller: _placeIdController, label: AppStrings.labelPlaceId, hint: AppStrings.hintPlaceId),
+                  _buildField(controller: _placeIdController, label: AppStrings.labelPlaceId),
                   const SizedBox(height: 14),
-                  _buildField(controller: _placeNameController, label: AppStrings.labelPlaceName, hint: AppStrings.hintPlaceName),
+                  _buildField(controller: _placeNameController, label: AppStrings.labelPlaceName),
                 ]),
                 const SizedBox(height: 24),
                 _buildSection(theme, AppStrings.authServerSettings, [
-                  _buildField(controller: _keychipIdController, label: AppStrings.labelKeychipId, hint: AppStrings.hintKeychipId),
+                  _buildField(controller: _keychipIdController, label: AppStrings.labelKeychipId),
                   const SizedBox(height: 14),
-                  _buildField(controller: _aimeUrlController, label: AppStrings.labelAimeUrl, hint: AppStrings.hintAimeUrl),
+                  _buildField(controller: _aimeUrlController, label: AppStrings.labelAimeUrl),
                   const SizedBox(height: 14),
-                  _buildField(controller: _aimeSaltController, label: AppStrings.labelAimeSalt, hint: AppStrings.hintAimeSalt),
+                  _buildField(controller: _aimeSaltController, label: AppStrings.labelAimeSalt),
                 ]),
                 const SizedBox(height: 32),
                 FilledButton.icon(
@@ -145,6 +146,22 @@ class _SettingsPageState extends State<SettingsPage> {
                   icon: const Icon(Icons.save, size: 20),
                   label: const Text(AppStrings.save),
                   style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (_) => const ConfigExportImportPage()),
+                    );
+                  },
+                  icon: const Icon(Icons.import_export, size: 20),
+                  label: const Text(AppStrings.configExportImport),
+                  style: OutlinedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -191,13 +208,11 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget _buildField({
     required TextEditingController controller,
     required String label,
-    required String hint,
   }) {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        hintText: hint,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
         ),
