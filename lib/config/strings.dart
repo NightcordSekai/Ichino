@@ -4,6 +4,7 @@ class AppStrings {
   // Tab
   static const tabHome = '主页';
   static const tabTickets = '票据';
+  static const tabTransfer = '传包';
   static const tabSettings = '设置';
   static const tabAbout = '关于';
 
@@ -116,6 +117,8 @@ class AppStrings {
       '冷却中，剩余 $remaining 秒';
   static String ticketCooldownNotice(int remaining) =>
       '登录后需冷却 $ticketCooldownSeconds 秒，剩余 $remaining 秒后可使用功能票。';
+  static String packetCooldownNotice(int remaining) =>
+      '登录后需冷却 $ticketCooldownSeconds 秒，剩余 $remaining 秒后可使用传包。';
 
   // Settings
   static const titleServerSettings = 'Title Server 设置';
@@ -124,7 +127,7 @@ class AppStrings {
   static const machineSettings = '机器信息';
   static const save = '保存';
   static const labelTitleServerUrl = 'Title Server URL';
-  static const hintTitleServerUrl = 'https://maimai-gm.wahlap.com:42081/Maimai2Servlet/';
+  static const hintTitleServerUrl = '';
   static const labelAesKey = 'AES Key';
   static const hintAesKey = 'your aes key string';
   static const labelAesIv = 'AES IV';
@@ -146,7 +149,7 @@ class AppStrings {
   static const labelKeychipId = 'Keychip ID';
   static const hintKeychipId = 'ID';
   static const labelAimeUrl = 'Aime URL';
-  static const hintAimeUrl = 'http://ai.sys-allnet.cn/wc_aime/api/get_data';
+  static const hintAimeUrl = '';
   static const labelAimeSalt = 'Aime Salt';
   static const hintAimeSalt = 'API Key 派生用 Salt';
   static String fieldRequired(String label) => '$label 不能为空';
@@ -159,6 +162,28 @@ class AppStrings {
   static const importSuccess = '配置已导入并保存';
   static const importFailed = '导入失败：剪贴板内容无效';
   static const noConfigToExport = '没有可导出的配置';
+
+  // Transfer Package (传包)
+  static const transferTitle = '传包 (UpsertUserAll)';
+  static const transferDesc = '拉取用户数据后，可修改角色槽位、锁定槽位和角色等级，然后传包回服务器。';
+  static const transferFetchData = '拉取数据';
+  static const transferFetching = '拉取中...';
+  static const transferNotLoggedIn = '尚未登录游戏服务器，无法传包。';
+  static const transferCharaSlot = '角色槽位 (charaSlot)';
+  static const transferCharaLockSlot = '锁定槽位 (charaLockSlot)';
+  static const transferCharacterLevels = '角色等级 (userCharacterList)';
+  static const transferAddCharacter = '添加角色';
+  static const transferCharacterId = '角色ID';
+  static const transferLevel = '等级';
+  static const transferAwakening = '觉醒';
+  static const transferSend = '发送传包';
+  static const transferSending = '发送中...';
+  static const transferSuccess = '传包完成';
+  static const transferFailed = '传包失败';
+  static const transferSlotLabel = '槽位';
+  static const transferNoData = '⚠️ 未拉取到用户数据，请先点「拉取数据」按钮获取。';
+  static const transferDataLoaded = '数据已就绪，可在下方编辑后发送。';
+  static const transferRemove = '移除';
 
   // About
   static const aboutTitle = 'Project Ichino';

@@ -9,6 +9,7 @@ import '../services/title_api_service.dart';
 import 'about_page.dart';
 import 'settings_page.dart';
 import 'ticket_page.dart';
+import 'transfer_package_page.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -42,6 +43,7 @@ class _HomePageState extends State<HomePage> {
   static const _tabTitles = [
     AppStrings.tabHome,
     AppStrings.tabTickets,
+    AppStrings.tabTransfer,
     AppStrings.tabSettings,
     AppStrings.tabAbout,
   ];
@@ -184,8 +186,10 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _performLogoutAndExit() async {
     setState(() => _loggingOut = true);
-    await Future.delayed(const Duration(seconds: 5));
-    await _logoutSession();
+    if (_login != null) {
+      await Future.delayed(const Duration(seconds: 5));
+      await _logoutSession();
+    }
     if (mounted) {
       Navigator.of(context).pop();
     }
@@ -227,6 +231,13 @@ class _HomePageState extends State<HomePage> {
             playerRating: _userData?.playerRating ?? _preview?.playerRating ?? 0,
             onLogoutRequested: _login != null ? _logoutSession : null,
           ),
+          TransferPackagePage(
+            userId: widget.userId,
+            cookies: _sessionCookies ?? widget.cookies,
+            loginDateTime: _login?.loginDateTime,
+            playlogId: _login?.loginId,
+            lastLoginDate: _login?.lastLoginDate,
+          ),
           SettingsPage(showAppBar: false),
           const AboutPage(),
         ],
@@ -237,6 +248,7 @@ class _HomePageState extends State<HomePage> {
         destinations: const [
           NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home), label: AppStrings.tabHome),
           NavigationDestination(icon: Icon(Icons.confirmation_number_outlined), selectedIcon: Icon(Icons.confirmation_number), label: AppStrings.tabTickets),
+          NavigationDestination(icon: Icon(Icons.inventory_2_outlined), selectedIcon: Icon(Icons.inventory_2), label: AppStrings.tabTransfer),
           NavigationDestination(icon: Icon(Icons.settings_outlined), selectedIcon: Icon(Icons.settings), label: AppStrings.tabSettings),
           NavigationDestination(icon: Icon(Icons.info_outlined), selectedIcon: Icon(Icons.info), label: AppStrings.tabAbout),
         ],
@@ -268,7 +280,7 @@ class _HomePageState extends State<HomePage> {
               ),
               const SizedBox(height: 24),
               FilledButton.icon(
-                onPressed: () => setState(() => _currentTab = 2),
+                onPressed: () => setState(() => _currentTab = 3),
                 icon: const Icon(Icons.settings, size: 20),
                 label: const Text(AppStrings.openSettings),
               ),

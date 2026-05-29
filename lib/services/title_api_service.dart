@@ -510,6 +510,56 @@ class TitleApiService {
     return '${dt.year}-${dt.month.toString().padLeft(2, '0')}-${dt.day.toString().padLeft(2, '0')} '
         '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}:${dt.second.toString().padLeft(2, '0')}.0';
   }
+
+  // ---- UpsertUserAll (传包) ----
+
+  /// Fetch all user data needed to build an UpsertUserAll payload.
+  /// Returns a map keyed by the raw API names (e.g. 'GetUserDataApi').
+  Future<Map<String, Map<String, dynamic>>> fetchUserAllData(int userId) async {
+    final results = await Future.wait([
+      getUserData(userId),
+      getUserExtend(userId),
+      getUserOption(userId),
+      getUserRating(userId),
+      getUserCharge(userId),
+      getUserActivity(userId),
+      getUserMissionData(userId),
+    ]);
+
+    return {
+      'GetUserDataApi': results[0],
+      'GetUserExtendApi': results[1],
+      'GetUserOptionApi': results[2],
+      'GetUserRatingApi': results[3],
+      'GetUserChargeApi': results[4],
+      'GetUserActivityApi': results[5],
+      'GetUserMissionDataApi': results[6],
+    };
+  }
+
+  /// Send an UpsertUserAll payload to the server.
+  Future<void> upsertUserAll(
+    Map<String, dynamic> packet,
+    int userId,
+  ) async {
+    const apiName = 'UpsertUserAllApi';
+    final json = await _callApi(apiName, packet, userId);
+    final returnCode = json['returnCode'] as int? ?? -1;
+    if (returnCode != 1) {
+      throw TitleApiException('UpsertUserAllApi returnCode=$returnCode');
+    }
+  }
+
+  /// Fetch user character list.
+  Future<List<Map<String, dynamic>>> getUserCharacter(int userId) async {
+    final json = await _callApi(
+      'GetUserCharacterApi',
+      {'userId': userId},
+      userId,
+    );
+    final list = json['userCharacterList'] as List<dynamic>? ?? [];
+    return list.map((e) => e as Map<String, dynamic>).toList();
+  }
 }
 
 class _RandomHelper {
