@@ -19,6 +19,7 @@ class AppStrings {
   static const qrScanSuccess = '二维码解析成功';
   static const qrScanFailed = '未能识别二维码，请手动粘贴内容';
   static const qrScanError = '解析失败';
+  static const forcePreviewApi = '强制使用 Preview API';
   static const loginFailed = '登录失败';
   static const requestFailed = '请求失败';
   static const settingsTooltip = '设置';

@@ -51,6 +51,7 @@ class _LoginPageState extends State<LoginPage> {
   final _apiService = ApiService();
   String _qrCode = '';
   bool _loading = false;
+  bool _forcePreviewApi = false;
 
   @override
   void dispose() {
@@ -115,6 +116,7 @@ class _LoginPageState extends State<LoginPage> {
               userId: result.userId,
               token: result.token,
               cookies: result.cookies,
+              forcePreviewApi: _forcePreviewApi,
             ),
           ),
         );
@@ -316,6 +318,15 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ],
+                ),
+                const SizedBox(height: 16),
+                CheckboxListTile(
+                  value: _forcePreviewApi,
+                  onChanged: (v) => setState(() => _forcePreviewApi = v ?? false),
+                  title: const Text(AppStrings.forcePreviewApi),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
                 ),
               ],
             ),

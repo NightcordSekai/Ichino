@@ -14,12 +14,14 @@ class HomePage extends StatefulWidget {
   final int userId;
   final String token;
   final String? cookies;
+  final bool forcePreviewApi;
 
   const HomePage({
     super.key,
     required this.userId,
     required this.token,
     this.cookies,
+    this.forcePreviewApi = false,
   });
 
   @override
@@ -34,6 +36,7 @@ class _HomePageState extends State<HomePage> {
   String? _error;
   bool _loading = true;
   bool _loggingOut = false;
+  String? _sessionCookies;
 
   static const _tabTitles = [
     AppStrings.tabHome,
@@ -76,10 +79,12 @@ class _HomePageState extends State<HomePage> {
         token: widget.token,
       );
       if (!mounted) return;
+      _sessionCookies = service.cookies;
       setState(() => _preview = preview);
 
       // isLogin == true => 已有人登录, 不再走完整登录, 直接展示 preview 概要
-      if (preview.isLogin) {
+      // forcePreviewApi => 跳过 UserLoginApi, 仅展示 preview + Login 按钮
+      if (preview.isLogin || widget.forcePreviewApi) {
         setState(() => _loading = false);
         return;
       }
@@ -89,10 +94,55 @@ class _HomePageState extends State<HomePage> {
         token: widget.token,
       );
       if (!mounted) return;
+      _sessionCookies = service.cookies;
       setState(() => _login = login);
 
       final userData = await service.getUserDataTyped(widget.userId);
       if (!mounted) return;
+      _sessionCookies = service.cookies;
+      setState(() {
+        _userData = userData;
+        _loading = false;
+      });
+    } on TitleApiException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e.message;
+        _loading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _error = e.toString();
+        _loading = false;
+      });
+    }
+  }
+
+  Future<void> _performLogin() async {
+    if (!TitleServerConfigHolder().isConfigured) return;
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+
+    final service = TitleApiService(
+      TitleServerConfigHolder().config!,
+      cookies: _sessionCookies ?? widget.cookies,
+    );
+
+    try {
+      final login = await service.userLoginFull(
+        userId: widget.userId,
+        token: widget.token,
+      );
+      if (!mounted) return;
+      _sessionCookies = service.cookies;
+      setState(() => _login = login);
+
+      final userData = await service.getUserDataTyped(widget.userId);
+      if (!mounted) return;
+      _sessionCookies = service.cookies;
       setState(() {
         _userData = userData;
         _loading = false;
@@ -118,7 +168,7 @@ class _HomePageState extends State<HomePage> {
     if (!TitleServerConfigHolder().isConfigured) return;
     final service = TitleApiService(
       TitleServerConfigHolder().config!,
-      cookies: widget.cookies,
+      cookies: _sessionCookies ?? widget.cookies,
     );
     try {
       await service.userLogout(
@@ -171,7 +221,7 @@ class _HomePageState extends State<HomePage> {
           _buildBody(theme),
           TicketPage(
             userId: widget.userId,
-            cookies: widget.cookies,
+            cookies: _sessionCookies ?? widget.cookies,
             loginDateTime: _login?.loginDateTime,
             playerRating: _userData?.playerRating ?? _preview?.playerRating ?? 0,
             onLogoutRequested: _login != null ? _logoutSession : null,
@@ -268,8 +318,13 @@ class _HomePageState extends State<HomePage> {
       return const SizedBox.shrink();
     }
 
-    if (preview.isLogin && userData == null) {
-      return _buildPreviewOnly(theme, preview);
+    if ((preview.isLogin || (widget.forcePreviewApi && _login == null)) && userData == null) {
+      return _buildPreviewOnly(
+        theme,
+        preview,
+        showLoginButton: widget.forcePreviewApi && _login == null,
+        onLoginPressed: _performLogin,
+      );
     }
 
     if (userData != null) {
@@ -279,7 +334,12 @@ class _HomePageState extends State<HomePage> {
     return const SizedBox.shrink();
   }
 
-  Widget _buildPreviewOnly(ThemeData theme, UserPreviewDataBean preview) {
+  Widget _buildPreviewOnly(
+    ThemeData theme,
+    UserPreviewDataBean preview, {
+    bool showLoginButton = false,
+    VoidCallback? onLoginPressed,
+  }) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: ConstrainedBox(
@@ -295,12 +355,35 @@ class _HomePageState extends State<HomePage> {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
-                AppStrings.inheritedAccountNotice,
+                showLoginButton ? 'Preview API 模式，点击下方按钮登录。' : AppStrings.inheritedAccountNotice,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onTertiaryContainer,
                 ),
               ),
             ),
+            if (showLoginButton) ...[
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton.icon(
+                  onPressed: _loading ? null : onLoginPressed,
+                  icon: _loading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.login, size: 20),
+                  label: Text(_loading ? AppStrings.loggingIn : AppStrings.login),
+                  style: FilledButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+            ],
             const SizedBox(height: 12),
             _ProfileFromPreviewCard(theme: theme, preview: preview),
             const SizedBox(height: 12),

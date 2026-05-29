@@ -40,7 +40,9 @@ class TitleApiService {
   final TitleServerConfig _config;
   String? _cookies;
 
-  TitleApiService(this._config, {this._cookies});
+  TitleApiService(this._config, {String? cookies}) : _cookies = cookies;
+
+  String? get cookies => _cookies;
 
   Uint8List _aesEncrypt(Uint8List plaintext) {
     final cipher = PaddedBlockCipherImpl(
