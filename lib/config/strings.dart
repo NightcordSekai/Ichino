@@ -119,17 +119,18 @@ class AppStrings {
 
   // Settings
   static const titleServerSettings = 'Title Server 设置';
-  static const required = '必填';
-  static const optional = '可选 (有默认值)';
+  static const titleServerSection = 'Title Server';
+  static const authServerSettings = 'Auth Server';
+  static const machineSettings = '机器信息';
   static const save = '保存';
   static const labelTitleServerUrl = 'Title Server URL';
-  static const hintTitleServerUrl = 'http://maimai-gm.wahlap.com:42081';
+  static const hintTitleServerUrl = 'https://maimai-gm.wahlap.com:42081/Maimai2Servlet/';
   static const labelAesKey = 'AES Key';
   static const hintAesKey = 'your aes key string';
   static const labelAesIv = 'AES IV';
   static const hintAesIv = 'your aes iv string';
   static const labelClientId = 'Client ID';
-  static const hintClientId = 'your client id';
+  static const hintClientId = 'A63E01C2805';
   static const labelRegionId = 'Region ID';
   static const hintRegionId = '1';
   static const labelPlaceId = 'Place ID';
@@ -138,6 +139,16 @@ class AppStrings {
   static const hintObfuscateParam = 'LatuAa81';
   static const labelApiVersion = 'API Version (Mai-Encoding)';
   static const hintApiVersion = '1.53';
+  static const labelRegionName = 'Region 名称';
+  static const hintRegionName = '北京';
+  static const labelPlaceName = 'Place 名称';
+  static const hintPlaceName = '插电师北京王府井银泰店';
+  static const labelKeychipId = 'Keychip ID';
+  static const hintKeychipId = 'A63E-01C28055905';
+  static const labelAimeUrl = 'Aime URL';
+  static const hintAimeUrl = 'http://ai.sys-allnet.cn/wc_aime/api/get_data';
+  static const labelAimeSalt = 'Aime Salt';
+  static const hintAimeSalt = 'API Key 派生用 Salt';
   static String fieldRequired(String label) => '$label 不能为空';
 
   // About

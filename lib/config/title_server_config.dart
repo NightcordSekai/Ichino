@@ -11,6 +11,12 @@ class TitleServerConfig {
   final String clientId;
   final int regionId;
   final int placeId;
+  final String regionName;
+  final String placeName;
+  final String keychipId;
+  final String aimeUrl;
+  final String aimeSalt;
+  final String openGameID;
 
   const TitleServerConfig({
     required this.titleServerUrl,
@@ -21,7 +27,13 @@ class TitleServerConfig {
     required this.clientId,
     this.regionId = 1,
     this.placeId = 1403,
-  });
+    this.regionName = '',
+    this.placeName = '',
+    this.keychipId = '',
+    this.aimeUrl = '',
+    this.aimeSalt = '',
+    String? openGameID,
+  }) : openGameID = openGameID ?? 'MAID';
 
   List<int> get aesKeyBytes => utf8.encode(aesKey);
   List<int> get aesIvBytes => utf8.encode(aesIv);
@@ -35,6 +47,12 @@ class TitleServerConfig {
         'clientId': clientId,
         'regionId': regionId,
         'placeId': placeId,
+        'regionName': regionName,
+        'placeName': placeName,
+        'keychipId': keychipId,
+        'aimeUrl': aimeUrl,
+        'aimeSalt': aimeSalt,
+        'openGameID': openGameID,
       };
 
   factory TitleServerConfig.fromJson(Map<String, dynamic> json) {
@@ -47,6 +65,12 @@ class TitleServerConfig {
       clientId: json['clientId'] as String? ?? '',
       regionId: json['regionId'] as int? ?? 1,
       placeId: json['placeId'] as int? ?? 1403,
+      regionName: json['regionName'] as String? ?? '',
+      placeName: json['placeName'] as String? ?? '',
+      keychipId: json['keychipId'] as String? ?? '',
+      aimeUrl: json['aimeUrl'] as String? ?? '',
+      aimeSalt: json['aimeSalt'] as String? ?? '',
+      openGameID: json['openGameID'] as String? ?? 'MAID',
     );
   }
 }

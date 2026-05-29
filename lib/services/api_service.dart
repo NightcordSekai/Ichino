@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
 
+import '../config/title_server_config.dart';
+
 class LoginResult {
   final bool success;
   final int errorId;
@@ -20,12 +22,24 @@ class LoginResult {
 }
 
 class ApiService {
-  static const String chimeSalt = 'XcW5FW4cPArBXEk4vzKz3CIrMuA5EVVW';
-  static const String baseUrl = 'http://ai.sys-allnet.cn';
+  final TitleServerConfig? _config;
 
-  String chipId;
+  ApiService([this._config]);
 
-  ApiService({this.chipId = 'A63E-01C28055905'});
+  TitleServerConfig? get _cfg => _config ?? TitleServerConfigHolder().config;
+  String get _chipId {
+    final v = _cfg?.keychipId;
+    return (v != null && v.isNotEmpty) ? v : 'A63E-01C28055905';
+  }
+  String get _aimeSalt {
+    final v = _cfg?.aimeSalt;
+    return (v != null && v.isNotEmpty) ? v : 'XcW5FW4cPArBXEk4vzKz3CIrMuA5EVVW';
+  }
+  String get _aimeUrl {
+    final v = _cfg?.aimeUrl;
+    return (v != null && v.isNotEmpty) ? v : 'http://ai.sys-allnet.cn/wc_aime/api/get_data';
+  }
+  String get _openGameID => _cfg?.openGameID ?? 'MAID';
 
   String _formatTimestamp() {
     final tokyo = DateTime.now().toUtc().add(const Duration(hours: 9));
@@ -53,20 +67,26 @@ class ApiService {
   Future<LoginResult> login(String qrCodeToken) async {
     final timestamp = _formatTimestamp();
     final qrCode = extractQRCode(qrCodeToken);
-    final rawKey = chipId + timestamp + chimeSalt;
+    final chipId = _chipId;
+    final rawKey = chipId + timestamp + _aimeSalt;
     final key = _sha256(rawKey).toUpperCase();
 
     final body = jsonEncode({
       'chipID': chipId,
-      'openGameID': 'MAID',
+      'openGameID': _openGameID,
       'key': key,
       'qrCode': qrCode,
       'timestamp': timestamp,
     });
 
+    // ignore: avoid_print
+    print('[login] POST $_aimeUrl');
+    // ignore: avoid_print
+    print('[login] chipId=$chipId openGameID=$_openGameID');
+
     final response = await http
         .post(
-          Uri.parse('$baseUrl/wc_aime/api/get_data'),
+          Uri.parse(_aimeUrl),
           headers: {
             'Content-Type': 'application/json',
             'User-Agent': 'WC_AIME_LIB',

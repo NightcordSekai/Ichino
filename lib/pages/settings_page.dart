@@ -22,6 +22,11 @@ class _SettingsPageState extends State<SettingsPage> {
   final _placeIdController = TextEditingController(text: '1403');
   final _obfuscateController = TextEditingController(text: 'LatuAa81');
   final _apiVersionController = TextEditingController(text: '1.53');
+  final _regionNameController = TextEditingController();
+  final _placeNameController = TextEditingController();
+  final _keychipIdController = TextEditingController();
+  final _aimeUrlController = TextEditingController();
+  final _aimeSaltController = TextEditingController();
 
   @override
   void initState() {
@@ -36,6 +41,11 @@ class _SettingsPageState extends State<SettingsPage> {
       _placeIdController.text = '${config.placeId}';
       _obfuscateController.text = config.obfuscateParam;
       _apiVersionController.text = config.apiVersion;
+      _regionNameController.text = config.regionName;
+      _placeNameController.text = config.placeName;
+      _keychipIdController.text = config.keychipId;
+      _aimeUrlController.text = config.aimeUrl;
+      _aimeSaltController.text = config.aimeSalt;
     }
   }
 
@@ -49,6 +59,11 @@ class _SettingsPageState extends State<SettingsPage> {
     _placeIdController.dispose();
     _obfuscateController.dispose();
     _apiVersionController.dispose();
+    _regionNameController.dispose();
+    _placeNameController.dispose();
+    _keychipIdController.dispose();
+    _aimeUrlController.dispose();
+    _aimeSaltController.dispose();
     super.dispose();
   }
 
@@ -64,6 +79,11 @@ class _SettingsPageState extends State<SettingsPage> {
       placeId: int.tryParse(_placeIdController.text.trim()) ?? 1403,
       obfuscateParam: _obfuscateController.text.trim(),
       apiVersion: _apiVersionController.text.trim(),
+      regionName: _regionNameController.text.trim(),
+      placeName: _placeNameController.text.trim(),
+      keychipId: _keychipIdController.text.trim(),
+      aimeUrl: _aimeUrlController.text.trim(),
+      aimeSalt: _aimeSaltController.text.trim(),
     ));
 
     if (mounted) Navigator.of(context).pop();
@@ -88,64 +108,36 @@ class _SettingsPageState extends State<SettingsPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _buildSection(theme, AppStrings.required, [
-                  _buildField(
-                    controller: _urlController,
-                    label: AppStrings.labelTitleServerUrl,
-                    hint: AppStrings.hintTitleServerUrl,
-                    required: true,
-                  ),
+                _buildSection(theme, AppStrings.titleServerSection, [
+                  _buildField(controller: _urlController, label: AppStrings.labelTitleServerUrl, hint: AppStrings.hintTitleServerUrl),
                   const SizedBox(height: 14),
-                  _buildField(
-                    controller: _aesKeyController,
-                    label: AppStrings.labelAesKey,
-                    hint: AppStrings.hintAesKey,
-                    required: true,
-                  ),
+                  _buildField(controller: _aesKeyController, label: AppStrings.labelAesKey, hint: AppStrings.hintAesKey),
                   const SizedBox(height: 14),
-                  _buildField(
-                    controller: _aesIvController,
-                    label: AppStrings.labelAesIv,
-                    hint: AppStrings.hintAesIv,
-                    required: true,
-                  ),
+                  _buildField(controller: _aesIvController, label: AppStrings.labelAesIv, hint: AppStrings.hintAesIv),
                   const SizedBox(height: 14),
-                  _buildField(
-                    controller: _clientIdController,
-                    label: AppStrings.labelClientId,
-                    hint: AppStrings.hintClientId,
-                    required: true,
-                  ),
+                  _buildField(controller: _clientIdController, label: AppStrings.labelClientId, hint: AppStrings.hintClientId),
+                  const SizedBox(height: 14),
+                  _buildField(controller: _obfuscateController, label: AppStrings.labelObfuscateParam, hint: AppStrings.hintObfuscateParam),
+                  const SizedBox(height: 14),
+                  _buildField(controller: _apiVersionController, label: AppStrings.labelApiVersion, hint: AppStrings.hintApiVersion),
                 ]),
                 const SizedBox(height: 24),
-                _buildSection(theme, AppStrings.optional, [
-                  _buildField(
-                    controller: _regionIdController,
-                    label: AppStrings.labelRegionId,
-                    hint: AppStrings.hintRegionId,
-                    required: false,
-                  ),
+                _buildSection(theme, AppStrings.machineSettings, [
+                  _buildField(controller: _regionIdController, label: AppStrings.labelRegionId, hint: AppStrings.hintRegionId),
                   const SizedBox(height: 14),
-                  _buildField(
-                    controller: _placeIdController,
-                    label: AppStrings.labelPlaceId,
-                    hint: AppStrings.hintPlaceId,
-                    required: false,
-                  ),
+                  _buildField(controller: _regionNameController, label: AppStrings.labelRegionName, hint: AppStrings.hintRegionName),
                   const SizedBox(height: 14),
-                  _buildField(
-                    controller: _obfuscateController,
-                    label: AppStrings.labelObfuscateParam,
-                    hint: AppStrings.hintObfuscateParam,
-                    required: false,
-                  ),
+                  _buildField(controller: _placeIdController, label: AppStrings.labelPlaceId, hint: AppStrings.hintPlaceId),
                   const SizedBox(height: 14),
-                  _buildField(
-                    controller: _apiVersionController,
-                    label: AppStrings.labelApiVersion,
-                    hint: AppStrings.hintApiVersion,
-                    required: false,
-                  ),
+                  _buildField(controller: _placeNameController, label: AppStrings.labelPlaceName, hint: AppStrings.hintPlaceName),
+                ]),
+                const SizedBox(height: 24),
+                _buildSection(theme, AppStrings.authServerSettings, [
+                  _buildField(controller: _keychipIdController, label: AppStrings.labelKeychipId, hint: AppStrings.hintKeychipId),
+                  const SizedBox(height: 14),
+                  _buildField(controller: _aimeUrlController, label: AppStrings.labelAimeUrl, hint: AppStrings.hintAimeUrl),
+                  const SizedBox(height: 14),
+                  _buildField(controller: _aimeSaltController, label: AppStrings.labelAimeSalt, hint: AppStrings.hintAimeSalt),
                 ]),
                 const SizedBox(height: 32),
                 FilledButton.icon(
@@ -200,7 +192,6 @@ class _SettingsPageState extends State<SettingsPage> {
     required TextEditingController controller,
     required String label,
     required String hint,
-    required bool required,
   }) {
     return TextFormField(
       controller: controller,
@@ -212,9 +203,7 @@ class _SettingsPageState extends State<SettingsPage> {
         ),
         contentPadding: const EdgeInsets.all(14),
       ),
-      validator: required
-          ? (v) => (v == null || v.trim().isEmpty) ? AppStrings.fieldRequired(label) : null
-          : null,
+      validator: (v) => (v == null || v.trim().isEmpty) ? AppStrings.fieldRequired(label) : null,
     );
   }
 }
