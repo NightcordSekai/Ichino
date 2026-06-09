@@ -511,7 +511,23 @@ class TitleApiService {
         '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}:${dt.second.toString().padLeft(2, '0')}.0';
   }
 
-  // ---- UpsertUserAll (传包) ----
+  // ---- UpsertUserAll (发包) ----
+
+  /// Upload a single playlog record (fake game log).
+  Future<void> uploadUserPlaylog(
+    Map<String, dynamic> userPlaylog,
+    int userId,
+  ) async {
+    const apiName = 'UploadUserPlaylogApi';
+    final json = await _callApi(apiName, {
+      'userId': userId,
+      'userPlaylog': userPlaylog,
+    }, userId);
+    final returnCode = json['returnCode'] as int? ?? -1;
+    if (returnCode != 1) {
+      throw TitleApiException('UploadUserPlaylogApi returnCode=$returnCode');
+    }
+  }
 
   /// Fetch all user data needed to build an UpsertUserAll payload.
   /// Returns a map keyed by the raw API names (e.g. 'GetUserDataApi').

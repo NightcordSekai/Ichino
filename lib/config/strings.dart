@@ -4,7 +4,7 @@ class AppStrings {
   // Tab
   static const tabHome = '主页';
   static const tabTickets = '票据';
-  static const tabTransfer = '传包';
+  static const tabTransfer = '发包';
   static const tabSettings = '设置';
   static const tabAbout = '关于';
 
@@ -118,7 +118,7 @@ class AppStrings {
   static String ticketCooldownNotice(int remaining) =>
       '登录后需冷却 $ticketCooldownSeconds 秒，剩余 $remaining 秒后可使用功能票。';
   static String packetCooldownNotice(int remaining) =>
-      '登录后需冷却 $ticketCooldownSeconds 秒，剩余 $remaining 秒后可使用传包。';
+      '登录后需冷却 $ticketCooldownSeconds 秒，剩余 $remaining 秒后可发包。';
 
   // Settings
   static const titleServerSettings = 'Title Server 设置';
@@ -163,12 +163,12 @@ class AppStrings {
   static const importFailed = '导入失败：剪贴板内容无效';
   static const noConfigToExport = '没有可导出的配置';
 
-  // Transfer Package (传包)
-  static const transferTitle = '传包 (UpsertUserAll)';
-  static const transferDesc = '拉取用户数据后，可修改角色槽位、锁定槽位和角色等级，然后传包回服务器。';
+  // Transfer Package (发包)
+  static const transferTitle = '发包 (UpsertUserAll)';
+  static const transferDesc = '拉取用户数据后，可修改角色槽位、锁定槽位和角色等级，然后发包回服务器。';
   static const transferFetchData = '拉取数据';
   static const transferFetching = '拉取中...';
-  static const transferNotLoggedIn = '尚未登录游戏服务器，无法传包。';
+  static const transferNotLoggedIn = '尚未登录游戏服务器，无法发包。';
   static const transferCharaSlot = '角色槽位 (charaSlot)';
   static const transferCharaLockSlot = '锁定槽位 (charaLockSlot)';
   static const transferCharacterLevels = '角色等级 (userCharacterList)';
@@ -176,10 +176,11 @@ class AppStrings {
   static const transferCharacterId = '角色ID';
   static const transferLevel = '等级';
   static const transferAwakening = '觉醒';
-  static const transferSend = '发送传包';
+  static const transferSend = '发包';
   static const transferSending = '发送中...';
-  static const transferSuccess = '传包完成';
-  static const transferFailed = '传包失败';
+  static const transferSuccess = '发包完成';
+  static const transferFailed = '发包失败';
+  static const transferUploadingPlaylog = '上传游戏记录...';
   static const transferSlotLabel = '槽位';
   static const transferNoData = '⚠️ 未拉取到用户数据，请先点「拉取数据」按钮获取。';
   static const transferDataLoaded = '数据已就绪，可在下方编辑后发送。';

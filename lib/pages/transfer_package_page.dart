@@ -9,7 +9,7 @@ import '../models/upsert_user_all.dart';
 import '../services/title_api_service.dart';
 import 'transfer_advanced_page.dart';
 
-enum TransferStep { idle, fetching, ready, sending, done, failed }
+enum TransferStep { idle, fetching, ready, uploadingPlaylog, sending, done, failed }
 
 class TransferPackagePage extends StatefulWidget {
   final int userId;
@@ -216,14 +216,24 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
       return;
     }
 
+    // Step 1: Upload fake playlog
     setState(() {
-      _step = TransferStep.sending;
+      _step = TransferStep.uploadingPlaylog;
       _error = null;
     });
 
     try {
       final config = TitleServerConfigHolder().config!;
       final service = TitleApiService(config, cookies: widget.cookies);
+
+      final playlog = _buildFakePlaylog();
+      await service.uploadUserPlaylog(playlog, widget.userId);
+
+      if (!mounted) return;
+
+      // Step 2: UpsertUserAll
+      setState(() => _step = TransferStep.sending);
+
       final payload = _buildPayload();
       await service.upsertUserAll(payload.toJson(), widget.userId);
 
@@ -243,6 +253,217 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
       });
     }
   }
+
+  // ─── Fake game log (UploadUserPlaylog) ─────────────────────────────────
+
+  /// Look up level + awakening for a character ID from the editable list.
+  (int level, int awakening) _charLevel(int charId) {
+    for (final e in _charEntries) {
+      if (e.characterId == charId) return (e.level, e.awakening);
+    }
+    return (1, 0);
+  }
+
+  /// Build a playlog entry with character levels from _charEntries.
+  Map<String, dynamic> _makePlaylogEntry({
+    required List<int> charaSlot,
+    required int musicId,
+    required int level,
+    required int trackNo,
+    required int achievement,
+    required int deluxscore,
+    required int scoreRank,
+    required int comboStatus,
+    required int maxCombo,
+    required int totalCombo,
+    required int maxSync,
+    required int totalSync,
+    required bool isClear,
+    required bool isAchieveNewRecord,
+    required bool isDeluxscoreNewRecord,
+    required int extNum4,
+  }) {
+    final rating = _apiRating;
+    final cfg = TitleServerConfigHolder().config;
+    final loginDt = widget.loginDateTime ??
+        DateTime.now().millisecondsSinceEpoch ~/ 1000;
+
+    final c1 = _charLevel(charaSlot.isNotEmpty ? charaSlot[0] : 0);
+    final c2 = _charLevel(charaSlot.length > 1 ? charaSlot[1] : 0);
+    final c3 = _charLevel(charaSlot.length > 2 ? charaSlot[2] : 0);
+    final c4 = _charLevel(charaSlot.length > 3 ? charaSlot[3] : 0);
+    final c5 = _charLevel(charaSlot.length > 4 ? charaSlot[4] : 0);
+
+    return {
+      'userId': 0,
+      'orderId': 0,
+      'playlogId': widget.playlogId ?? 0,
+      'version': 1053000,
+      'placeId': cfg?.placeId ?? 0,
+      'placeName': cfg?.placeName ?? '',
+      'loginDate': loginDt,
+      'playDate': _nowStr().split(' ')[0],
+      'userPlayDate': _nowStr(),
+      'type': 0,
+      'musicId': musicId,
+      'level': level,
+      'trackNo': trackNo,
+      'vsMode': 0,
+      'vsUserName': '',
+      'vsStatus': 0,
+      'vsUserRating': 0,
+      'vsUserAchievement': 0,
+      'vsUserGradeRank': 0,
+      'vsRank': 0,
+      'playerNum': 1,
+      'playedUserId1': 0,
+      'playedUserName1': '',
+      'playedMusicLevel1': 0,
+      'playedUserId2': 0,
+      'playedUserName2': '',
+      'playedMusicLevel2': 0,
+      'playedUserId3': 0,
+      'playedUserName3': '',
+      'playedMusicLevel3': 0,
+      'characterId1': charaSlot.isNotEmpty ? charaSlot[0] : 0,
+      'characterLevel1': c1.$1,
+      'characterAwakening1': c1.$2,
+      'characterId2': charaSlot.length > 1 ? charaSlot[1] : 0,
+      'characterLevel2': c2.$1,
+      'characterAwakening2': c2.$2,
+      'characterId3': charaSlot.length > 2 ? charaSlot[2] : 0,
+      'characterLevel3': c3.$1,
+      'characterAwakening3': c3.$2,
+      'characterId4': charaSlot.length > 3 ? charaSlot[3] : 0,
+      'characterLevel4': c4.$1,
+      'characterAwakening4': c4.$2,
+      'characterId5': charaSlot.length > 4 ? charaSlot[4] : 0,
+      'characterLevel5': c5.$1,
+      'characterAwakening5': c5.$2,
+      'achievement': achievement,
+      'deluxscore': deluxscore,
+      'scoreRank': scoreRank,
+      'maxCombo': maxCombo,
+      'totalCombo': totalCombo,
+      'maxSync': maxSync,
+      'totalSync': totalSync,
+      'tapCriticalPerfect': 101,
+      'tapPerfect': 0,
+      'tapGreat': 0,
+      'tapGood': 0,
+      'tapMiss': 0,
+      'holdCriticalPerfect': 9,
+      'holdPerfect': 0,
+      'holdGreat': 0,
+      'holdGood': 0,
+      'holdMiss': 0,
+      'slideCriticalPerfect': 4,
+      'slidePerfect': 0,
+      'slideGreat': 0,
+      'slideGood': 0,
+      'slideMiss': 0,
+      'touchCriticalPerfect': 0,
+      'touchPerfect': 0,
+      'touchGreat': 0,
+      'touchGood': 0,
+      'touchMiss': 0,
+      'breakCriticalPerfect': 1,
+      'breakPerfect': 0,
+      'breakGreat': 0,
+      'breakGood': 0,
+      'breakMiss': 0,
+      'isTap': true,
+      'isHold': true,
+      'isSlide': true,
+      'isTouch': false,
+      'isBreak': true,
+      'isCriticalDisp': true,
+      'isFastLateDisp': true,
+      'fastCount': 0,
+      'lateCount': 0,
+      'isAchieveNewRecord': isAchieveNewRecord,
+      'isDeluxscoreNewRecord': isDeluxscoreNewRecord,
+      'comboStatus': comboStatus,
+      'syncStatus': 0,
+      'isClear': isClear,
+      'beforeRating': rating,
+      'afterRating': rating,
+      'beforeGrade': 0,
+      'afterGrade': 0,
+      'afterGradeRank': 0,
+      'beforeDeluxRating': rating,
+      'afterDeluxRating': rating,
+      'isPlayTutorial': false,
+      'isEventMode': false,
+      'isFreedomMode': false,
+      'playMode': 0,
+      'isNewFree': false,
+      'trialPlayAchievement': -1,
+      'extNum1': 0,
+      'extNum2': 0,
+      'extNum4': extNum4,
+      'extBool1': false,
+      'extBool2': false,
+    };
+  }
+
+  /// Build musicDetail entry matching a playlog.
+  Map<String, dynamic> _makeMusicDetail({
+    required int musicId,
+    required int level,
+    required int playCount,
+    required int achievement,
+    required int comboStatus,
+    required int syncStatus,
+    required int deluxscoreMax,
+    required int scoreRank,
+  }) {
+    return {
+      'musicId': musicId,
+      'level': level,
+      'playCount': playCount,
+      'achievement': achievement,
+      'comboStatus': comboStatus,
+      'syncStatus': syncStatus,
+      'deluxscoreMax': deluxscoreMax,
+      'scoreRank': scoreRank,
+      'extNum1': 0,
+    };
+  }
+
+  int get _apiRating {
+    final data = _apiData;
+    if (data == null) return 0;
+    final userDataJson = data['GetUserDataApi']!;
+    final ud =
+        (userDataJson['userData'] as Map<String, dynamic>?) ?? const {};
+    return ud['playerRating'] as int? ?? 0;
+  }
+
+  Map<String, dynamic> _buildFakePlaylog() {
+    final charaSlot =
+        _slotCtrls.map((c) => int.tryParse(c.text) ?? 0).toList();
+    return _makePlaylogEntry(
+      charaSlot: charaSlot,
+      musicId: 834,
+      level: 4,
+      trackNo: 1,
+      achievement: 1000000,
+      deluxscore: 0,
+      scoreRank: 13,
+      comboStatus: 3,
+      maxCombo: 0,
+      totalCombo: 128,
+      maxSync: 0,
+      totalSync: 0,
+      isClear: true,
+      isAchieveNewRecord: true,
+      isDeluxscoreNewRecord: true,
+      extNum4: 101,
+    );
+  }
+
+  // ─── Build UpsertUserAll payload ──────────────────────────────────────
 
   UpsertUserAllPayload _buildPayload() {
     final data = _apiData!;
@@ -293,27 +514,29 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
     final cfg = TitleServerConfigHolder().config;
     final clientId = ud['lastClientId'] ?? cfg?.clientId ?? '';
 
-    // Build musicData for userMusicDetailList — must NOT be empty.
-    // Matches the playlog entry below (same musicId/level/achievement/…).
-    final musicData = <String, dynamic>{
-      'musicId': 834,
-      'level': 4,
-      'playCount': 1,
-      'achievement': 1000000,
-      'comboStatus': 3,
-      'syncStatus': 0,
-      'deluxscoreMax': 0,
-      'scoreRank': 13,
-      'extNum1': 0,
-    };
+    const musicId = 834;
+    const level = 4;
+    const achievement = 1000000;
+    const comboStatus = 3;
+    const deluxscore = 0;
+    const scoreRank = 13;
+
+    // Build musicDetailList + gamePlaylog + outer playlog (all for 1 track).
+    final musicDetail = _makeMusicDetail(
+      musicId: musicId,
+      level: level,
+      playCount: 1,
+      achievement: achievement,
+      comboStatus: comboStatus,
+      syncStatus: 0,
+      deluxscoreMax: deluxscore,
+      scoreRank: scoreRank,
+    );
 
     final upsertUserAll = {
       'userData': [
         {
           ...ud,
-          'playCount': (ud['playCount'] as int? ?? 0) + 1,
-          'currentPlayCount':
-              (ud['currentPlayCount'] as int? ?? 0) + 1,
           'lastLoginDate':
               widget.lastLoginDate ?? ud['lastLoginDate'] ?? '',
           'banState': userDataJson['banState'] ?? ud['banState'] ?? 0,
@@ -323,7 +546,6 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
           'lastRomVersion': ud['lastRomVersion'] ?? '1.53.00',
           'lastDataVersion': ud['lastDataVersion'] ?? '1.50.14',
           'lastPlayDate': _nowStr(),
-          'lastPlayCredit': 1,
           'lastPlayMode': 0,
           'lastPlaceId': cfg?.placeId ?? ud['lastPlaceId'] ?? 0,
           'lastPlaceName':
@@ -334,7 +556,7 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
           'lastAllNetId': ud['lastAllNetId'] ?? 0,
           'lastCountryCode': ud['lastCountryCode'] ?? 'CHN',
           'lastClientId': clientId,
-          'dateTime': loginDt,
+          'dateTime': DateTime.now().millisecondsSinceEpoch ~/ 1000,
         },
       ],
       'userExtend': [ue],
@@ -346,7 +568,7 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
       'userLoginBonusList': _advanced.parsedUserLoginBonusList('[]'),
       'userRatingList': [ur],
       'userItemList': _advanced.parsedUserItemList('[]'),
-      'userMusicDetailList': [musicData],
+      'userMusicDetailList': [musicDetail],
       'userCourseList': <dynamic>[],
       'userFriendSeasonRankingList': <dynamic>[],
       'userChargeList': uc,
@@ -409,58 +631,25 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
       'isNewKaleidxScopeList': '',
     };
 
-    // Minimal playlog entry — required, server rejects empty playlogList.
-    final rating = ud['playerRating'] as int? ?? 0;
-    final playlog = <String, dynamic>{
-      'userId': 0, 'orderId': 0,
-      'playlogId': widget.playlogId ?? 0, 'version': 1053000,
-      'placeId': cfg?.placeId ?? 0,
-      'placeName': cfg?.placeName ?? '',
-      'loginDate': loginDt,
-      'playDate': _nowStr().split(' ')[0],
-      'userPlayDate': _nowStr(), 'type': 0,
-      'musicId': 834, 'level': 4, 'trackNo': 1,
-      'vsMode': 0, 'vsUserName': '', 'vsStatus': 0,
-      'vsUserRating': 0, 'vsUserAchievement': 0, 'vsUserGradeRank': 0,
-      'vsRank': 0, 'playerNum': 1,
-      'playedUserId1': 0, 'playedUserName1': '', 'playedMusicLevel1': 0,
-      'playedUserId2': 0, 'playedUserName2': '', 'playedMusicLevel2': 0,
-      'playedUserId3': 0, 'playedUserName3': '', 'playedMusicLevel3': 0,
-      'characterId1': charaSlot.isNotEmpty ? charaSlot[0] : 0,
-      'characterLevel1': 1, 'characterAwakening1': 0,
-      'characterId2': charaSlot.length > 1 ? charaSlot[1] : 0,
-      'characterLevel2': 1, 'characterAwakening2': 0,
-      'characterId3': charaSlot.length > 2 ? charaSlot[2] : 0,
-      'characterLevel3': 1, 'characterAwakening3': 0,
-      'characterId4': charaSlot.length > 3 ? charaSlot[3] : 0,
-      'characterLevel4': 1, 'characterAwakening4': 0,
-      'characterId5': charaSlot.length > 4 ? charaSlot[4] : 0,
-      'characterLevel5': 1, 'characterAwakening5': 0,
-      'achievement': 1000000, 'deluxscore': 0, 'scoreRank': 13,
-      'maxCombo': 0, 'totalCombo': 128, 'maxSync': 0, 'totalSync': 0,
-      'tapCriticalPerfect': 101, 'tapPerfect': 0, 'tapGreat': 0,
-      'tapGood': 0, 'tapMiss': 0,
-      'holdCriticalPerfect': 9, 'holdPerfect': 0, 'holdGreat': 0,
-      'holdGood': 0, 'holdMiss': 0,
-      'slideCriticalPerfect': 4, 'slidePerfect': 0, 'slideGreat': 0,
-      'slideGood': 0, 'slideMiss': 0,
-      'touchCriticalPerfect': 0, 'touchPerfect': 0, 'touchGreat': 0,
-      'touchGood': 0, 'touchMiss': 0,
-      'breakCriticalPerfect': 1, 'breakPerfect': 0, 'breakGreat': 0,
-      'breakGood': 0, 'breakMiss': 0,
-      'isTap': true, 'isHold': true, 'isSlide': true, 'isTouch': false,
-      'isBreak': true, 'isCriticalDisp': true, 'isFastLateDisp': true,
-      'fastCount': 0, 'lateCount': 0,
-      'isAchieveNewRecord': false, 'isDeluxscoreNewRecord': false,
-      'comboStatus': 3, 'syncStatus': 0, 'isClear': true,
-      'beforeRating': rating, 'afterRating': rating,
-      'beforeGrade': 0, 'afterGrade': 0, 'afterGradeRank': 0,
-      'beforeDeluxRating': rating, 'afterDeluxRating': rating,
-      'isPlayTutorial': false, 'isEventMode': false, 'isFreedomMode': false,
-      'playMode': 0, 'isNewFree': false, 'trialPlayAchievement': -1,
-      'extNum1': 0, 'extNum2': 0, 'extNum4': 101,
-      'extBool1': false, 'extBool2': false,
-    };
+    // Outer playlog matching the fake game log.
+    final playlog = _makePlaylogEntry(
+      charaSlot: charaSlot,
+      musicId: musicId,
+      level: level,
+      trackNo: 1,
+      achievement: achievement,
+      deluxscore: deluxscore,
+      scoreRank: scoreRank,
+      comboStatus: comboStatus,
+      maxCombo: 0,
+      totalCombo: 128,
+      maxSync: 0,
+      totalSync: 0,
+      isClear: true,
+      isAchieveNewRecord: true,
+      isDeluxscoreNewRecord: true,
+      extNum4: 101,
+    );
 
     return UpsertUserAllPayload(
       userId: widget.userId,
@@ -713,7 +902,9 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
             ),
           ),
 
-        if (_step == TransferStep.fetching || _step == TransferStep.sending)
+        if (_step == TransferStep.fetching ||
+            _step == TransferStep.sending ||
+            _step == TransferStep.uploadingPlaylog)
           _buildProgress(theme),
         if (_error != null && _apiData == null) ...[
           const SizedBox(height: 12),
@@ -828,7 +1019,8 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
   Widget _buildFetchButton(ThemeData theme) {
     final hasLogin = widget.loginDateTime != null;
     final isLoading = _step == TransferStep.fetching;
-    final isSending = _step == TransferStep.sending;
+    final isSending = _step == TransferStep.sending ||
+        _step == TransferStep.uploadingPlaylog;
     final canFetch = hasLogin && !isLoading && !isSending;
 
     return SizedBox(
@@ -1190,6 +1382,14 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
   }
 
   Widget _buildProgress(ThemeData theme) {
+    String text;
+    if (_step == TransferStep.fetching) {
+      text = AppStrings.transferFetching;
+    } else if (_step == TransferStep.uploadingPlaylog) {
+      text = AppStrings.transferUploadingPlaylog;
+    } else {
+      text = AppStrings.transferSending;
+    }
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Center(
@@ -1198,9 +1398,7 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
             const CircularProgressIndicator(),
             const SizedBox(height: 12),
             Text(
-              _step == TransferStep.fetching
-                  ? AppStrings.transferFetching
-                  : AppStrings.transferSending,
+              text,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
