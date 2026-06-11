@@ -307,7 +307,7 @@ class TitleApiService {
         'Accept-Encoding': '',
         'Charset': 'UTF-8',
         'Content-Encoding': 'deflate',
-        'Host': 'maimai-gm.wahlap.com:42081',
+        'Host': 'maimai.wahlap.com:42081',
       };
       final previewCookies = _cookies;
       if (previewCookies != null) {
