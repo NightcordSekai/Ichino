@@ -43,7 +43,6 @@ class TicketPage extends StatefulWidget {
 class _TicketPageState extends State<TicketPage> {
   static const _ticketNameMap = {
     2: '2倍功能票',
-    3: '3倍功能票',
     4: '4倍功能票',
     5: '5倍功能票'
   };
