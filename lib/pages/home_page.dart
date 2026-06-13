@@ -199,26 +199,26 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Scaffold(
+    return PopScope(
+      canPop: !_loggingOut,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop && !_loggingOut) {
+          _performLogoutAndExit();
+        }
+      },
+      child: Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: _loggingOut
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              : const Icon(Icons.arrow_back),
+          onPressed: _loggingOut ? null : _performLogoutAndExit,
+        ),
         title: Text(_tabTitles[_currentTab]),
-        actions: [
-          if (_loggingOut)
-            const Padding(
-              padding: EdgeInsets.only(right: 12),
-              child: SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
-            )
-          else
-            IconButton(
-              icon: const Icon(Icons.logout),
-              tooltip: AppStrings.logoutTooltip,
-              onPressed: _performLogoutAndExit,
-            ),
-        ],
       ),
       body: IndexedStack(
         index: _currentTab,
@@ -253,6 +253,7 @@ class _HomePageState extends State<HomePage> {
           NavigationDestination(icon: Icon(Icons.info_outlined), selectedIcon: Icon(Icons.info), label: AppStrings.tabAbout),
         ],
       ),
+    ),
     );
   }
 
