@@ -1,16 +1,21 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../config/responsive.dart';
 import '../config/strings.dart';
 import '../config/title_server_config.dart';
 import '../models/upsert_user_all.dart';
 import '../services/title_api_service.dart';
-import 'transfer_advanced_page.dart';
 
-enum TransferStep { idle, fetching, ready, uploadingPlaylog, sending, done, failed }
+enum TransferStep { idle, fetching, ready, sending, done, failed }
 
+/// Third-party score upload page (传送分数).
+///
+/// Fetches the user's current server state, then uploads a single song score
+/// as one valid play session via UpsertUserAllApi. Aligned with the reference
+/// Python implementation (UpsertMusic.py / payload.py) and the 1.55.01 dump.
 class TransferPackagePage extends StatefulWidget {
   final int userId;
   final String? cookies;
@@ -31,45 +36,20 @@ class TransferPackagePage extends StatefulWidget {
   State<TransferPackagePage> createState() => _TransferPackagePageState();
 }
 
-/// Lightweight data-only row — no controllers, no FocusNodes.
-class _CharEntry {
-  int characterId;
-  int level;
-  int awakening;
-  int useCount;
-
-  _CharEntry({
-    required this.characterId,
-    this.level = 1,
-    this.awakening = 0,
-    this.useCount = 0,
-  });
-}
-
 class _TransferPackagePageState extends State<TransferPackagePage> {
   TransferStep _step = TransferStep.idle;
   String? _error;
 
   Map<String, Map<String, dynamic>>? _apiData;
 
-  final List<TextEditingController> _slotCtrls =
-      List.generate(5, (_) => TextEditingController());
-  final List<TextEditingController> _lockSlotCtrls =
-      List.generate(5, (_) => TextEditingController());
-
-  /// Character data — plain list, no widgets attached.
-  final List<_CharEntry> _charEntries = [];
-
-  /// Search filter
-  final _searchCtrl = TextEditingController();
-  String _searchQuery = '';
-
-  /// Display cap — only show first N items initially.
-  static const int _pageSize = 50;
-  int _visibleCount = _pageSize;
-
-  /// Advanced raw-JSON fields editable via the advanced page.
-  AdvancedFields _advanced = AdvancedFields();
+  // ── Score form state ──
+  final _musicIdCtrl = TextEditingController();
+  final _achievementCtrl = TextEditingController(text: '1010000');
+  final _deluxCtrl = TextEditingController(text: '0');
+  final _playCountCtrl = TextEditingController(text: '1');
+  int _level = 3; // Master by default
+  int _comboStatus = 0;
+  int _syncStatus = 0;
 
   // ── Cooldown (same as TicketPage: 60s after login) ──
   Timer? _cooldownTimer;
@@ -79,6 +59,7 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
   void initState() {
     super.initState();
     _syncCooldown();
+    _achievementCtrl.addListener(_onAchievementChanged);
   }
 
   @override
@@ -92,15 +73,15 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
   @override
   void dispose() {
     _cooldownTimer?.cancel();
-    for (final c in _slotCtrls) {
-      c.dispose();
-    }
-    for (final c in _lockSlotCtrls) {
-      c.dispose();
-    }
-    _searchCtrl.dispose();
+    _achievementCtrl.removeListener(_onAchievementChanged);
+    _musicIdCtrl.dispose();
+    _achievementCtrl.dispose();
+    _deluxCtrl.dispose();
+    _playCountCtrl.dispose();
     super.dispose();
   }
+
+  void _onAchievementChanged() => setState(() {});
 
   void _syncCooldown() {
     _cooldownTimer?.cancel();
@@ -137,10 +118,6 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
       _step = TransferStep.fetching;
       _error = null;
       _apiData = null;
-      _charEntries.clear();
-      _searchQuery = '';
-      _searchCtrl.clear();
-      _visibleCount = _pageSize;
     });
 
     try {
@@ -149,40 +126,7 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
 
       final data = await service.fetchUserAllData(widget.userId);
 
-      List<Map<String, dynamic>> charList;
-      try {
-        charList = await service.getUserCharacter(widget.userId);
-      } catch (_) {
-        charList = [];
-      }
-
       if (!mounted) return;
-
-      final userDataJson = data['GetUserDataApi']!;
-      final ud =
-          (userDataJson['userData'] as Map<String, dynamic>?) ?? const {};
-
-      final slot = List<int>.from((ud['charaSlot'] as List<dynamic>?)
-              ?.map((e) => (e as num).toInt()) ??
-          [0, 0, 0, 0, 0]);
-      final lock = List<int>.from((ud['charaLockSlot'] as List<dynamic>?)
-              ?.map((e) => (e as num).toInt()) ??
-          [0, 0, 0, 0, 0]);
-
-      for (var i = 0; i < 5; i++) {
-        _slotCtrls[i].text = slot.length > i ? '${slot[i]}' : '0';
-        _lockSlotCtrls[i].text = lock.length > i ? '${lock[i]}' : '0';
-      }
-
-      for (final c in charList) {
-        _charEntries.add(_CharEntry(
-          characterId: (c['characterId'] as num?)?.toInt() ?? 0,
-          level: (c['level'] as num?)?.toInt() ?? 1,
-          awakening: (c['awakening'] as num?)?.toInt() ?? 0,
-          useCount: (c['useCount'] as num?)?.toInt() ?? 0,
-        ));
-      }
-
       setState(() {
         _apiData = data;
         _step = TransferStep.ready;
@@ -202,9 +146,75 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
     }
   }
 
-  // ─── Send ────────────────────────────────────────────────────────────────
+  // ─── Score helpers ─────────────────────────────────────────────────────
 
-  Future<void> _sendPackage() async {
+  /// Parse a rom version string like "1.55.01" into the int form 1055001
+  /// (major*1000000 + minor*1000 + patch). Falls back to 1055001.
+  static int _romVersionToInt(String version) {
+    final parts = version.split('.');
+    if (parts.length < 3) return 1055001;
+    final major = int.tryParse(parts[0]) ?? 1;
+    final minor = int.tryParse(parts[1]) ?? 55;
+    final patch = int.tryParse(parts[2]) ?? 1;
+    return major * 1000000 + minor * 1000 + patch;
+  }
+
+  /// Derive scoreRank enum from achievement (verified against the dump:
+  /// 996696→11, 1004084→12, 1006702→13).
+  static int _scoreRankFromAchievement(int a) {
+    if (a >= 1005000) return 13; // SSS+
+    if (a >= 1000000) return 12; // SSS
+    if (a >= 995000) return 11; // SS+
+    if (a >= 990000) return 10; // SS
+    if (a >= 980000) return 9; // S+
+    if (a >= 970000) return 8; // S
+    if (a >= 940000) return 7; // AAA
+    if (a >= 900000) return 6; // AA
+    if (a >= 800000) return 5; // A
+    if (a >= 750000) return 4; // BBB
+    if (a >= 700000) return 3; // BB
+    if (a >= 600000) return 2; // B
+    if (a >= 500000) return 1; // C
+    return 0; // D
+  }
+
+  /// Live preview of the rank label for the current achievement input.
+  String _currentRankLabel() {
+    final a = int.tryParse(_achievementCtrl.text) ?? 0;
+    final rank = _scoreRankFromAchievement(a);
+    const names = {
+      13: 'SSS+', 12: 'SSS', 11: 'SS+', 10: 'SS', 9: 'S+', 8: 'S',
+      7: 'AAA', 6: 'AA', 5: 'A', 4: 'BBB', 3: 'BB', 2: 'B', 1: 'C', 0: 'D',
+    };
+    final pct = (a / 10000).toStringAsFixed(4);
+    return '$pct%  ·  ${names[rank]} ($rank)';
+  }
+
+  Map<String, dynamic> get _userDataMap {
+    final data = _apiData;
+    if (data == null) return const {};
+    final json = data['GetUserDataApi'];
+    return (json?['userData'] as Map<String, dynamic>?) ?? const {};
+  }
+
+  int get _apiRating => (_userDataMap['playerRating'] as num?)?.toInt() ?? 0;
+
+  String _nowStr() {
+    final now = DateTime.now();
+    String pad(int n) => n.toString().padLeft(2, '0');
+    return '${now.year}-${pad(now.month)}-${pad(now.day)} '
+        '${pad(now.hour)}:${pad(now.minute)}:${pad(now.second)}.0';
+  }
+
+  List<int> _charaSlot() {
+    final raw = _userDataMap['charaSlot'] as List<dynamic>?;
+    final slot = raw?.map((e) => (e as num).toInt()).toList() ?? const [];
+    return List<int>.generate(5, (i) => i < slot.length ? slot[i] : 0);
+  }
+
+  // ─── Send ──────────────────────────────────────────────────────────────
+
+  Future<void> _sendScore() async {
     if (_apiData == null) return;
     if (!TitleServerConfigHolder().isConfigured) return;
 
@@ -216,9 +226,17 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
       return;
     }
 
-    // Step 1: Upload fake playlog
+    final musicId = int.tryParse(_musicIdCtrl.text);
+    final achievement = int.tryParse(_achievementCtrl.text);
+    if (musicId == null || musicId <= 0 || achievement == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text(AppStrings.scoreInvalidInput)),
+      );
+      return;
+    }
+
     setState(() {
-      _step = TransferStep.uploadingPlaylog;
+      _step = TransferStep.sending;
       _error = null;
     });
 
@@ -226,15 +244,11 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
       final config = TitleServerConfigHolder().config!;
       final service = TitleApiService(config, cookies: widget.cookies);
 
-      final playlog = _buildFakePlaylog();
-      await service.uploadUserPlaylog(playlog, widget.userId);
-
-      if (!mounted) return;
-
-      // Step 2: UpsertUserAll
-      setState(() => _step = TransferStep.sending);
-
-      final payload = _buildPayload();
+      final payload = _buildScorePayload(
+        musicId: musicId,
+        achievement: achievement,
+        loginDateTime: loginDateTime,
+      );
       await service.upsertUserAll(payload.toJson(), widget.userId);
 
       if (!mounted) return;
@@ -254,60 +268,222 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
     }
   }
 
-  // ─── Fake game log (UploadUserPlaylog) ─────────────────────────────────
+  // ─── Build UpsertUserAll payload ────────────────────────────────────────
 
-  /// Look up level + awakening for a character ID from the editable list.
-  (int level, int awakening) _charLevel(int charId) {
-    for (final e in _charEntries) {
-      if (e.characterId == charId) return (e.level, e.awakening);
-    }
-    return (1, 0);
+  UpsertUserAllPayload _buildScorePayload({
+    required int musicId,
+    required int achievement,
+    required int loginDateTime,
+  }) {
+    final data = _apiData!;
+    final ud = _userDataMap;
+    final ue =
+        (data['GetUserExtendApi']?['userExtend'] as Map<String, dynamic>?) ??
+            const {};
+    final uo =
+        (data['GetUserOptionApi']?['userOption'] as Map<String, dynamic>?) ??
+            const {};
+    final ur =
+        (data['GetUserRatingApi']?['userRating'] as Map<String, dynamic>?) ??
+            const {};
+    final uc =
+        (data['GetUserChargeApi']?['userChargeList'] as List<dynamic>?) ??
+            const [];
+    final ua =
+        (data['GetUserActivityApi']?['userActivity'] as Map<String, dynamic>?) ??
+            const {};
+    final um =
+        (data['GetUserMissionDataApi']?['userMissionDataList']
+            as List<dynamic>?) ??
+            const [];
+    final uw =
+        (data['GetUserMissionDataApi']?['userWeeklyData']
+            as Map<String, dynamic>?) ??
+            const {};
+
+    final cfg = TitleServerConfigHolder().config;
+    final romVerStr = (ud['lastRomVersion'] as String?) ?? '1.55.01';
+    final clientId = (ud['lastClientId'] as String?) ?? cfg?.clientId ?? '';
+    final playlogId = widget.playlogId ?? 0;
+    final nowSec = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+    final playCount = (ud['playCount'] as num?)?.toInt() ?? 0;
+    final currentPlayCount =
+        (ud['currentPlayCount'] as num?)?.toInt() ?? 0;
+
+    final deluxscore = int.tryParse(_deluxCtrl.text) ?? 0;
+    final musicPlayCount = int.tryParse(_playCountCtrl.text) ?? 1;
+    final scoreRank = _scoreRankFromAchievement(achievement);
+
+    final musicDetail = _makeMusicDetail(
+      musicId: musicId,
+      achievement: achievement,
+      deluxscoreMax: deluxscore,
+      scoreRank: scoreRank,
+      playCount: musicPlayCount,
+    );
+
+    final playlog = _makePlaylogEntry(
+      playlogId: playlogId,
+      romVerInt: _romVersionToInt(romVerStr),
+      musicId: musicId,
+      achievement: achievement,
+      deluxscore: deluxscore,
+      scoreRank: scoreRank,
+      loginDateTime: loginDateTime,
+    );
+
+    final upsertUserAll = {
+      'userData': [
+        {
+          ...ud,
+          'accessCode': '',
+          'lastGameId': 'SDGB',
+          'lastRomVersion': romVerStr,
+          'lastDataVersion': ud['lastDataVersion'] ?? romVerStr,
+          'lastLoginDate': widget.lastLoginDate ?? ud['lastLoginDate'] ?? '',
+          'lastPlayDate': _nowStr(),
+          'lastPlayCredit': 1,
+          'lastPlayMode': 0,
+          'lastPlaceId': cfg?.placeId ?? ud['lastPlaceId'] ?? 0,
+          'lastPlaceName': cfg?.placeName ?? ud['lastPlaceName'] ?? '',
+          'lastAllNetId': ud['lastAllNetId'] ?? 0,
+          'lastRegionId': cfg?.regionId ?? ud['lastRegionId'] ?? 0,
+          'lastRegionName': cfg?.regionName ?? ud['lastRegionName'] ?? '',
+          'lastClientId': clientId,
+          'lastCountryCode': ud['lastCountryCode'] ?? 'CHN',
+          'playCount': playCount + 1,
+          'currentPlayCount': currentPlayCount + 1,
+          'banState': data['GetUserDataApi']?['banState'] ?? ud['banState'] ?? 0,
+          'dateTime': nowSec,
+        },
+      ],
+      'userExtend': [ue],
+      'userOption': [uo],
+      'userCharacterList': <dynamic>[],
+      'userGhost': <dynamic>[],
+      'userMapList': <dynamic>[],
+      'userLoginBonusList': <dynamic>[],
+      'userRatingList': [ur],
+      'userItemList': <dynamic>[],
+      'userMusicDetailList': [musicDetail],
+      'userCourseList': <dynamic>[],
+      'userFriendSeasonRankingList': <dynamic>[],
+      'userChargeList': uc,
+      'userFavoriteList': <dynamic>[
+        {'itemKind': 3, 'itemIdList': <dynamic>[]},
+        {'itemKind': 1, 'itemIdList': <dynamic>[]},
+        {'itemKind': 2, 'itemIdList': <dynamic>[]},
+        {'itemKind': 10, 'itemIdList': <dynamic>[]},
+        {'itemKind': 11, 'itemIdList': <dynamic>[]},
+      ],
+      'userActivityList': [ua],
+      'userMissionDataList': um,
+      'userWeeklyData': uw,
+      'userGamePlaylogList': <dynamic>[
+        {
+          'playlogId': playlogId,
+          'version': romVerStr,
+          'playDate': _nowStr(),
+          'playMode': 0,
+          'useTicketId': -1,
+          'playCredit': 1,
+          'playTrack': 1,
+          'clientId': clientId,
+          'isPlayTutorial': false,
+          'isEventMode': false,
+          'isNewFree': false,
+          'playCount': 0,
+          'playSpecial': TitleApiService.calcRandom(),
+          'playOtherUserId': 0,
+        },
+      ],
+      'user2pPlaylog': {
+        'userId1': 0,
+        'userId2': 0,
+        'userName1': '',
+        'userName2': '',
+        'regionId': 0,
+        'placeId': 0,
+        'user2pPlaylogDetailList': <dynamic>[],
+      },
+      'userIntimateList': <dynamic>[],
+      'userShopItemStockList': <dynamic>[],
+      'userGetPointList': <dynamic>[],
+      'userTradeItemList': <dynamic>[],
+      'userFavoritemusicList': <dynamic>[],
+      'userKaleidxScopeList': <dynamic>[],
+      'isNewCharacterList': '',
+      'isNewMapList': '',
+      'isNewLoginBonusList': '',
+      'isNewItemList': '',
+      'isNewMusicDetailList': '0',
+      'isNewCourseList': '',
+      'isNewFavoriteList': '11111',
+      'isNewFriendSeasonRankingList': '',
+      'isNewUserIntimateList': '',
+      'isNewFavoritemusicList': '',
+      'isNewKaleidxScopeList': '',
+    };
+
+    return UpsertUserAllPayload(
+      userId: widget.userId,
+      playlogId: playlogId,
+      loginDateTime: loginDateTime,
+      upsertUserAll: upsertUserAll,
+      userPlaylog: playlog,
+    );
   }
 
-  /// Build a playlog entry with character levels from _charEntries.
-  Map<String, dynamic> _makePlaylogEntry({
-    required List<int> charaSlot,
+  Map<String, dynamic> _makeMusicDetail({
     required int musicId,
-    required int level,
-    required int trackNo,
+    required int achievement,
+    required int deluxscoreMax,
+    required int scoreRank,
+    required int playCount,
+  }) {
+    return {
+      'musicId': musicId,
+      'level': _level,
+      'playCount': playCount,
+      'achievement': achievement,
+      'comboStatus': _comboStatus,
+      'syncStatus': _syncStatus,
+      'deluxscoreMax': deluxscoreMax,
+      'scoreRank': scoreRank,
+      'extNum1': 0,
+    };
+  }
+
+  /// Build the userPlaylogList entry. Judgment detail uses the placeholder
+  /// values from the reference Python script (payload.py). Character levels
+  /// are 1/0 since this page no longer edits characters.
+  Map<String, dynamic> _makePlaylogEntry({
+    required int playlogId,
+    required int romVerInt,
+    required int musicId,
     required int achievement,
     required int deluxscore,
     required int scoreRank,
-    required int comboStatus,
-    required int maxCombo,
-    required int totalCombo,
-    required int maxSync,
-    required int totalSync,
-    required bool isClear,
-    required bool isAchieveNewRecord,
-    required bool isDeluxscoreNewRecord,
-    required int extNum4,
+    required int loginDateTime,
   }) {
     final rating = _apiRating;
     final cfg = TitleServerConfigHolder().config;
-    final loginDt = widget.loginDateTime ??
-        DateTime.now().millisecondsSinceEpoch ~/ 1000;
-
-    final c1 = _charLevel(charaSlot.isNotEmpty ? charaSlot[0] : 0);
-    final c2 = _charLevel(charaSlot.length > 1 ? charaSlot[1] : 0);
-    final c3 = _charLevel(charaSlot.length > 2 ? charaSlot[2] : 0);
-    final c4 = _charLevel(charaSlot.length > 3 ? charaSlot[3] : 0);
-    final c5 = _charLevel(charaSlot.length > 4 ? charaSlot[4] : 0);
+    final slot = _charaSlot();
 
     return {
       'userId': 0,
       'orderId': 0,
-      'playlogId': widget.playlogId ?? 0,
-      'version': 1053000,
+      'playlogId': playlogId,
+      'version': romVerInt,
       'placeId': cfg?.placeId ?? 0,
       'placeName': cfg?.placeName ?? '',
-      'loginDate': loginDt,
+      'loginDate': loginDateTime,
       'playDate': _nowStr().split(' ')[0],
       'userPlayDate': _nowStr(),
       'type': 0,
       'musicId': musicId,
-      'level': level,
-      'trackNo': trackNo,
+      'level': _level,
+      'trackNo': 1,
       'vsMode': 0,
       'vsUserName': '',
       'vsStatus': 0,
@@ -325,28 +501,28 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
       'playedUserId3': 0,
       'playedUserName3': '',
       'playedMusicLevel3': 0,
-      'characterId1': charaSlot.isNotEmpty ? charaSlot[0] : 0,
-      'characterLevel1': c1.$1,
-      'characterAwakening1': c1.$2,
-      'characterId2': charaSlot.length > 1 ? charaSlot[1] : 0,
-      'characterLevel2': c2.$1,
-      'characterAwakening2': c2.$2,
-      'characterId3': charaSlot.length > 2 ? charaSlot[2] : 0,
-      'characterLevel3': c3.$1,
-      'characterAwakening3': c3.$2,
-      'characterId4': charaSlot.length > 3 ? charaSlot[3] : 0,
-      'characterLevel4': c4.$1,
-      'characterAwakening4': c4.$2,
-      'characterId5': charaSlot.length > 4 ? charaSlot[4] : 0,
-      'characterLevel5': c5.$1,
-      'characterAwakening5': c5.$2,
+      'characterId1': slot[0],
+      'characterLevel1': 1,
+      'characterAwakening1': 0,
+      'characterId2': slot[1],
+      'characterLevel2': 1,
+      'characterAwakening2': 0,
+      'characterId3': slot[2],
+      'characterLevel3': 1,
+      'characterAwakening3': 0,
+      'characterId4': slot[3],
+      'characterLevel4': 1,
+      'characterAwakening4': 0,
+      'characterId5': slot[4],
+      'characterLevel5': 1,
+      'characterAwakening5': 0,
       'achievement': achievement,
       'deluxscore': deluxscore,
       'scoreRank': scoreRank,
-      'maxCombo': maxCombo,
-      'totalCombo': totalCombo,
-      'maxSync': maxSync,
-      'totalSync': totalSync,
+      'maxCombo': 0,
+      'totalCombo': 128,
+      'maxSync': 0,
+      'totalSync': 0,
       'tapCriticalPerfect': 101,
       'tapPerfect': 0,
       'tapGreat': 0,
@@ -381,11 +557,11 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
       'isFastLateDisp': true,
       'fastCount': 0,
       'lateCount': 0,
-      'isAchieveNewRecord': isAchieveNewRecord,
-      'isDeluxscoreNewRecord': isDeluxscoreNewRecord,
-      'comboStatus': comboStatus,
-      'syncStatus': 0,
-      'isClear': isClear,
+      'isAchieveNewRecord': false,
+      'isDeluxscoreNewRecord': false,
+      'comboStatus': _comboStatus,
+      'syncStatus': _syncStatus,
+      'isClear': true,
       'beforeRating': rating,
       'afterRating': rating,
       'beforeGrade': 0,
@@ -401,423 +577,13 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
       'trialPlayAchievement': -1,
       'extNum1': 0,
       'extNum2': 0,
-      'extNum4': extNum4,
+      'extNum4': 101,
       'extBool1': false,
       'extBool2': false,
     };
   }
 
-  /// Build musicDetail entry matching a playlog.
-  Map<String, dynamic> _makeMusicDetail({
-    required int musicId,
-    required int level,
-    required int playCount,
-    required int achievement,
-    required int comboStatus,
-    required int syncStatus,
-    required int deluxscoreMax,
-    required int scoreRank,
-  }) {
-    return {
-      'musicId': musicId,
-      'level': level,
-      'playCount': playCount,
-      'achievement': achievement,
-      'comboStatus': comboStatus,
-      'syncStatus': syncStatus,
-      'deluxscoreMax': deluxscoreMax,
-      'scoreRank': scoreRank,
-      'extNum1': 0,
-    };
-  }
-
-  int get _apiRating {
-    final data = _apiData;
-    if (data == null) return 0;
-    final userDataJson = data['GetUserDataApi']!;
-    final ud =
-        (userDataJson['userData'] as Map<String, dynamic>?) ?? const {};
-    return ud['playerRating'] as int? ?? 0;
-  }
-
-  Map<String, dynamic> _buildFakePlaylog() {
-    final charaSlot =
-        _slotCtrls.map((c) => int.tryParse(c.text) ?? 0).toList();
-    return _makePlaylogEntry(
-      charaSlot: charaSlot,
-      musicId: 834,
-      level: 4,
-      trackNo: 1,
-      achievement: 1000000,
-      deluxscore: 0,
-      scoreRank: 13,
-      comboStatus: 3,
-      maxCombo: 0,
-      totalCombo: 128,
-      maxSync: 0,
-      totalSync: 0,
-      isClear: true,
-      isAchieveNewRecord: true,
-      isDeluxscoreNewRecord: true,
-      extNum4: 101,
-    );
-  }
-
-  // ─── Build UpsertUserAll payload ──────────────────────────────────────
-
-  UpsertUserAllPayload _buildPayload() {
-    final data = _apiData!;
-    final loginDt = widget.loginDateTime ?? DateTime.now().millisecondsSinceEpoch ~/ 1000;
-
-    final userDataJson = data['GetUserDataApi']!;
-    final userExtendJson = data['GetUserExtendApi']!;
-    final userOptionJson = data['GetUserOptionApi']!;
-    final userRatingJson = data['GetUserRatingApi']!;
-    final userChargeJson = data['GetUserChargeApi']!;
-    final userActivityJson = data['GetUserActivityApi']!;
-    final userMissionJson = data['GetUserMissionDataApi']!;
-
-    final charaSlot =
-        _slotCtrls.map((c) => int.tryParse(c.text) ?? 0).toList();
-    final charaLockSlot =
-        _lockSlotCtrls.map((c) => int.tryParse(c.text) ?? 0).toList();
-
-    final userCharacterList = _charEntries
-        .where((e) => e.characterId > 0)
-        .map((e) => UserCharacter(
-              characterId: e.characterId,
-              level: e.level,
-              awakening: e.awakening,
-              useCount: e.useCount,
-            ))
-        .toList();
-
-    final ud =
-        (userDataJson['userData'] as Map<String, dynamic>?) ?? const {};
-    final ue =
-        (userExtendJson['userExtend'] as Map<String, dynamic>?) ?? const {};
-    final uo =
-        (userOptionJson['userOption'] as Map<String, dynamic>?) ?? const {};
-    final ur =
-        (userRatingJson['userRating'] as Map<String, dynamic>?) ?? const {};
-    final uc =
-        (userChargeJson['userChargeList'] as List<dynamic>?) ?? const [];
-    final ua =
-        (userActivityJson['userActivity'] as Map<String, dynamic>?) ??
-            const {};
-    final um = (userMissionJson['userMissionDataList'] as List<dynamic>?) ??
-        const [];
-    final uw =
-        (userMissionJson['userWeeklyData'] as Map<String, dynamic>?) ??
-            const {};
-
-    final cfg = TitleServerConfigHolder().config;
-    final clientId = ud['lastClientId'] ?? cfg?.clientId ?? '';
-
-    const musicId = 834;
-    const level = 4;
-    const achievement = 1000000;
-    const comboStatus = 3;
-    const deluxscore = 0;
-    const scoreRank = 13;
-
-    // Build musicDetailList + gamePlaylog + outer playlog (all for 1 track).
-    final musicDetail = _makeMusicDetail(
-      musicId: musicId,
-      level: level,
-      playCount: 1,
-      achievement: achievement,
-      comboStatus: comboStatus,
-      syncStatus: 0,
-      deluxscoreMax: deluxscore,
-      scoreRank: scoreRank,
-    );
-
-    final upsertUserAll = {
-      'userData': [
-        {
-          ...ud,
-          'lastLoginDate':
-              widget.lastLoginDate ?? ud['lastLoginDate'] ?? '',
-          'banState': userDataJson['banState'] ?? ud['banState'] ?? 0,
-          'charaSlot': charaSlot,
-          'charaLockSlot': charaLockSlot,
-          'lastGameId': 'SDGB',
-          'lastRomVersion': ud['lastRomVersion'] ?? '1.53.00',
-          'lastDataVersion': ud['lastDataVersion'] ?? '1.50.14',
-          'lastPlayDate': _nowStr(),
-          'lastPlayMode': 0,
-          'lastPlaceId': cfg?.placeId ?? ud['lastPlaceId'] ?? 0,
-          'lastPlaceName':
-              cfg?.placeName ?? ud['lastPlaceName'] ?? '',
-          'lastRegionId': cfg?.regionId ?? ud['lastRegionId'] ?? 0,
-          'lastRegionName':
-              cfg?.regionName ?? ud['lastRegionName'] ?? '',
-          'lastAllNetId': ud['lastAllNetId'] ?? 0,
-          'lastCountryCode': ud['lastCountryCode'] ?? 'CHN',
-          'lastClientId': clientId,
-          'dateTime': DateTime.now().millisecondsSinceEpoch ~/ 1000,
-        },
-      ],
-      'userExtend': [ue],
-      'userOption': [uo],
-      'userCharacterList':
-          userCharacterList.map((c) => c.toJson()).toList(),
-      'userGhost': <dynamic>[],
-      'userMapList': _advanced.parsedUserMapList('[]'),
-      'userLoginBonusList': _advanced.parsedUserLoginBonusList('[]'),
-      'userRatingList': [ur],
-      'userItemList': _advanced.parsedUserItemList('[]'),
-      'userMusicDetailList': [musicDetail],
-      'userCourseList': <dynamic>[],
-      'userFriendSeasonRankingList': <dynamic>[],
-      'userChargeList': uc,
-      'userFavoriteList': <dynamic>[
-        {'itemKind': 3, 'itemIdList': <dynamic>[]},
-        {'itemKind': 1, 'itemIdList': <dynamic>[]},
-        {'itemKind': 2, 'itemIdList': <dynamic>[]},
-        {'itemKind': 10, 'itemIdList': <dynamic>[]},
-        {'itemKind': 11, 'itemIdList': <dynamic>[]},
-      ],
-      'userActivityList': [ua],
-      'userMissionDataList': um,
-      'userWeeklyData': uw,
-      'userGamePlaylogList': <dynamic>[
-        {
-          'playlogId': widget.playlogId ?? 0,
-          'version': ud['lastRomVersion'] ?? '1.53.00',
-          'playDate': _nowStr(),
-          'playMode': 0,
-          'useTicketId': -1,
-          'playCredit': 1,
-          'playTrack': 1,
-          'clientId':
-              ud['lastClientId'] ??
-                  TitleServerConfigHolder().config?.clientId ??
-                  '',
-          'isPlayTutorial': false,
-          'isEventMode': false,
-          'isNewFree': false,
-          'playCount': 0,
-          'playSpecial': TitleApiService.calcRandom(),
-          'playOtherUserId': 0,
-        },
-      ],
-      'user2pPlaylog': {
-        'userId1': 0,
-        'userId2': 0,
-        'userName1': '',
-        'userName2': '',
-        'regionId': 0,
-        'placeId': 0,
-        'user2pPlaylogDetailList': <dynamic>[],
-      },
-      'userIntimateList': <dynamic>[],
-      'userShopItemStockList': <dynamic>[],
-      'userGetPointList': _advanced.parsedUserGetPointList('[]'),
-      'userTradeItemList': _advanced.parsedUserTradeItemList('[]'),
-      'userFavoritemusicList': <dynamic>[],
-      'userKaleidxScopeList': <dynamic>[],
-      'isNewCharacterList': '',
-      'isNewMapList': '',
-      'isNewLoginBonusList': '',
-      'isNewItemList': '',
-      'isNewMusicDetailList': '0',
-      'isNewCourseList': '',
-      'isNewFavoriteList': '11111',
-      'isNewFriendSeasonRankingList': '',
-      'isNewUserIntimateList': '',
-      'isNewFavoritemusicList': '',
-      'isNewKaleidxScopeList': '',
-    };
-
-    // Outer playlog matching the fake game log.
-    final playlog = _makePlaylogEntry(
-      charaSlot: charaSlot,
-      musicId: musicId,
-      level: level,
-      trackNo: 1,
-      achievement: achievement,
-      deluxscore: deluxscore,
-      scoreRank: scoreRank,
-      comboStatus: comboStatus,
-      maxCombo: 0,
-      totalCombo: 128,
-      maxSync: 0,
-      totalSync: 0,
-      isClear: true,
-      isAchieveNewRecord: true,
-      isDeluxscoreNewRecord: true,
-      extNum4: 101,
-    );
-
-    return UpsertUserAllPayload(
-      userId: widget.userId,
-      playlogId: widget.playlogId ?? 0,
-      loginDateTime: loginDt,
-      upsertUserAll: upsertUserAll,
-      charaSlot: charaSlot,
-      charaLockSlot: charaLockSlot,
-      userCharacterList: userCharacterList,
-      userPlaylog: playlog,
-    );
-  }
-
-  String _nowStr() {
-    final now = DateTime.now();
-    String pad(int n) => n.toString().padLeft(2, '0');
-    return '${now.year}-${pad(now.month)}-${pad(now.day)} '
-        '${pad(now.hour)}:${pad(now.minute)}:${pad(now.second)}.0';
-  }
-
-  // ─── Search / filter ─────────────────────────────────────────────────────
-
-  List<_CharEntry> get _filteredEntries {
-    if (_searchQuery.isEmpty) return _charEntries;
-    final q = _searchQuery.toLowerCase();
-    return _charEntries
-        .where((e) => e.characterId.toString().contains(q))
-        .toList();
-  }
-
-  void _onSearchChanged(String value) {
-    setState(() {
-      _searchQuery = value.trim();
-      _visibleCount = _pageSize;
-    });
-  }
-
-  // ─── Edit dialog ─────────────────────────────────────────────────────────
-
-  Future<void> _openEditDialog(_CharEntry entry) async {
-    final idCtrl = TextEditingController(text: '${entry.characterId}');
-    final levelCtrl = TextEditingController(text: '${entry.level}');
-    final awakeningCtrl =
-        TextEditingController(text: '${entry.awakening}');
-
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('编辑角色'),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: idCtrl,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: '角色 ID',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: levelCtrl,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: '等级',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: awakeningCtrl,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: '觉醒',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('取消'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('保存'),
-          ),
-        ],
-      ),
-    );
-
-    idCtrl.dispose();
-    levelCtrl.dispose();
-    awakeningCtrl.dispose();
-
-    if (ok == true) {
-      setState(() {
-        entry.characterId = int.tryParse(idCtrl.text) ?? entry.characterId;
-        entry.level = int.tryParse(levelCtrl.text) ?? entry.level;
-        entry.awakening =
-            int.tryParse(awakeningCtrl.text) ?? entry.awakening;
-      });
-    }
-  }
-
-  // ─── Batch operations ────────────────────────────────────────────────────
-
-  Future<void> _batchSetLevel() async {
-    final ctrl = TextEditingController();
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('批量设置等级'),
-        content: TextField(
-          controller: ctrl,
-          keyboardType: TextInputType.number,
-          autofocus: true,
-          decoration: const InputDecoration(
-            labelText: '目标等级',
-            border: OutlineInputBorder(),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('取消'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('全部设置'),
-          ),
-        ],
-      ),
-    );
-    final level = int.tryParse(ctrl.text);
-    ctrl.dispose();
-
-    if (ok == true && level != null) {
-      setState(() {
-        for (final e in _charEntries) {
-          e.level = level;
-        }
-      });
-    }
-  }
-
-  void _addCharacterRow() {
-    setState(() {
-      _charEntries.add(_CharEntry(characterId: 0, level: 1));
-    });
-  }
-
-  void _removeCharacter(int index) {
-    // Index in the filtered list — find the actual entry
-    final filtered = _filteredEntries;
-    if (index >= filtered.length) return;
-    final entry = filtered[index];
-    final realIdx = _charEntries.indexOf(entry);
-    if (realIdx >= 0) {
-      setState(() => _charEntries.removeAt(realIdx));
-    }
-  }
-
-  // ─── UI ──────────────────────────────────────────────────────────────────
+  // ─── UI ─────────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
@@ -843,12 +609,10 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
 
     return Column(
       children: [
-        // Top section (description + fetch button) — always visible
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
           child: ConstrainedBox(
-            constraints:
-                BoxConstraints(maxWidth: responsiveMaxWidth(context)),
+            constraints: BoxConstraints(maxWidth: responsiveMaxWidth(context)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -865,27 +629,23 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
                 _buildDescCard(theme),
                 const SizedBox(height: 12),
                 _buildFetchButton(theme),
-                const SizedBox(height: 4),
-                _buildAdvancedButton(theme),
               ],
             ),
           ),
         ),
-
-        // Data sections — scrollable
         if (_apiData != null && _step != TransferStep.fetching)
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
               child: ConstrainedBox(
-                constraints: BoxConstraints(
-                    maxWidth: responsiveMaxWidth(context)),
+                constraints:
+                    BoxConstraints(maxWidth: responsiveMaxWidth(context)),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _buildSlotSection(theme),
+                    _buildDataReadyBanner(theme),
                     const SizedBox(height: 12),
-                    _buildCharacterSection(theme),
+                    _buildScoreForm(theme),
                     const SizedBox(height: 20),
                     _buildSendButton(theme),
                     if (_error != null) ...[
@@ -901,11 +661,7 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
               ),
             ),
           ),
-
-        if (_step == TransferStep.fetching ||
-            _step == TransferStep.sending ||
-            _step == TransferStep.uploadingPlaylog)
-          _buildProgress(theme),
+        if (_step == TransferStep.fetching) _buildProgress(theme),
         if (_error != null && _apiData == null) ...[
           const SizedBox(height: 12),
           _buildErrorCard(theme),
@@ -927,6 +683,29 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
         style: theme.textTheme.bodySmall?.copyWith(
           color: theme.colorScheme.onTertiaryContainer,
         ),
+      ),
+    );
+  }
+
+  Widget _buildDataReadyBanner(ThemeData theme) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.green.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.check_circle_outline, size: 18, color: Colors.green),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              AppStrings.transferDataReady,
+              style: theme.textTheme.bodySmall?.copyWith(color: Colors.green),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -956,34 +735,6 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
         ],
       ),
     );
-  }
-
-  Widget _buildAdvancedButton(ThemeData theme) {
-    return SizedBox(
-      width: double.infinity,
-      child: OutlinedButton.icon(
-        onPressed: _openAdvancedPage,
-        icon: const Icon(Icons.tune, size: 18),
-        label: const Text('高级字段'),
-        style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _openAdvancedPage() async {
-    final result = await Navigator.of(context).push<AdvancedFields>(
-      MaterialPageRoute(
-        builder: (_) => TransferAdvancedPage(initial: _advanced),
-      ),
-    );
-    if (result != null) {
-      setState(() => _advanced = result);
-    }
   }
 
   Widget _buildBanner(
@@ -1019,9 +770,9 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
   Widget _buildFetchButton(ThemeData theme) {
     final hasLogin = widget.loginDateTime != null;
     final isLoading = _step == TransferStep.fetching;
-    final isSending = _step == TransferStep.sending ||
-        _step == TransferStep.uploadingPlaylog;
+    final isSending = _step == TransferStep.sending;
     final canFetch = hasLogin && !isLoading && !isSending;
+    final hasData = _apiData != null;
 
     return SizedBox(
       width: double.infinity,
@@ -1034,10 +785,12 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
                 child: CircularProgressIndicator(
                     strokeWidth: 2, color: Colors.white),
               )
-            : const Icon(Icons.download, size: 20),
+            : Icon(hasData ? Icons.refresh : Icons.download, size: 20),
         label: Text(isLoading
             ? AppStrings.transferFetching
-            : AppStrings.transferFetchData),
+            : (hasData
+                ? AppStrings.transferRefetch
+                : AppStrings.transferFetchData)),
         style: FilledButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 14),
           shape: RoundedRectangleBorder(
@@ -1048,7 +801,7 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
     );
   }
 
-  Widget _buildSlotSection(ThemeData theme) {
+  Widget _buildScoreForm(ThemeData theme) {
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -1062,291 +815,137 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              AppStrings.transferCharaSlot,
+              AppStrings.scoreFormTitle,
               style: theme.textTheme.labelLarge?.copyWith(
                 color: theme.colorScheme.primary,
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const SizedBox(height: 12),
-            for (var i = 0; i < 5; i++)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 60,
-                      child: Text(
-                        '${AppStrings.transferSlotLabel} $i',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: TextField(
-                        controller: _slotCtrls[i],
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          isDense: true,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 10,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             const SizedBox(height: 16),
-            Text(
-              AppStrings.transferCharaLockSlot,
-              style: theme.textTheme.labelLarge?.copyWith(
-                color: theme.colorScheme.primary,
-                fontWeight: FontWeight.w600,
-              ),
+            _numberField(
+              theme,
+              controller: _musicIdCtrl,
+              label: AppStrings.scoreMusicId,
             ),
-            const SizedBox(height: 12),
-            for (var i = 0; i < 5; i++)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 4),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 60,
-                      child: Text(
-                        '${AppStrings.transferSlotLabel} $i',
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: TextField(
-                        controller: _lockSlotCtrls[i],
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                          isDense: true,
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 10,
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            const SizedBox(height: 14),
+            _dropdownField(
+              theme,
+              label: AppStrings.scoreLevel,
+              value: _level,
+              labels: AppStrings.levelLabels,
+              onChanged: (v) => setState(() => _level = v),
+            ),
+            const SizedBox(height: 14),
+            _numberField(
+              theme,
+              controller: _achievementCtrl,
+              label: AppStrings.scoreAchievement,
+              helperText: AppStrings.scoreAchievementHint,
+            ),
+            const SizedBox(height: 6),
+            _rankPreview(theme),
+            const SizedBox(height: 14),
+            _dropdownField(
+              theme,
+              label: AppStrings.scoreComboStatus,
+              value: _comboStatus,
+              labels: AppStrings.comboStatusLabels,
+              onChanged: (v) => setState(() => _comboStatus = v),
+            ),
+            const SizedBox(height: 14),
+            _dropdownField(
+              theme,
+              label: AppStrings.scoreSyncStatus,
+              value: _syncStatus,
+              labels: AppStrings.syncStatusLabels,
+              onChanged: (v) => setState(() => _syncStatus = v),
+            ),
+            const SizedBox(height: 14),
+            _numberField(
+              theme,
+              controller: _deluxCtrl,
+              label: AppStrings.scoreDeluxscore,
+            ),
+            const SizedBox(height: 14),
+            _numberField(
+              theme,
+              controller: _playCountCtrl,
+              label: AppStrings.scorePlayCount,
+            ),
           ],
         ),
       ),
     );
   }
 
-  // ─── Character section (optimised) ───────────────────────────────────────
-
-  Widget _buildCharacterSection(ThemeData theme) {
-    final filtered = _filteredEntries;
-    final visible = filtered.length > _visibleCount
-        ? filtered.sublist(0, _visibleCount)
-        : filtered;
-
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(
-            color: theme.colorScheme.outline.withValues(alpha: 0.3)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header row with count
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    '${AppStrings.transferCharacterLevels} (${_charEntries.length})',
-                    style: theme.textTheme.labelLarge?.copyWith(
-                      color: theme.colorScheme.primary,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                TextButton.icon(
-                  onPressed: _batchSetLevel,
-                  icon: const Icon(Icons.dynamic_feed, size: 16),
-                  label: Text('批量改等级',
-                      style: theme.textTheme.labelSmall),
-                  style: TextButton.styleFrom(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8),
-                  ),
-                ),
-                TextButton.icon(
-                  onPressed: _addCharacterRow,
-                  icon: const Icon(Icons.add, size: 18),
-                  label: Text(AppStrings.transferAddCharacter,
-                      style: theme.textTheme.labelSmall),
-                  style: TextButton.styleFrom(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-
-            // Search box
-            TextField(
-              controller: _searchCtrl,
-              onChanged: _onSearchChanged,
-              decoration: InputDecoration(
-                hintText: '搜索角色ID...',
-                prefixIcon:
-                    const Icon(Icons.search, size: 18),
-                suffixIcon: _searchQuery.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear, size: 18),
-                        onPressed: () {
-                          _searchCtrl.clear();
-                          _onSearchChanged('');
-                        },
-                      )
-                    : null,
-                isDense: true,
-                contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 12, vertical: 10),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-
-            // List — uses a fixed-height container + ListView.builder
-            // so only visible rows are built.
-            if (visible.isEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: Text(
-                  _searchQuery.isNotEmpty
-                      ? '没有匹配的角色。'
-                      : '暂无角色。',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  ),
-                ),
-              )
-            else ...[
-              // Table header
-              _charTableHeader(theme),
-              SizedBox(
-                // Cap height at ~10 rows to keep scrolling performant
-                height: (visible.length.clamp(0, 10) * 40.0 + 4)
-                    .toDouble(),
-                child: ListView.builder(
-                  itemCount: visible.length,
-                  itemExtent: 40,
-                  itemBuilder: (ctx, i) =>
-                      _charRow(theme, visible[i], i),
-                ),
-              ),
-              // "show more" button
-              if (_visibleCount < filtered.length)
-                TextButton(
-                  onPressed: () => setState(() =>
-                      _visibleCount += _pageSize),
-                  child: Text(
-                    '显示更多 (已显示 $_visibleCount / ${filtered.length})',
-                    style: theme.textTheme.labelSmall,
-                  ),
-                ),
-            ],
-          ],
-        ),
+  Widget _numberField(
+    ThemeData theme, {
+    required TextEditingController controller,
+    required String label,
+    String? helperText,
+  }) {
+    return TextField(
+      controller: controller,
+      keyboardType: TextInputType.number,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+      decoration: InputDecoration(
+        labelText: label,
+        helperText: helperText,
+        isDense: true,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
   }
 
-  Widget _charTableHeader(ThemeData theme) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      child: Row(
-        children: [
-          const SizedBox(width: 28),
-          Expanded(
-            flex: 3,
-            child: Text('ID',
-                style: theme.textTheme.labelSmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant)),
-          ),
-          Expanded(
-            flex: 2,
-            child: Text('等级',
-                style: theme.textTheme.labelSmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant)),
-          ),
-          Expanded(
-            flex: 2,
-            child: Text('觉醒',
-                style: theme.textTheme.labelSmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant)),
-          ),
-        ],
+  Widget _dropdownField(
+    ThemeData theme, {
+    required String label,
+    required int value,
+    required List<String> labels,
+    required ValueChanged<int> onChanged,
+  }) {
+    return DropdownButtonFormField<int>(
+      initialValue: value,
+      isExpanded: true,
+      decoration: InputDecoration(
+        labelText: label,
+        isDense: true,
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
+      items: [
+        for (var i = 0; i < labels.length; i++)
+          DropdownMenuItem(value: i, child: Text(labels[i])),
+      ],
+      onChanged: (v) {
+        if (v != null) onChanged(v);
+      },
     );
   }
 
-  Widget _charRow(ThemeData theme, _CharEntry entry, int displayIdx) {
-    return InkWell(
-      onTap: () => _openEditDialog(entry),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-        child: Row(
-          children: [
-            SizedBox(
-              width: 28,
-              child: Icon(Icons.edit, size: 14,
-                  color: theme.colorScheme.onSurfaceVariant
-                      .withValues(alpha: 0.5)),
-            ),
-            Expanded(
-              flex: 3,
-              child: Text('${entry.characterId}',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                      fontFamily: 'monospace')),
-            ),
-            Expanded(
-              flex: 2,
-              child: Text('${entry.level}',
-                  style: theme.textTheme.bodySmall),
-            ),
-            Expanded(
-              flex: 2,
-              child: Text('${entry.awakening}',
-                  style: theme.textTheme.bodySmall),
-            ),
-            IconButton(
-              icon: Icon(Icons.remove_circle_outline, size: 16,
-                  color: theme.colorScheme.error),
-              padding: EdgeInsets.zero,
-              constraints: const BoxConstraints(),
-              tooltip: AppStrings.transferRemove,
-              onPressed: () => _removeCharacter(displayIdx),
-            ),
-          ],
+  Widget _rankPreview(ThemeData theme) {
+    return Row(
+      children: [
+        Icon(Icons.military_tech_outlined,
+            size: 16, color: theme.colorScheme.primary),
+        const SizedBox(width: 6),
+        Text(
+          '${AppStrings.scoreRankLabel}: ',
+          style: theme.textTheme.labelSmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
         ),
-      ),
+        Text(
+          _currentRankLabel(),
+          style: theme.textTheme.labelMedium?.copyWith(
+            color: theme.colorScheme.primary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ],
     );
   }
 
@@ -1359,7 +958,7 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
     return SizedBox(
       width: double.infinity,
       child: FilledButton.icon(
-        onPressed: canSend ? _sendPackage : null,
+        onPressed: canSend ? _sendScore : null,
         icon: isSending
             ? const SizedBox(
                 width: 18,
@@ -1382,14 +981,9 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
   }
 
   Widget _buildProgress(ThemeData theme) {
-    String text;
-    if (_step == TransferStep.fetching) {
-      text = AppStrings.transferFetching;
-    } else if (_step == TransferStep.uploadingPlaylog) {
-      text = AppStrings.transferUploadingPlaylog;
-    } else {
-      text = AppStrings.transferSending;
-    }
+    final text = _step == TransferStep.fetching
+        ? AppStrings.transferFetching
+        : AppStrings.transferSending;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16),
       child: Center(
@@ -1422,8 +1016,8 @@ class _TransferPackagePageState extends State<TransferPackagePage> {
         children: [
           Row(
             children: [
-              Icon(Icons.error, size: 16,
-                  color: theme.colorScheme.onErrorContainer),
+              Icon(Icons.error,
+                  size: 16, color: theme.colorScheme.onErrorContainer),
               const SizedBox(width: 8),
               Text(
                 AppStrings.transferFailed,

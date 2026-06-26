@@ -4,7 +4,7 @@ class AppStrings {
   // Tab
   static const tabHome = '主页';
   static const tabTickets = '票据';
-  static const tabTransfer = '发包';
+  static const tabTransfer = '传分';
   static const tabSettings = '设置';
   static const tabAbout = '关于';
 
@@ -118,7 +118,7 @@ class AppStrings {
   static String ticketCooldownNotice(int remaining) =>
       '登录后需冷却 $ticketCooldownSeconds 秒，剩余 $remaining 秒后可使用功能票。';
   static String packetCooldownNotice(int remaining) =>
-      '登录后需冷却 $ticketCooldownSeconds 秒，剩余 $remaining 秒后可发包。';
+      '登录后需冷却 $ticketCooldownSeconds 秒，剩余 $remaining 秒后可上传成绩。';
 
   // Settings
   static const titleServerSettings = 'Title Server 设置';
@@ -163,28 +163,59 @@ class AppStrings {
   static const importFailed = '导入失败：剪贴板内容无效';
   static const noConfigToExport = '没有可导出的配置';
 
-  // Transfer Package (发包)
-  static const transferTitle = '发包 (UpsertUserAll)';
-  static const transferDesc = '拉取用户数据后，可修改角色槽位、锁定槽位和角色等级，然后发包回服务器。';
+  // Transfer Score (传分 / UpsertUserAll 上传成绩)
+  static const transferTitle = '传送分数';
+  static const transferDesc =
+      '新版本机台容易崩溃导致成绩传不上去。在此填入一首歌的成绩，程序会作为一次有效游玩记录上传回服务器。';
   static const transferFetchData = '拉取数据';
   static const transferFetching = '拉取中...';
-  static const transferNotLoggedIn = '尚未登录游戏服务器，无法发包。';
-  static const transferCharaSlot = '角色槽位 (charaSlot)';
-  static const transferCharaLockSlot = '锁定槽位 (charaLockSlot)';
-  static const transferCharacterLevels = '角色等级 (userCharacterList)';
-  static const transferAddCharacter = '添加角色';
-  static const transferCharacterId = '角色ID';
-  static const transferLevel = '等级';
-  static const transferAwakening = '觉醒';
-  static const transferSend = '发包';
-  static const transferSending = '发送中...';
-  static const transferSuccess = '发包完成';
-  static const transferFailed = '发包失败';
-  static const transferUploadingPlaylog = '上传游戏记录...';
+  static const transferRefetch = '重新拉取';
+  static const transferNotLoggedIn = '尚未登录游戏服务器，无法上传成绩。';
+  static const transferDataReady = '数据已就绪，填写下方成绩后点击上传。';
+
+  // Score form
+  static const scoreFormTitle = '成绩信息';
+  static const scoreMusicId = '歌曲 ID (musicId)';
+  static const scoreLevel = '难度';
+  static const scoreAchievement = '达成率 (achievement)';
+  static const scoreAchievementHint = '例如 1010000 = 101.0000%';
+  static const scoreComboStatus = 'Combo 状态';
+  static const scoreSyncStatus = 'Sync 状态';
+  static const scoreDeluxscore = 'DX 分 (deluxscoreMax)';
+  static const scorePlayCount = '游玩次数 (playCount)';
+  static const scoreRankLabel = '评级 (自动)';
+  static const scoreInvalidInput = '请填写有效的歌曲 ID 与达成率。';
+
+  static const List<String> levelLabels = [
+    'Basic (绿)',
+    'Advanced (黄)',
+    'Expert (红)',
+    'Master (紫)',
+    'Re:Master (白)',
+  ];
+
+  static const List<String> comboStatusLabels = [
+    '无',
+    'FC (Full Combo)',
+    'FC+ (Full Combo+)',
+    'AP (All Perfect)',
+    'AP+ (All Perfect+)',
+  ];
+
+  static const List<String> syncStatusLabels = [
+    '无',
+    'FS (Full Sync)',
+    'FS+ (Full Sync+)',
+    'FDX (Full Sync DX)',
+    'FDX+ (Full Sync DX+)',
+  ];
+
+  static const transferSend = '上传成绩';
+  static const transferSending = '上传中...';
+  static const transferSuccess = '成绩上传完成';
+  static const transferFailed = '成绩上传失败';
   static const transferSlotLabel = '槽位';
   static const transferNoData = '⚠️ 未拉取到用户数据，请先点「拉取数据」按钮获取。';
-  static const transferDataLoaded = '数据已就绪，可在下方编辑后发送。';
-  static const transferRemove = '移除';
 
   // About
   static const aboutTitle = 'Project Ichino';
