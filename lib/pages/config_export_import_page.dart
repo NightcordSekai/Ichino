@@ -54,6 +54,7 @@ class ConfigExportImportPage extends StatelessWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text(AppStrings.importSuccess)),
         );
+        Navigator.of(context).pop();
       }
     } catch (_) {
       if (context.mounted) {

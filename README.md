@@ -1,4 +1,4 @@
-# ichino
+# Purarine
 
 A new Flutter project.
 

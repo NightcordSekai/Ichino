@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 
-const _channel = MethodChannel('com.ichino/qr_scanner');
+const _channel = MethodChannel('dev.naominet.purarine/qr_scanner');
 
 Future<String?> decodeQRFromBytes(Uint8List bytes) async {
   try {

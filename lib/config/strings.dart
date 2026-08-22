@@ -4,12 +4,12 @@ class AppStrings {
   // Tab
   static const tabHome = '主页';
   static const tabTickets = '票据';
-  static const tabTransfer = '传分';
+  static const tabRisk = '风险';
   static const tabSettings = '设置';
   static const tabAbout = '关于';
 
   // Login
-  static const appTitle = 'Project Ichino';
+  static const appTitle = 'Purarine';
   static const loginSubtitle = '扫描或输入二维码进行登录';
   static const qrCodeToken = 'QR Code 令牌';
   static const qrHint = '粘贴二维码解析内容...';
@@ -110,6 +110,7 @@ class AppStrings {
   static const refreshTickets = '刷新数据';
   static const loading = '加载中...';
   static const ticketNotSelected = '请先在功能票列表中选中一张票。';
+  static const ticketStockNotEmpty = '该功能票已有库存，出于安全考虑不会继续发票。';
   static const selectedTicket = '已选票';
   static const ticketUsed = '功能票使用完成';
   static const ticketCooldownSeconds = 60;
@@ -117,11 +118,9 @@ class AppStrings {
       '冷却中，剩余 $remaining 秒';
   static String ticketCooldownNotice(int remaining) =>
       '登录后需冷却 $ticketCooldownSeconds 秒，剩余 $remaining 秒后可使用功能票。';
-  static String packetCooldownNotice(int remaining) =>
-      '登录后需冷却 $ticketCooldownSeconds 秒，剩余 $remaining 秒后可上传成绩。';
 
   // Settings
-  static const titleServerSettings = 'Title Server 设置';
+  static const titleServerSettings = '参数设置';
   static const titleServerSection = 'Title Server';
   static const authServerSettings = 'Auth Server';
   static const machineSettings = '机器信息';
@@ -163,62 +162,77 @@ class AppStrings {
   static const importFailed = '导入失败：剪贴板内容无效';
   static const noConfigToExport = '没有可导出的配置';
 
-  // Transfer Score (传分 / UpsertUserAll 上传成绩)
-  static const transferTitle = '传送分数';
-  static const transferDesc =
-      '新版本机台容易崩溃导致成绩传不上去。在此填入一首歌的成绩，程序会作为一次有效游玩记录上传回服务器。';
-  static const transferFetchData = '拉取数据';
-  static const transferFetching = '拉取中...';
-  static const transferRefetch = '重新拉取';
-  static const transferNotLoggedIn = '尚未登录游戏服务器，无法上传成绩。';
-  static const transferDataReady = '数据已就绪，填写下方成绩后点击上传。';
+  // UnlockMusic (解锁歌曲 / UpsertUserAll 上传解锁道具)
+  static const unlockFeatureTitle = '歌曲解锁';
+  static const unlockFeatureDesc = '通过上传 itemKind 5/6/7 道具解锁歌曲与谱面。';
+  static const unlockMusicIdLabel = '解锁歌曲 ID';
+  static const unlockMusicIdHint = '例如 834';
+  static const unlockMusicOption = '解锁歌曲 (itemKind 5)';
+  static const unlockMasterOption = '解锁 Master (itemKind 6)';
+  static const unlockRemasterOption = '解锁 Re:Master (itemKind 7)';
+  static const unlockNeedMusicId = '请填写要解锁的歌曲 ID。';
+  static const unlockNeedOption = '请至少勾选一项解锁内容。';
+  static const unlockNotLoggedIn = '尚未登录游戏服务器，无法执行解锁操作。';
+  static String unlockCooldownNotice(int remaining) =>
+      '登录后需冷却 $ticketCooldownSeconds 秒，剩余 $remaining 秒后可执行解锁操作。';
+  static const unlockFetchData = '拉取数据';
+  static const unlockFetching = '拉取中...';
+  static const unlockRefetch = '重新拉取';
+  static const unlockNoData = '⚠️ 未拉取到用户数据，请先点「拉取数据」按钮获取。';
+  static const unlockFetched = '数据已拉取';
+  static const unlockAutoLogout = '完成后自动退出登录';
+  static const unlockMusicRun = '执行解锁';
+  static const unlockRunning = '执行中...';
+  static const unlockStepFetch = '拉取用户数据';
+  static const unlockStepUpload = '上传解锁数据';
+  static const unlockMusicSuccess = '解锁数据上传完成';
 
-  // Score form
-  static const scoreFormTitle = '成绩信息';
-  static const scoreMusicId = '歌曲 ID (musicId)';
-  static const scoreLevel = '难度';
-  static const scoreAchievement = '达成率 (achievement)';
-  static const scoreAchievementHint = '例如 1010000 = 101.0000%';
-  static const scoreComboStatus = 'Combo 状态';
-  static const scoreSyncStatus = 'Sync 状态';
-  static const scoreDeluxscore = 'DX 分 (deluxscoreMax)';
-  static const scorePlayCount = '游玩次数 (playCount)';
-  static const scoreRankLabel = '评级 (自动)';
-  static const scoreInvalidInput = '请填写有效的歌曲 ID 与达成率。';
+  // Collectibles (收藏品获取 / UpsertUserAll 上传收藏品道具)
+  // itemKind: 1=姓名框 2=称号 3=头像 10=搭档 11=背景板 12=功能票
+  static const collectiblesFeatureTitle = '收藏品获取';
+  static const collectiblesFeatureDesc =
+      '通过上传 itemKind 道具获取收藏品（姓名框/称号/头像/搭档/背景板/功能票）。';
+  static const collectiblesItemKindLabel = '收藏品类型 (itemKind)';
+  static const collectiblesItemIdLabel = '收藏品 ID';
+  static const collectiblesItemIdHint = '例如 250103';
+  static const collectiblesNeedItemId = '请填写要获取的收藏品 ID。';
+  static const collectiblesNotLoggedIn = '尚未登录游戏服务器，无法执行获取操作。';
+  static String collectiblesCooldownNotice(int remaining) =>
+      '登录后需冷却 $ticketCooldownSeconds 秒，剩余 $remaining 秒后可执行获取操作。';
+  static const collectiblesRun = '执行获取';
+  static const collectiblesStepUpload = '上传获取数据';
+  static const collectiblesSuccess = '收藏品获取数据上传完成';
 
-  static const List<String> levelLabels = [
-    'Basic (绿)',
-    'Advanced (黄)',
-    'Expert (红)',
-    'Master (紫)',
-    'Re:Master (白)',
-  ];
+  static const List<int> collectiblesItemKinds = [1, 2, 3, 10, 11, 12];
 
-  static const List<String> comboStatusLabels = [
-    '无',
-    'FC (Full Combo)',
-    'FC+ (Full Combo+)',
-    'AP (All Perfect)',
-    'AP+ (All Perfect+)',
-  ];
+  static String collectiblesItemKindName(int kind) {
+    switch (kind) {
+      case 1:
+        return '姓名框';
+      case 2:
+        return '称号';
+      case 3:
+        return '头像';
+      case 10:
+        return '搭档';
+      case 11:
+        return '背景板';
+      case 12:
+        return '功能票';
+      default:
+        return '$kind';
+    }
+  }
 
-  static const List<String> syncStatusLabels = [
-    '无',
-    'FS (Full Sync)',
-    'FS+ (Full Sync+)',
-    'FDX (Full Sync DX)',
-    'FDX+ (Full Sync DX+)',
-  ];
-
-  static const transferSend = '上传成绩';
-  static const transferSending = '上传中...';
-  static const transferSuccess = '成绩上传完成';
-  static const transferFailed = '成绩上传失败';
-  static const transferSlotLabel = '槽位';
-  static const transferNoData = '⚠️ 未拉取到用户数据，请先点「拉取数据」按钮获取。';
+  // HighRiskFeature hub (中转页)
+  static const musicRiskHubTitle = '高危功能';
+  static const musicRiskHubDesc = '以下功能会向服务器发送伪造数据，属于高风险操作，请谨慎使用。';
+  static const musicRiskHubNotLoggedIn = '尚未登录游戏服务器，无法执行高危操作。';
+  static String musicRiskHubCooldownNotice(int remaining) =>
+      '登录后需冷却 $ticketCooldownSeconds 秒，剩余 $remaining 秒后可执行高危操作。';
 
   // About
-  static const aboutTitle = 'Project Ichino';
+  static const aboutTitle = 'Purarine';
   static const aboutDesc = '基于 QR Code 的 maimai DX 街机网络登录客户端。';
   static const credits = '致谢';
   static const creditBuiltWith = '构建框架';

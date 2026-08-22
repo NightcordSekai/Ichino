@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'config/responsive.dart';
 import 'config/strings.dart';
 import 'config/title_server_config.dart';
-import 'services/api_service.dart';
+import 'models/session_model.dart';
 import 'services/file_picker_service.dart';
 import 'services/qr_service.dart';
 import 'pages/home_page.dart';
@@ -49,7 +49,6 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _qrController = TextEditingController();
-  final _apiService = ApiService();
   String _qrCode = '';
   bool _loading = false;
   bool _forcePreviewApi = false;
@@ -62,7 +61,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void _onQRContentChanged(String value) {
     setState(() {
-      _qrCode = _apiService.extractQRCode(value.trim());
+      _qrCode = SessionModel.extractQRCode(value.trim());
     });
   }
 
@@ -76,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
       if (result != null && result.isNotEmpty) {
         _qrController.text = result;
         setState(() {
-          _qrCode = _apiService.extractQRCode(result);
+          _qrCode = SessionModel.extractQRCode(result);
         });
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -105,18 +104,16 @@ class _LoginPageState extends State<LoginPage> {
     setState(() => _loading = true);
 
     try {
-      final result = await _apiService.login(_qrCode);
+      final result = await SessionModel.instance.loginWithQr(_qrCode);
 
       if (!mounted) return;
 
       if (result.success) {
-        if (!mounted) return;
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (_) => HomePage(
               userId: result.userId,
               token: result.token,
-              cookies: result.cookies,
               forcePreviewApi: _forcePreviewApi,
             ),
           ),

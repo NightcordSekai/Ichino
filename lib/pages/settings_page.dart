@@ -33,6 +33,10 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   void initState() {
     super.initState();
+    _loadConfig();
+  }
+
+  void _loadConfig() {
     final config = TitleServerConfigHolder().config;
     if (config != null) {
       _urlController.text = config.titleServerUrl;
@@ -155,10 +159,13 @@ class _SettingsPageState extends State<SettingsPage> {
                 ),
                 const SizedBox(height: 12),
                 OutlinedButton.icon(
-                  onPressed: () {
-                    Navigator.of(context).push(
+                  onPressed: () async {
+                    await Navigator.of(context).push(
                       MaterialPageRoute(builder: (_) => const ConfigExportImportPage()),
                     );
+                    if (mounted) {
+                      _loadConfig();
+                    }
                   },
                   icon: const Icon(Icons.import_export, size: 20),
                   label: const Text(AppStrings.configExportImport),

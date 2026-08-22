@@ -93,46 +93,20 @@ class TitleApiService {
     return _aesEncrypt(compressed);
   }
 
+  /// Port of empurple `HttpResult.cookieHeader()`: only the `JSESSIONID`
+  /// from the Set-Cookie response headers is used for subsequent requests.
   void _captureCookiesFromResponse(http.Response response, String apiName) {
-    // ignore: avoid_print
-    print('[$apiName] ── Response headers (${response.headers.length} entries) ──');
     final headerKeys = response.headers.keys.toList();
-    String? rawCookies;
     for (final key in headerKeys) {
+      if (!key.toLowerCase().contains('set-cookie')) continue;
       final value = response.headers[key]!;
-      // ignore: avoid_print
-      print('[$apiName]   "$key": "$value"');
-      final lower = key.toLowerCase();
-      if (lower.contains('set-cookie') || lower.contains('cookie')) {
-        rawCookies = value;
+      final match =
+          RegExp(r'JSESSIONID=([^;,]+)', caseSensitive: false).firstMatch(value);
+      if (match != null) {
+        _cookies = 'JSESSIONID=${match.group(1)!.trim()}';
         // ignore: avoid_print
-        print('[$apiName] >>> Found cookie header: $key = $rawCookies');
-      }
-    }
-
-    if (rawCookies != null) {
-      // Parse JSESSIONID from the cookie value
-      // The jsessionid cookie is the session key from WaCa
-      final parts = <String>[];
-      for (final chunk in rawCookies.split(RegExp(r', |\n'))) {
-        final trimmed = chunk.trim();
-        if (trimmed.isEmpty) continue;
-        final semi = trimmed.indexOf(';');
-        final nv = semi > 0 ? trimmed.substring(0, semi) : trimmed;
-        if (nv.contains('=')) {
-          parts.add(nv);
-          final eq = nv.indexOf('=');
-          final name = nv.substring(0, eq);
-          final value = nv.substring(eq + 1);
-          // ignore: avoid_print
-          print('[$apiName] >>> Cookie pair: $name = $value');
-        }
-      }
-      final cleanCookies = parts.join('; ');
-      if (cleanCookies.isNotEmpty) {
-        _cookies = cleanCookies;
-        // ignore: avoid_print
-        print('[$apiName] >>> Stored cookies for subsequent requests: $_cookies');
+        print('[$apiName] >>> Captured session cookie: $_cookies');
+        return;
       }
     }
   }
@@ -184,14 +158,15 @@ class TitleApiService {
     // ignore: avoid_print
     print(packetStr);
 
+    final uaSuffix = userId != 0 ? '$userId' : _config.clientId;
     final headers = <String, String>{
-      'User-Agent': '$hash#$userId',
+      'User-Agent': '$hash#$uaSuffix',
       'Content-Type': 'application/json',
       'Mai-Encoding': _config.apiVersion,
       'Accept-Encoding': '',
       'Charset': 'UTF-8',
       'Content-Encoding': 'deflate',
-      'Host': 'maimai-gm.wahlap.com:42081',
+      'number': '0',
     };
     final cookies = _cookies;
     if (cookies != null) {
@@ -307,7 +282,7 @@ class TitleApiService {
         'Accept-Encoding': '',
         'Charset': 'UTF-8',
         'Content-Encoding': 'deflate',
-        'Host': 'maimai.wahlap.com:42081',
+        'number': '0',
       };
       final previewCookies = _cookies;
       if (previewCookies != null) {
@@ -434,6 +409,17 @@ class TitleApiService {
 
   // ---- UserLogout ----
 
+  /// Port of empurple/eaquira behavior: the server may omit `returnCode`
+  /// for fire-and-forget APIs. Only a present-but-not-1 code is an error.
+  void _checkReturnCode(Map<String, dynamic> json, String apiName) {
+    final returnCode = json['returnCode'];
+    if (returnCode == null) return;
+    final code = (returnCode as num).toInt();
+    if (code != 1) {
+      throw TitleApiException('$apiName returnCode=$code');
+    }
+  }
+
   Future<void> userLogout({
     required int userId,
     required int loginDateTime,
@@ -451,16 +437,10 @@ class TitleApiService {
     };
 
     final json = await _callApi(apiName, packet, userId);
-    final returnCode = json['returnCode'] as int? ?? -1;
-    if (returnCode != 1) {
-      throw TitleApiException('UserLogoutApi returnCode=$returnCode');
-    }
+    _checkReturnCode(json, apiName);
   }
 
   // ---- UpsertUserChargeLog (使用功能票) ----
-  // Reference: KanadeBot SendTicketCommand / PayloadBuilder.generateTicketRequest
-
-  static const _ticketPriceMap = {1: 1, 2: 6, 3: 2, 4: 2, 5: 2, 6: 0};
 
   Future<void> upsertUserChargeLog({
     required int userId,
@@ -482,7 +462,7 @@ class TitleApiService {
       'userId': userId,
       'userChargelog': {
         'chargeId': ticketId,
-        'price': _ticketPriceMap[ticketId] ?? 0,
+        'price': 0,
         'purchaseDate': purchaseDateStr,
         'playCount': playCount,
         'playerRating': playerRating,
@@ -500,10 +480,7 @@ class TitleApiService {
     };
 
     final json = await _callApi(apiName, packet, userId);
-    final returnCode = json['returnCode'] as int? ?? -1;
-    if (returnCode != 1) {
-      throw TitleApiException('UpsertUserChargelogApi returnCode=$returnCode');
-    }
+    _checkReturnCode(json, apiName);
   }
 
   String _formatDateTime(DateTime dt) {
@@ -523,10 +500,7 @@ class TitleApiService {
       'userId': userId,
       'userPlaylog': userPlaylog,
     }, userId);
-    final returnCode = json['returnCode'] as int? ?? -1;
-    if (returnCode != 1) {
-      throw TitleApiException('UploadUserPlaylogApi returnCode=$returnCode');
-    }
+    _checkReturnCode(json, apiName);
   }
 
   /// Fetch all user data needed to build an UpsertUserAll payload.
@@ -560,10 +534,7 @@ class TitleApiService {
   ) async {
     const apiName = 'UpsertUserAllApi';
     final json = await _callApi(apiName, packet, userId);
-    final returnCode = json['returnCode'] as int? ?? -1;
-    if (returnCode != 1) {
-      throw TitleApiException('UpsertUserAllApi returnCode=$returnCode');
-    }
+    _checkReturnCode(json, apiName);
   }
 
   /// Fetch user character list.

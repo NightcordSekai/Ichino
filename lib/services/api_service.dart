@@ -10,14 +10,12 @@ class LoginResult {
   final int errorId;
   final int userId;
   final String token;
-  final String? cookies;
 
   const LoginResult({
     required this.success,
     required this.errorId,
     required this.userId,
     required this.token,
-    this.cookies,
   });
 }
 
@@ -51,7 +49,7 @@ class ApiService {
     return sha256.convert(bytes).toString();
   }
 
-  String extractQRCode(String qrCodeToken) {
+  static String extractQRCode(String qrCodeToken) {
     if (qrCodeToken.length > 64) {
       return qrCodeToken.substring(qrCodeToken.length - 64);
     }
@@ -94,85 +92,14 @@ class ApiService {
     final userId = obj['userID'] as int? ?? -1;
     final token = obj['token'] as String? ?? '';
 
-    // ── Extract ALL cookies from response headers ──
-    // On web, Set-Cookie is a forbidden response header (browser hides it).
-    // On native (dart:io), it appears as lowercase 'set-cookie'.
-    // The http package may join multiple Set-Cookie lines with ', '.
-    String? cookies;
-
-    // ignore: avoid_print
-    print('[login] ── Response headers (${response.headers.length} entries) ──');
-    final headerKeys = response.headers.keys.toList();
-    for (final key in headerKeys) {
-      final value = response.headers[key]!;
-      // ignore: avoid_print
-      print('[login]   "$key": "$value"');
-
-      // Match any header name that smells like a cookie
-      final lower = key.toLowerCase();
-      if (lower.contains('cookie') || lower.contains('set-cookie')) {
-        cookies = value;
-        // ignore: avoid_print
-        print('[login] >>> Found cookie header: $key = $cookies');
-      }
-    }
-
-    // Also try direct lookup with various casings (just in case iteration misses)
-    if (cookies == null) {
-      for (final name in ['set-cookie', 'Set-Cookie', 'SET-COOKIE', 'cookie', 'Cookie', 'COOKIE']) {
-        final v = response.headers[name];
-        if (v != null && v.isNotEmpty) {
-          cookies = v;
-          // ignore: avoid_print
-          print('[login] >>> Direct lookup "$name" = $cookies');
-          break;
-        }
-      }
-    }
-
-    if (cookies == null) {
-      // ignore: avoid_print
-      print('[login] WARNING: No cookie/set-cookie header found in response.');
-      // Also check if response body has session info
-      if (obj.containsKey('jsessionId')) {
-        cookies = 'JSESSIONID=${obj['jsessionId']}';
-        // ignore: avoid_print
-        print('[login] >>> Found jsessionId in response body: $cookies');
-      } else if (obj.containsKey('sessionId')) {
-        cookies = 'JSESSIONID=${obj['sessionId']}';
-        // ignore: avoid_print
-        print('[login] >>> Found sessionId in response body: $cookies');
-      }
-    }
-
-    // Parse out individual cookie name=value pairs for clean forwarding
-    // (strip Path, HttpOnly, etc. attributes)
-    String? cleanCookies;
-    if (cookies != null) {
-      final parts = <String>[];
-      // Split on ', ' first (http package combines multiple Set-Cookie headers)
-      // Then split on '\n' (some server responses use newlines)
-      for (final chunk in cookies.split(RegExp(r', |\n'))) {
-        final trimmed = chunk.trim();
-        if (trimmed.isEmpty) continue;
-        // Extract "NAME=VALUE" before the first ';'
-        final semi = trimmed.indexOf(';');
-        final nv = semi > 0 ? trimmed.substring(0, semi) : trimmed;
-        if (nv.contains('=')) {
-          parts.add(nv);
-        }
-      }
-      cleanCookies = parts.join('; ');
-      // ignore: avoid_print
-      print('[login] Clean cookies to forward: $cleanCookies');
-    }
+    // Session cookies (JSESSIONID) are captured from the title server's
+    // UserLoginApi response, not from the Aime server — see empurple.
 
     return LoginResult(
       success: errorId == 0,
       errorId: errorId,
       userId: userId,
       token: token,
-      cookies: cleanCookies,
     );
   }
 }

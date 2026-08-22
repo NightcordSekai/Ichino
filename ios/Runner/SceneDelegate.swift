@@ -14,7 +14,7 @@ class SceneDelegate: FlutterSceneDelegate {
     guard let controller = window?.rootViewController as? FlutterViewController else { return }
 
     let channel = FlutterMethodChannel(
-      name: "com.ichino/qr_scanner",
+      name: "dev.naominet.purarine/qr_scanner",
       binaryMessenger: controller.binaryMessenger
     )
 

@@ -42,16 +42,16 @@ class TicketPage extends StatefulWidget {
 
 class _TicketPageState extends State<TicketPage> {
   static const _ticketNameMap = {
-    2: '2倍功能票',
-    4: '4倍功能票',
-    5: '5倍功能票'
+    2: '2倍票',
+    4: '4倍票',
+    5: '5倍票'
   };
 
   TicketStep _step = TicketStep.idle;
   String _stepMessage = '';
   String? _error;
   bool _running = false;
-  bool _autoLogout = false;
+  bool _autoLogout = true;
 
   List<Map<String, dynamic>>? _tickets;
   bool _ticketsLoading = false;
@@ -183,6 +183,15 @@ class _TicketPageState extends State<TicketPage> {
         SnackBar(
           content: Text(AppStrings.ticketCooldownNotice(_cooldownRemaining)),
         ),
+      );
+      return;
+    }
+
+    final selectedTicket = _findTicket(_selectedTicketId!);
+    if (selectedTicket != null &&
+        (selectedTicket['stock'] as num?)?.toInt() != 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text(AppStrings.ticketStockNotEmpty)),
       );
       return;
     }

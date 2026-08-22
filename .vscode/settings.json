@@ -1,5 +1,5 @@
 {
   "dart.flutterHotReloadOnSave": "all",
-  "dart.flutterSdkPath": "D:\\fluttersdk",
-  "dart.sdkPath": "D:\\fluttersdk\\bin\\cache\\dart-sdk"
+  "dart.flutterSdkPath": "D:\\flutterdev\\flutter",
+  "dart.sdkPath": "D:\\flutterdev\\flutter\\bin\\cache\\dart-sdk"
 }

@@ -3,26 +3,25 @@ import 'package:flutter/material.dart';
 import '../config/responsive.dart';
 import '../config/strings.dart';
 import '../config/title_server_config.dart';
+import '../models/session_model.dart';
 import '../models/user_data.dart';
 import '../models/user_preview.dart';
 import '../services/title_api_service.dart';
 import 'about_page.dart';
+import 'high_risk_feature_page.dart';
 import 'settings_page.dart';
 import 'ticket_page.dart';
-import 'transfer_package_page.dart';
 
 
 class HomePage extends StatefulWidget {
   final int userId;
   final String token;
-  final String? cookies;
   final bool forcePreviewApi;
 
   const HomePage({
     super.key,
     required this.userId,
     required this.token,
-    this.cookies,
     this.forcePreviewApi = false,
   });
 
@@ -34,16 +33,16 @@ class _HomePageState extends State<HomePage> {
   int _currentTab = 0;
   UserPreviewDataBean? _preview;
   UserDataBean? _userData;
-  UserLoginResult? _login;
   String? _error;
   bool _loading = true;
   bool _loggingOut = false;
-  String? _sessionCookies;
+
+  SessionModel get _session => SessionModel.instance;
 
   static const _tabTitles = [
     AppStrings.tabHome,
     AppStrings.tabTickets,
-    AppStrings.tabTransfer,
+    AppStrings.tabRisk,
     AppStrings.tabSettings,
     AppStrings.tabAbout,
   ];
@@ -68,12 +67,12 @@ class _HomePageState extends State<HomePage> {
       _error = null;
       _preview = null;
       _userData = null;
-      _login = null;
     });
+    _session.setGameLogin(null);
 
     final service = TitleApiService(
       TitleServerConfigHolder().config!,
-      cookies: widget.cookies,
+      cookies: _session.cookies,
     );
 
     try {
@@ -82,7 +81,7 @@ class _HomePageState extends State<HomePage> {
         token: widget.token,
       );
       if (!mounted) return;
-      _sessionCookies = service.cookies;
+      _session.updateCookies(service.cookies);
       setState(() => _preview = preview);
 
       // isLogin == true => 已有人登录, 不再走完整登录, 直接展示 preview 概要
@@ -92,17 +91,19 @@ class _HomePageState extends State<HomePage> {
         return;
       }
 
-      final login = await service.userLoginFull(
+      await _session.loginGame(
         userId: widget.userId,
         token: widget.token,
       );
       if (!mounted) return;
-      _sessionCookies = service.cookies;
-      setState(() => _login = login);
 
-      final userData = await service.getUserDataTyped(widget.userId);
+      final userDataService = TitleApiService(
+        TitleServerConfigHolder().config!,
+        cookies: _session.cookies,
+      );
+      final userData = await userDataService.getUserDataTyped(widget.userId);
       if (!mounted) return;
-      _sessionCookies = service.cookies;
+      _session.updateCookies(userDataService.cookies);
       setState(() {
         _userData = userData;
         _loading = false;
@@ -129,23 +130,20 @@ class _HomePageState extends State<HomePage> {
       _error = null;
     });
 
-    final service = TitleApiService(
-      TitleServerConfigHolder().config!,
-      cookies: _sessionCookies ?? widget.cookies,
-    );
-
     try {
-      final login = await service.userLoginFull(
+      await _session.loginGame(
         userId: widget.userId,
         token: widget.token,
       );
       if (!mounted) return;
-      _sessionCookies = service.cookies;
-      setState(() => _login = login);
 
+      final service = TitleApiService(
+        TitleServerConfigHolder().config!,
+        cookies: _session.cookies,
+      );
       final userData = await service.getUserDataTyped(widget.userId);
       if (!mounted) return;
-      _sessionCookies = service.cookies;
+      _session.updateCookies(service.cookies);
       setState(() {
         _userData = userData;
         _loading = false;
@@ -166,30 +164,16 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _logoutSession() async {
-    final login = _login;
-    if (login == null) return;
-    if (!TitleServerConfigHolder().isConfigured) return;
-    final service = TitleApiService(
-      TitleServerConfigHolder().config!,
-      cookies: _sessionCookies ?? widget.cookies,
-    );
-    try {
-      await service.userLogout(
-        userId: widget.userId,
-        loginDateTime: login.loginDateTime,
-      );
-    } catch (_) {
-      // best-effort
-    }
-    _login = null;
+    await _session.logoutGame(userId: widget.userId);
   }
 
   Future<void> _performLogoutAndExit() async {
     setState(() => _loggingOut = true);
-    if (_login != null) {
+    if (_session.gameLogin != null) {
       await Future.delayed(const Duration(seconds: 5));
       await _logoutSession();
     }
+    _session.reset();
     if (mounted) {
       Navigator.of(context).pop();
     }
@@ -199,61 +183,68 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return PopScope(
-      canPop: !_loggingOut,
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop && !_loggingOut) {
-          _performLogoutAndExit();
-        }
+    return ListenableBuilder(
+      listenable: _session,
+      builder: (context, _) {
+        return PopScope(
+          canPop: !_loggingOut,
+          onPopInvokedWithResult: (didPop, _) {
+            if (!didPop && !_loggingOut) {
+              _performLogoutAndExit();
+            }
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                icon: _loggingOut
+                    ? const SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.arrow_back),
+                onPressed: _loggingOut ? null : _performLogoutAndExit,
+              ),
+              title: Text(_tabTitles[_currentTab]),
+            ),
+            body: IndexedStack(
+              index: _currentTab,
+              children: [
+                _buildBody(theme),
+                TicketPage(
+                  userId: widget.userId,
+                  cookies: _session.cookies,
+                  loginDateTime: _session.gameLogin?.loginDateTime,
+                  playerRating: _userData?.playerRating ?? _preview?.playerRating ?? 0,
+                  onLogoutRequested: _session.gameLogin != null ? _logoutSession : null,
+                ),
+                HighRiskFeaturePage(
+                  userId: widget.userId,
+                  cookies: _session.cookies,
+                  loginDateTime: _session.gameLogin?.loginDateTime,
+                  loginId: _session.gameLogin?.loginId,
+                  lastLoginDate: _session.gameLogin?.lastLoginDate,
+                  onLogoutRequested:
+                      _session.gameLogin != null ? _logoutSession : null,
+                ),
+                SettingsPage(showAppBar: false),
+                const AboutPage(),
+              ],
+            ),
+            bottomNavigationBar: NavigationBar(
+              selectedIndex: _currentTab,
+              onDestinationSelected: (i) => setState(() => _currentTab = i),
+              destinations: const [
+                NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home), label: AppStrings.tabHome),
+                NavigationDestination(icon: Icon(Icons.confirmation_number_outlined), selectedIcon: Icon(Icons.confirmation_number), label: AppStrings.tabTickets),
+                NavigationDestination(icon: Icon(Icons.warning_outlined), selectedIcon: Icon(Icons.inventory_2), label: AppStrings.tabRisk),
+                NavigationDestination(icon: Icon(Icons.settings_outlined), selectedIcon: Icon(Icons.settings), label: AppStrings.tabSettings),
+                NavigationDestination(icon: Icon(Icons.info_outlined), selectedIcon: Icon(Icons.info), label: AppStrings.tabAbout),
+              ],
+            ),
+          ),
+        );
       },
-      child: Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: _loggingOut
-              ? const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                )
-              : const Icon(Icons.arrow_back),
-          onPressed: _loggingOut ? null : _performLogoutAndExit,
-        ),
-        title: Text(_tabTitles[_currentTab]),
-      ),
-      body: IndexedStack(
-        index: _currentTab,
-        children: [
-          _buildBody(theme),
-          TicketPage(
-            userId: widget.userId,
-            cookies: _sessionCookies ?? widget.cookies,
-            loginDateTime: _login?.loginDateTime,
-            playerRating: _userData?.playerRating ?? _preview?.playerRating ?? 0,
-            onLogoutRequested: _login != null ? _logoutSession : null,
-          ),
-          TransferPackagePage(
-            userId: widget.userId,
-            cookies: _sessionCookies ?? widget.cookies,
-            loginDateTime: _login?.loginDateTime,
-            playlogId: _login?.loginId,
-            lastLoginDate: _login?.lastLoginDate,
-          ),
-          SettingsPage(showAppBar: false),
-          const AboutPage(),
-        ],
-      ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _currentTab,
-        onDestinationSelected: (i) => setState(() => _currentTab = i),
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home), label: AppStrings.tabHome),
-          NavigationDestination(icon: Icon(Icons.confirmation_number_outlined), selectedIcon: Icon(Icons.confirmation_number), label: AppStrings.tabTickets),
-          NavigationDestination(icon: Icon(Icons.inventory_2_outlined), selectedIcon: Icon(Icons.inventory_2), label: AppStrings.tabTransfer),
-          NavigationDestination(icon: Icon(Icons.settings_outlined), selectedIcon: Icon(Icons.settings), label: AppStrings.tabSettings),
-          NavigationDestination(icon: Icon(Icons.info_outlined), selectedIcon: Icon(Icons.info), label: AppStrings.tabAbout),
-        ],
-      ),
-    ),
     );
   }
 
@@ -332,11 +323,11 @@ class _HomePageState extends State<HomePage> {
       return const SizedBox.shrink();
     }
 
-    if ((preview.isLogin || (widget.forcePreviewApi && _login == null)) && userData == null) {
+    if ((preview.isLogin || (widget.forcePreviewApi && _session.gameLogin == null)) && userData == null) {
       return _buildPreviewOnly(
         theme,
         preview,
-        showLoginButton: widget.forcePreviewApi && _login == null,
+        showLoginButton: widget.forcePreviewApi && _session.gameLogin == null,
         onLoginPressed: _performLogin,
       );
     }
