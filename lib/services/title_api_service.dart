@@ -42,7 +42,7 @@ class TitleApiService {
   final TitleServerConfig _config;
   String? _cookies;
 
-  TitleApiService(this._config, {String? cookies}) : _cookies = cookies;
+  TitleApiService(this._config, {this._cookies});
 
   String? get cookies => _cookies;
 

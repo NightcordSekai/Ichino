@@ -25,7 +25,9 @@ jobs:
           channel: stable
           cache: true
       - run: flutter pub get
-      - run: flutter analyze
+      # info 级别不致命：仓库标准是 0 error/warning（见 README），
+      # 否则依赖升级带进来的 deprecation 提示就会打断整条流水线。
+      - run: flutter analyze --no-fatal-infos
       - run: flutter test
 
   android:
