@@ -10,6 +10,7 @@ import 'package:pointycastle/export.dart';
 import '../config/title_server_config.dart';
 import '../models/user_data.dart';
 import '../models/user_preview.dart';
+import '../models/user_rating.dart';
 
 class TitleApiException implements Exception {
   final String message;
@@ -352,6 +353,11 @@ class TitleApiService {
 
   Future<Map<String, dynamic>> getUserRating(int userId) async {
     return _callApi('GetUserRatingApi', {'userId': userId}, userId);
+  }
+
+  Future<UserRatingBean> getUserRatingTyped(int userId) async {
+    final json = await getUserRating(userId);
+    return UserRatingBean.fromJson(json);
   }
 
   Future<Map<String, dynamic>> getUserCharge(int userId) async {

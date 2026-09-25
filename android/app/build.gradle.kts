@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "dev.naominet.purarine"
+    namespace = "dev.naominet.ichino"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -15,7 +15,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "dev.naominet.purarine"
+        applicationId = "dev.naominet.ichino"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

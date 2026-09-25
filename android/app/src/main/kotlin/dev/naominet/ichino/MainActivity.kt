@@ -1,4 +1,4 @@
-package dev.naominet.purarine
+package dev.naominet.ichino
 
 import android.graphics.BitmapFactory
 import com.google.mlkit.vision.barcode.BarcodeScanning
@@ -9,7 +9,7 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
-    private val CHANNEL = "dev.naominet.purarine/qr_scanner"
+    private val CHANNEL = "dev.naominet.ichino/qr_scanner"
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)

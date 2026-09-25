@@ -8,6 +8,7 @@ import '../models/user_data.dart';
 import '../models/user_preview.dart';
 import '../services/title_api_service.dart';
 import 'about_page.dart';
+import 'best50_page.dart';
 import 'high_risk_feature_page.dart';
 import 'settings_page.dart';
 import 'ticket_page.dart';
@@ -42,6 +43,7 @@ class _HomePageState extends State<HomePage> {
   static const _tabTitles = [
     AppStrings.tabHome,
     AppStrings.tabTickets,
+    AppStrings.tabBest50,
     AppStrings.tabRisk,
     AppStrings.tabSettings,
     AppStrings.tabAbout,
@@ -218,6 +220,13 @@ class _HomePageState extends State<HomePage> {
                   playerRating: _userData?.playerRating ?? _preview?.playerRating ?? 0,
                   onLogoutRequested: _session.gameLogin != null ? _logoutSession : null,
                 ),
+                Best50Page(
+                  userId: widget.userId,
+                  cookies: _session.cookies,
+                  userName: _userData?.userName ?? _preview?.userName ?? '',
+                  iconId: _userData?.iconId ?? _preview?.iconId ?? 0,
+                  playerRating: _userData?.playerRating ?? _preview?.playerRating ?? 0,
+                ),
                 HighRiskFeaturePage(
                   userId: widget.userId,
                   cookies: _session.cookies,
@@ -237,6 +246,7 @@ class _HomePageState extends State<HomePage> {
               destinations: const [
                 NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home), label: AppStrings.tabHome),
                 NavigationDestination(icon: Icon(Icons.confirmation_number_outlined), selectedIcon: Icon(Icons.confirmation_number), label: AppStrings.tabTickets),
+                NavigationDestination(icon: Icon(Icons.bar_chart_outlined), selectedIcon: Icon(Icons.bar_chart), label: AppStrings.tabBest50),
                 NavigationDestination(icon: Icon(Icons.warning_outlined), selectedIcon: Icon(Icons.inventory_2), label: AppStrings.tabRisk),
                 NavigationDestination(icon: Icon(Icons.settings_outlined), selectedIcon: Icon(Icons.settings), label: AppStrings.tabSettings),
                 NavigationDestination(icon: Icon(Icons.info_outlined), selectedIcon: Icon(Icons.info), label: AppStrings.tabAbout),
@@ -272,7 +282,7 @@ class _HomePageState extends State<HomePage> {
               ),
               const SizedBox(height: 24),
               FilledButton.icon(
-                onPressed: () => setState(() => _currentTab = 3),
+                onPressed: () => setState(() => _currentTab = 4),
                 icon: const Icon(Icons.settings, size: 20),
                 label: const Text(AppStrings.openSettings),
               ),

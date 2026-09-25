@@ -5,14 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Purarine",
+            "name": "Ichino",
             "request": "launch",
             "type": "dart",
             "program": "lib/main.dart",
             "deviceId": "windows"
         },
         {
-            "name": "Purarine (profile mode)",
+            "name": "Ichino (profile mode)",
             "request": "launch",
             "type": "dart",
             "program": "lib/main.dart",
@@ -20,7 +20,7 @@
             "flutterMode": "profile"
         },
         {
-            "name": "Purarine (release mode)",
+            "name": "Ichino (release mode)",
             "request": "launch",
             "type": "dart",
             "program": "lib/main.dart",
