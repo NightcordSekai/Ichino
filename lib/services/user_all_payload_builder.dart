@@ -260,6 +260,7 @@ class UserAllPayloadBuilder {
       'extNum4': 0,
       'extBool1': false,
       'extBool2': false,
+      'extBool3': false,
     };
     for (var i = 0; i < 5; i++) {
       playlog['characterId${i + 1}'] = paddedCharaSlot[i];

@@ -222,7 +222,11 @@ class TitleApiService {
       num3 += n % 2;
       n >>= 1;
     }
-    return num3;
+    // 原版 num5 是 C# 的 int，`<<=` 溢出按二进制补码环绕，所以结果恒为合法的
+    // signed int32（高位被置起时是负数）。Dart 的 int 是 64 位且 n 恒为正，
+    // 不重解释就会产出 >2^31 的正数，超出 UserGamePlaylog.playSpecial 的 int
+    // 声明，服务器反序列化失败直接返回 HTTP 500。
+    return num3.toSigned(32);
   }
 
   String _normalizeUrl(String url) {
