@@ -1,7 +1,11 @@
 import 'dart:typed_data';
 
-import 'file_picker_service_native.dart'
-    if (dart.library.html) 'file_picker_service_web.dart'
-    as impl;
+import 'package:image_picker/image_picker.dart';
 
-Future<Uint8List?> pickImageBytes() => impl.pickImageBytes();
+/// 从相册选取一张图片并读出字节，供 QR 解码用。
+Future<Uint8List?> pickImageBytes() async {
+  final picker = ImagePicker();
+  final file = await picker.pickImage(source: ImageSource.gallery);
+  if (file == null) return null;
+  return await file.readAsBytes();
+}

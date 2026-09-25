@@ -1,10 +1,26 @@
+import 'dart:io';
 import 'dart:typed_data';
 
-import 'png_export_service_native.dart'
-    if (dart.library.html) 'png_export_service_web.dart' as impl;
+import 'package:share_plus/share_plus.dart';
 
-/// 导出一张 PNG：原生平台落临时盘并拉起系统分享，Web 走下载或 Web Share API。
+/// 导出一张 PNG：先落临时盘，再拉起系统分享面板。
 ///
-/// 返回原生平台上的落盘路径（用于分享能力缺失时提示用户），Web 返回 null。
-Future<String?> exportPng(Uint8List bytes, String fileName) =>
-    impl.exportPng(bytes, fileName);
+/// 返回落盘路径，供分享能力缺失时提示用户。Linux 与 Windows 10 RS5 之前
+/// 的 share_plus 不支持分享文件，会抛 UnimplementedError，此时文件仍在盘上。
+Future<String?> exportPng(Uint8List bytes, String fileName) async {
+  final file = File('${Directory.systemTemp.path}/$fileName');
+  await file.writeAsBytes(bytes);
+
+  try {
+    await SharePlus.instance.share(
+      ShareParams(
+        files: [XFile.fromData(bytes, name: fileName, mimeType: 'image/png')],
+        fileNameOverrides: [fileName],
+      ),
+    );
+  } on UnimplementedError {
+    // 该平台不支持分享文件，文件已落盘，返回路径即可。
+  }
+
+  return file.path;
+}

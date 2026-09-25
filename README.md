@@ -1,7 +1,7 @@
 # Ichino
 
 基于 QR Code 登录的 *某游戏* 客户端，Flutter 实现，覆盖
-Android / iOS / Web / Windows / macOS / Linux。
+Android / iOS / Windows / macOS / Linux。
 
 包名 `ichino`，应用标识 `dev.naominet.ichino`。
 
@@ -23,7 +23,6 @@ Android / iOS / Web / Windows / macOS / Linux。
 ```bash
 flutter pub get
 flutter run                      # 默认设备
-flutter run -d chrome            # Web
 flutter analyze                  # 需保持 0 error/warning
 flutter test
 ```
@@ -35,7 +34,6 @@ flutter build apk --release          # Android
 flutter build windows --release      # Windows（产物为 ichino.exe）
 flutter build macos --release        # macOS
 flutter build linux --release        # Linux
-flutter build web --release          # Web
 flutter build ios --release --no-codesign   # iOS（无证书时只验证可编译）
 ```
 
@@ -51,9 +49,9 @@ lib/
 └── widgets/             # 可复用视觉组件（B50 海报）
 ```
 
-平台相关代码用条件导入分离，形如 `xxx_service.dart` + `xxx_service_native.dart`
-+ `xxx_service_web.dart`（见 `qr_service`、`file_picker_service`、
-`png_export_service`、`music_data_cache`）。
+平台差异只体现在原生侧：QR 解码由 Android 的 `MainActivity` 与 iOS 的
+`SceneDelegate` 通过 `dev.naominet.ichino/qr_scanner` 这个 MethodChannel 提供，
+桌面平台没有该 handler，因此从图片识别二维码仅在移动端可用。
 
 ## 关键实现说明
 
