@@ -1,4 +1,7 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show SystemNavigator;
 
 import '../config/responsive.dart';
 import '../config/strings.dart';
@@ -169,6 +172,9 @@ class _HomePageState extends State<HomePage> {
     await _session.logoutGame(userId: widget.userId);
   }
 
+  /// 退登并回到主标题页。供 AppBar 的退出按钮与风险操作完成后的
+  /// onExitToTitle 使用——这两处都是「明确要回标题」，与主页上的
+  /// 系统返回手势不同（后者见 [_exitApp]）。
   Future<void> _performLogoutAndExit() async {
     setState(() => _loggingOut = true);
     if (_session.gameLogin != null) {
@@ -184,6 +190,13 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  /// 主页上的原生返回手势 = 结束应用。
+  void _exitApp() {
+    // iOS 不允许程序化退出，且根路由本来也没有返回手势。
+    if (Platform.isIOS) return;
+    SystemNavigator.pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -192,11 +205,13 @@ class _HomePageState extends State<HomePage> {
       listenable: _session,
       builder: (context, _) {
         return PopScope(
-          canPop: !_loggingOut,
+          // 根路由锁死在主页。之前 canPop 为 !_loggingOut（平时即 true），系统返回
+          // 手势会直接把 HomePage 弹掉、落回 Login Page，而且因为 didPop==true，
+          // 回调里的退登根本不会执行——既回错页面又没退登。
+          canPop: false,
           onPopInvokedWithResult: (didPop, _) {
-            if (!didPop && !_loggingOut) {
-              _performLogoutAndExit();
-            }
+            if (didPop || _loggingOut) return;
+            _exitApp();
           },
           child: Scaffold(
             appBar: AppBar(
