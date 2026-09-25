@@ -1,6 +1,6 @@
 # Ichino
 
-基于 QR Code 登录的 maimai DX 国服第三方客户端，Flutter 实现，覆盖
+基于 QR Code 登录的 *某游戏* 客户端，Flutter 实现，覆盖
 Android / iOS / Web / Windows / macOS / Linux。
 
 包名 `ichino`，应用标识 `dev.naominet.ichino`。
