@@ -23,6 +23,18 @@ bool isTablet(BuildContext context) =>
 bool isDesktop(BuildContext context) =>
     MediaQuery.of(context).size.width >= _breakpointDesktop;
 
+/// 把页面内容限制在响应式宽度内，并在宽窗口（桌面/横屏）下水平居中。
+/// 之前各页只有 ConstrainedBox 限宽，没有居中容器，1440 宽的窗口里内容
+/// 会贴左、右侧留出大片空白。
+Widget responsiveBody(BuildContext context, {required Widget child}) {
+  return Center(
+    child: ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: responsiveMaxWidth(context)),
+      child: child,
+    ),
+  );
+}
+
 /// Build columns for tablet/desktop — on phone, each item is full-width;
 /// on tablet+ they are laid out in [columns] columns.
 List<Widget> responsiveGrid({

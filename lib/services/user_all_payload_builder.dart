@@ -1,4 +1,5 @@
 import '../config/title_server_config.dart';
+import '../models/user_character.dart';
 import 'title_api_service.dart';
 
 /// Dart port of `eaquira/src/sdgb/payload.py::UserAll_payload` and
@@ -356,27 +357,46 @@ class UserAllPayloadBuilder {
     upsert['isNewItemList'] = List.filled(items.length, '1').join();
   }
 
-  /// Port of `music_user_all_patcher`: append unlock items
-  /// (itemKind 5=music, 6=master, 7=remaster) to the packet.
-  void applyMusicUnlockPatch(
+  /// 解锁歌曲/谱面时补一条 musicDetail 记录并标记为新增。
+  /// 难度本身由 userItemList 的 itemKind 5/6/7 行表达（见客户端
+  /// VOExtensions.ExportUserItems），不写在 musicDetail 上。
+  void applyMusicDetailPatch(
     Map<String, dynamic> packet, {
     required Map<String, dynamic> musicData,
-    required int musicId,
-    bool unlockMusic = false,
-    bool unlockMaster = false,
-    bool unlockRemaster = false,
   }) {
-    applyItemListPatch(packet, items: [
-      if (unlockMusic)
-        {'itemKind': 5, 'itemId': musicId, 'stock': 1, 'isValid': true},
-      if (unlockMaster)
-        {'itemKind': 6, 'itemId': musicId, 'stock': 1, 'isValid': true},
-      if (unlockRemaster)
-        {'itemKind': 7, 'itemId': musicId, 'stock': 1, 'isValid': true},
-    ]);
-
     final upsert = packet['upsertUserAll'] as Map<String, dynamic>;
     upsert['userMusicDetailList'] = [musicData];
     upsert['isNewMusicDetailList'] = '1';
+  }
+
+  /// 发放/更新旅行伙伴：写 `userCharacterList` 并按行数生成 `isNewCharacterList`。
+  /// 客户端 BuildListData 只发增量、每位一个字符，所以这里只放要新增的行。
+  void applyCharacterListPatch(
+    Map<String, dynamic> packet, {
+    required List<Map<String, dynamic>> characters,
+  }) {
+    final upsert = packet['upsertUserAll'] as Map<String, dynamic>;
+    upsert['userCharacterList'] = characters;
+    upsert['isNewCharacterList'] = List.filled(characters.length, '1').join();
+  }
+
+  /// 编组旅行伙伴：改 `userData[0].charaSlot`（int[5]，槽 0 为队长）。
+  /// 客户端 ExportUserPlaylog 用同一份 CharaSlot 填 playlog 的
+  /// characterId1..5，这里一起同步，避免 playlog 与 userData 互相矛盾。
+  void applyCharaSlotPatch(
+    Map<String, dynamic> packet, {
+    required List<int> charaSlot,
+  }) {
+    final slots = normalizeCharaSlot(charaSlot);
+    final upsert = packet['upsertUserAll'] as Map<String, dynamic>;
+    final userDataList = upsert['userData'] as List;
+    (userDataList.first as Map<String, dynamic>)['charaSlot'] = slots;
+
+    for (final raw in (packet['userPlaylogList'] as List)) {
+      final playlog = raw as Map<String, dynamic>;
+      for (var i = 0; i < 5; i++) {
+        playlog['characterId${i + 1}'] = slots[i];
+      }
+    }
   }
 }

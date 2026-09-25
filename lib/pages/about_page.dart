@@ -12,8 +12,8 @@ class AboutPage extends StatelessWidget {
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: responsiveMaxWidth(context)),
+      child: responsiveBody(
+        context,
         child: Column(
           children: [
             const SizedBox(height: 32),

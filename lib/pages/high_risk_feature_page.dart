@@ -6,6 +6,7 @@ import '../config/responsive.dart';
 import '../config/strings.dart';
 import '../config/title_server_config.dart';
 import 'collectibles_page.dart';
+import 'travel_partner_page.dart';
 import 'unlock_music_page.dart';
 
 /// 高危功能中转页：导航到 UnlockMusic (解锁歌曲) / 收藏品获取。
@@ -22,8 +23,8 @@ class HighRiskFeaturePage extends StatefulWidget {
   final int? loginId;
   final String? lastLoginDate;
 
-  /// 由 HomePage 负责发送 logout 包。
-  final Future<void> Function()? onLogoutRequested;
+  /// 完成后自动退出登录并返回标题页，由 HomePage 执行结算+退登+pop。
+  final Future<void> Function()? onExitToTitle;
 
   const HighRiskFeaturePage({
     super.key,
@@ -32,7 +33,7 @@ class HighRiskFeaturePage extends StatefulWidget {
     this.loginDateTime,
     this.loginId,
     this.lastLoginDate,
-    this.onLogoutRequested,
+    this.onExitToTitle,
   });
 
   @override
@@ -99,7 +100,7 @@ class _HighRiskFeaturePageState extends State<HighRiskFeaturePage> {
           loginDateTime: widget.loginDateTime,
           loginId: widget.loginId,
           lastLoginDate: widget.lastLoginDate,
-          onLogoutRequested: widget.onLogoutRequested,
+          onExitToTitle: widget.onExitToTitle,
         ),
       ),
     );
@@ -114,7 +115,21 @@ class _HighRiskFeaturePageState extends State<HighRiskFeaturePage> {
           loginDateTime: widget.loginDateTime,
           loginId: widget.loginId,
           lastLoginDate: widget.lastLoginDate,
-          onLogoutRequested: widget.onLogoutRequested,
+          onExitToTitle: widget.onExitToTitle,
+        ),
+      ),
+    );
+  }
+
+  void _openTravelPartner() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => TravelPartnerPage(
+          userId: widget.userId,
+          cookies: widget.cookies,
+          loginDateTime: widget.loginDateTime,
+          loginId: widget.loginId,
+          onExitToTitle: widget.onExitToTitle,
         ),
       ),
     );
@@ -144,8 +159,8 @@ class _HighRiskFeaturePageState extends State<HighRiskFeaturePage> {
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: responsiveMaxWidth(context)),
+      child: responsiveBody(
+        context,
         child: Column(
           children: [
             if (widget.loginDateTime == null) _buildNotLoggedInBanner(theme),
@@ -167,6 +182,14 @@ class _HighRiskFeaturePageState extends State<HighRiskFeaturePage> {
               title: AppStrings.collectiblesFeatureTitle,
               desc: AppStrings.collectiblesFeatureDesc,
               onTap: _openCollectibles,
+            ),
+            const SizedBox(height: 12),
+            _buildNavCard(
+              theme,
+              icon: Icons.workspace_premium_outlined,
+              title: AppStrings.travelPartnerFeatureTitle,
+              desc: AppStrings.travelPartnerFeatureDesc,
+              onTap: _openTravelPartner,
             ),
           ],
         ),

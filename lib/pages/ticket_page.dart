@@ -257,8 +257,8 @@ class _TicketPageState extends State<TicketPage> {
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: responsiveMaxWidth(context)),
+      child: responsiveBody(
+        context,
         child: Column(
           children: [
             if (widget.loginDateTime == null) _buildNotLoggedInBanner(theme),

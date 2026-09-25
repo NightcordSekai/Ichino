@@ -128,8 +128,9 @@ void main() {
               children: [
                 Expanded(
                   child: InteractiveViewer(
+                    constrained: false,
                     child: FittedBox(
-                      fit: BoxFit.contain,
+                      fit: BoxFit.fitWidth,
                       child: Best50Poster(
                         userName: 'Test Player',
                         iconId: 0,

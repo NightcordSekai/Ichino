@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import '../config/responsive.dart';
 import '../config/strings.dart';
 import '../config/title_server_config.dart';
 import '../models/user_rating.dart';
@@ -189,56 +190,80 @@ class _Best50PageState extends State<Best50Page> {
     return Scaffold(
       body: Column(
         children: [
-          if (!_musicReady)
-            _NoticeBanner(theme: theme, text: AppStrings.best50NoMusicData),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: SizedBox(
-              width: double.infinity,
-              child: FilledButton.icon(
-                onPressed: _exporting ? null : _export,
-                icon: _exporting
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.download, size: 20),
-                label: Text(
-                  _exporting
-                      ? AppStrings.best50Exporting
-                      : AppStrings.best50Export,
-                ),
-                style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+          responsiveBody(
+            context,
+            child: Column(
+              children: [
+                if (!_musicReady)
+                  _NoticeBanner(
+                    theme: theme,
+                    text: AppStrings.best50NoMusicData,
+                  ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: FilledButton.icon(
+                      onPressed: _exporting ? null : _export,
+                      icon: _exporting
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.download, size: 20),
+                      label: Text(
+                        _exporting
+                            ? AppStrings.best50Exporting
+                            : AppStrings.best50Export,
+                      ),
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-              ),
+              ],
             ),
           ),
           Expanded(
-            child: InteractiveViewer(
-              maxScale: 6,
-              boundaryMargin: const EdgeInsets.all(24),
-              // FittedBox 会按视口把固定尺寸的海报缩出来；它给子节点无限约束，
-              // 所以海报仍保持 1762x1850，RepaintBoundary 录到的也是原始尺寸
-              // （祖先变换不会被烘进边界里），导出不会糊。
-              child: FittedBox(
-                fit: BoxFit.contain,
-                alignment: Alignment.topCenter,
-                child: RepaintBoundary(
-                  key: _posterKey,
-                  child: Best50Poster(
-                    userName: widget.userName,
-                    iconId: widget.iconId,
-                    playerRating: widget.playerRating,
-                    best35: best35,
-                    best15: best15,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                // 按视口宽度适配：横屏/桌面下海报占满宽度、竖向拖动看全图，
+                // 而不是被 contain 缩成中间一小块、两侧大片空白。
+                // minScale 再允许缩到整张可见，导出仍是原始 1762x1850。
+                final fitWidth =
+                    constraints.maxWidth / Best50Poster.canvasWidth;
+                final scaledHeight = Best50Poster.canvasHeight * fitWidth;
+                final containScale = constraints.maxHeight / scaledHeight;
+                final minScale = containScale < 1 ? containScale : 1.0;
+
+                return InteractiveViewer(
+                  constrained: false,
+                  minScale: minScale,
+                  maxScale: minScale * 6,
+                  boundaryMargin: const EdgeInsets.all(24),
+                  child: FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: RepaintBoundary(
+                      key: _posterKey,
+                      child: Best50Poster(
+                        userName: widget.userName,
+                        iconId: widget.iconId,
+                        playerRating: widget.playerRating,
+                        best35: best35,
+                        best15: best15,
+                      ),
+                    ),
                   ),
-                ),
-              ),
+                );
+              },
             ),
           ),
         ],

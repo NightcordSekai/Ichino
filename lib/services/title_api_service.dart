@@ -9,6 +9,7 @@ import 'package:pointycastle/export.dart';
 
 import '../config/title_server_config.dart';
 import '../models/user_data.dart';
+import '../models/user_character.dart';
 import '../models/user_preview.dart';
 import '../models/user_rating.dart';
 
@@ -556,6 +557,16 @@ class TitleApiService {
     );
     final list = json['userCharacterList'] as List<dynamic>? ?? [];
     return list.map((e) => e as Map<String, dynamic>).toList();
+  }
+
+  /// 旅行伙伴（角色）列表，对应 UserCharacterResponseVO。
+  Future<List<UserCharacterBean>> getUserCharacters(int userId) async {
+    final json = await _callApi(
+      'GetUserCharacterApi',
+      {'userId': userId},
+      userId,
+    );
+    return UserCharacterBean.listFromResponse(json);
   }
 }
 

@@ -174,6 +174,19 @@ class AppStrings {
   static const unlockNeedMusicId = '请填写要解锁的歌曲 ID。';
   static const unlockNeedOption = '请至少勾选一项解锁内容。';
   static const unlockNotLoggedIn = '尚未登录游戏服务器，无法执行解锁操作。';
+
+  // 待提交列表 (userItemList 可累加多行)
+  static const listAddButton = '添加到列表';
+  static const listRemoveTooltip = '从列表移除';
+  static const listDuplicate = '该内容已在列表中。';
+  static const unlockPendingTitle = '待解锁列表';
+  static const collectiblesPendingTitle = '待获取列表';
+  static const unlockPendingEmpty = '列表为空，可在上方填写歌曲 ID 并勾选难度后添加。';
+  static const collectiblesPendingEmpty = '列表为空，可在上方选择类型与 ID 后添加。';
+  static const unlockNeedList = '请至少添加一首要解锁的歌曲。';
+  static const collectiblesNeedList = '请至少添加一项收藏品。';
+  static const autoLogoutAndExit = '完成后自动退出登录并返回标题页';
+  static const exitingToTitle = '正在退出登录并返回标题页...';
   static String unlockCooldownNotice(int remaining) =>
       '登录后需冷却 $ticketCooldownSeconds 秒，剩余 $remaining 秒后可执行解锁操作。';
   static const unlockFetchData = '拉取数据';
@@ -181,7 +194,6 @@ class AppStrings {
   static const unlockRefetch = '重新拉取';
   static const unlockNoData = '⚠️ 未拉取到用户数据，请先点「拉取数据」按钮获取。';
   static const unlockFetched = '数据已拉取';
-  static const unlockAutoLogout = '完成后自动退出登录';
   static const unlockMusicRun = '执行解锁';
   static const unlockRunning = '执行中...';
   static const unlockStepFetch = '拉取用户数据';
@@ -224,6 +236,39 @@ class AppStrings {
         return '$kind';
     }
   }
+
+  // TravelPartner 旅行伙伴 (ItemKind.Character = 9，走 userCharacterList)
+  static const travelPartnerFeatureTitle = '旅行伙伴';
+  static const travelPartnerFeatureDesc =
+      '发放旅行伙伴并编组出战槽位。角色走 userCharacterList（不是搭档 Partner=10，也不走 userItemList）。';
+  static const travelPartnerNotLoggedIn = '尚未登录游戏服务器，无法操作旅行伙伴。';
+  static String travelPartnerCooldownNotice(int remaining) =>
+      '登录后需冷却 $ticketCooldownSeconds 秒，剩余 $remaining 秒后可操作旅行伙伴。';
+  static const travelPartnerFetchData = '拉取角色数据';
+  static const travelPartnerFetching = '拉取中...';
+  static const travelPartnerRefetch = '重新拉取';
+  static const travelPartnerFetched = '角色数据已拉取';
+  static const travelPartnerNoData = '⚠️ 尚未拉取，请先获取角色与用户数据。';
+  static const travelPartnerOwnedTitle = '已拥有旅行伙伴';
+  static const travelPartnerOwnedEmpty = '还没有任何旅行伙伴。';
+  static const travelPartnerGrantTitle = '发放新的旅行伙伴';
+  static const travelPartnerGrantEmpty = '未添加待发放角色。';
+  static const travelPartnerCharacterIdLabel = '旅行伙伴 ID';
+  static const travelPartnerCharacterIdHint = '例如 1001';
+  static const travelPartnerNeedCharacterId = '请填写旅行伙伴 ID。';
+  static const travelPartnerAlreadyOwned = '该旅行伙伴已拥有，无需重复发放。';
+  static const travelPartnerSlotTitle = '编组出战槽位';
+  static const travelPartnerSlotNone = '空';
+  static String travelPartnerSlotLabel(int index) =>
+      index == 0 ? '槽 0（队长）' : '槽 $index';
+  static const travelPartnerCopySlot0 = '把槽 0 复制到其他槽位';
+  static const travelPartnerCopyNeedSlot0 = '槽 0 还没有选择旅行伙伴。';
+  static const travelPartnerNotOwnedHint = '编组失败：你并不拥有该旅行伙伴。';
+  static const travelPartnerRun = '执行旅行伙伴操作';
+  static const travelPartnerRunning = '执行中...';
+  static const travelPartnerSuccess = '旅行伙伴数据上传完成';
+  static const travelPartnerStepFetch = '拉取角色与用户数据';
+  static const travelPartnerStepUpload = '上传旅行伙伴数据';
 
   // HighRiskFeature hub (中转页)
   static const musicRiskHubTitle = '高危功能';

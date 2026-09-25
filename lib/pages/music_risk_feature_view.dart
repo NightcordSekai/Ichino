@@ -25,6 +25,39 @@ enum MusicRiskFeatureMode {
   collectibles,
 }
 
+/// 一行待提交的收藏品道具（对应 wire 上的 UserItem）。
+class _PendingItem {
+  final int kind;
+  final int id;
+
+  const _PendingItem(this.kind, this.id);
+}
+
+/// 一行待提交的歌曲解锁，展开成 itemKind 5/6/7 的若干行。
+class _PendingMusic {
+  final int musicId;
+  final bool base;
+  final bool master;
+  final bool remaster;
+
+  const _PendingMusic(this.musicId, this.base, this.master, this.remaster);
+
+  bool get hasAnyOption => base || master || remaster;
+
+  /// 难度由 itemKind 表达，不写在 musicDetail 上。
+  List<int> get itemKinds => [
+    if (base) 5,
+    if (master) 6,
+    if (remaster) 7,
+  ];
+
+  String get optionLabel => [
+    if (base) '歌曲',
+    if (master) 'Master',
+    if (remaster) 'Re:Master',
+  ].join('/');
+}
+
 class MusicRiskFeatureView extends StatefulWidget {
   final int userId;
   final String? cookies;
@@ -37,8 +70,9 @@ class MusicRiskFeatureView extends StatefulWidget {
   final int? loginId;
   final String? lastLoginDate;
 
-  /// 当用户勾选"完成后自动退出登录"时，由 HomePage 负责发送 logout 包。
-  final Future<void> Function()? onLogoutRequested;
+  /// 完成后自动退出登录并返回标题页时调用；由 HomePage 提供，
+  /// 内部会等待结算、发 UserLogoutApi、重置会话并 pop 回主标题。
+  final Future<void> Function()? onExitToTitle;
 
   final MusicRiskFeatureMode mode;
   final String featureTitle;
@@ -51,7 +85,7 @@ class MusicRiskFeatureView extends StatefulWidget {
     this.loginDateTime,
     this.loginId,
     this.lastLoginDate,
-    this.onLogoutRequested,
+    this.onExitToTitle,
     this.mode = MusicRiskFeatureMode.unlockMusic,
     required this.featureTitle,
     required this.featureDesc,
@@ -75,12 +109,19 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView> {
   final _itemIdController = TextEditingController();
   int _itemKind = 3;
 
+  // ── 待提交列表：userItemList 可以一次带多行 ──
+  // 真客户端的 ExportUserItems() 就是把 Plate/Title/Icon/Partner/Frame/Ticket 与
+  // MusicUnlock/Master/Remaster 各列表拼成多行 UserItem，BuildListData 再只发增量、
+  // isNewItemList 一行一个字符。所以多行同类/异类混发是客户端自己的做法。
+  final List<_PendingItem> _pendingItems = [];
+  final List<_PendingMusic> _pendingMusics = [];
+
   // ── 运行状态 ──
   Map<String, Map<String, dynamic>>? _userAllData;
   bool _fetching = false;
   String? _fetchError;
   bool _running = false;
-  bool _autoLogout = false;
+  bool _autoLogout = true;
   MusicRiskStep _step = MusicRiskStep.idle;
   String _stepMessage = '';
   String? _error;
@@ -153,10 +194,63 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView> {
 
   int _itemId() => int.tryParse(_itemIdController.text.trim()) ?? -1;
 
+  void _snack(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  /// 把当前输入框里的收藏品加入待提交列表。
+  void _addItemToList() {
+    final id = _itemId();
+    if (id <= 0) {
+      _snack(AppStrings.collectiblesNeedItemId);
+      return;
+    }
+    if (_pendingItems.any((e) => e.kind == _itemKind && e.id == id)) {
+      _snack(AppStrings.listDuplicate);
+      return;
+    }
+    setState(() {
+      _pendingItems.add(_PendingItem(_itemKind, id));
+      _itemIdController.clear();
+    });
+  }
+
+  /// 把当前输入框里的歌曲+勾选的难度加入待解锁列表。
+  void _addMusicToList() {
+    final id = _unlockMusicId();
+    if (id <= 0) {
+      _snack(AppStrings.unlockNeedMusicId);
+      return;
+    }
+    if (!_unlockMusic && !_unlockMaster && !_unlockRemaster) {
+      _snack(AppStrings.unlockNeedOption);
+      return;
+    }
+    if (_pendingMusics.any((e) => e.musicId == id)) {
+      _snack(AppStrings.listDuplicate);
+      return;
+    }
+    setState(() {
+      _pendingMusics.add(
+        _PendingMusic(id, _unlockMusic, _unlockMaster, _unlockRemaster),
+      );
+      _unlockMusicIdController.clear();
+      _unlockMusic = _unlockMaster = _unlockRemaster = false;
+    });
+  }
+
   /// eaquira UnlockMusic.py 使用 settings 中的默认 musicData。
+  /// 解锁状态本身由 userItemList 的 itemKind 5/6/7 行表达，这里只保留一条
+  /// 记录以维持 payload 形状，取列表首条歌曲 ID。
   Map<String, dynamic> _buildMusicData() {
     return {
-      'musicId': _isUnlock ? _unlockMusicId() : _defaultMusicId,
+      'musicId': _isUnlock
+          ? (_pendingMusics.isNotEmpty
+                ? _pendingMusics.first.musicId
+                : _defaultMusicId)
+          : _defaultMusicId,
       'level': 0,
       'playCount': 1,
       'achievement': 0,
@@ -168,16 +262,38 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView> {
     };
   }
 
+  /// 汇总成 wire 上的 userItemList 行。
+  List<Map<String, dynamic>> _buildUserItemList() {
+    if (_isUnlock) {
+      return [
+        for (final music in _pendingMusics)
+          for (final kind in music.itemKinds)
+            {
+              'itemKind': kind,
+              'itemId': music.musicId,
+              'stock': 1,
+              'isValid': true,
+            },
+      ];
+    }
+    return [
+      for (final item in _pendingItems)
+        {
+          'itemKind': item.kind,
+          'itemId': item.id,
+          'stock': 1,
+          'isValid': true,
+        },
+    ];
+  }
+
   String? _validateInputs() {
     if (_isUnlock) {
-      if (_unlockMusicId() <= 0) return AppStrings.unlockNeedMusicId;
-      if (!_unlockMusic && !_unlockMaster && !_unlockRemaster) {
-        return AppStrings.unlockNeedOption;
-      }
+      if (_pendingMusics.isEmpty) return AppStrings.unlockNeedList;
       return null;
     }
 
-    if (_itemId() <= 0) return AppStrings.collectiblesNeedItemId;
+    if (_pendingItems.isEmpty) return AppStrings.collectiblesNeedList;
     return null;
   }
 
@@ -264,28 +380,12 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView> {
         generalUserInfo: data,
       );
 
+      builder.applyItemListPatch(packet, items: _buildUserItemList());
       if (_isUnlock) {
-        builder.applyMusicUnlockPatch(
-          packet,
-          musicData: musicData,
-          musicId: _unlockMusicId(),
-          unlockMusic: _unlockMusic,
-          unlockMaster: _unlockMaster,
-          unlockRemaster: _unlockRemaster,
-        );
-      } else {
-        builder.applyItemListPatch(packet, items: [
-          {'itemKind': _itemKind, 'itemId': _itemId(), 'stock': 1, 'isValid': true},
-        ]);
+        builder.applyMusicDetailPatch(packet, musicData: musicData);
       }
 
       await service.upsertUserAll(packet, widget.userId);
-
-      if (_autoLogout && widget.onLogoutRequested != null) {
-        _updateStep(MusicRiskStep.logout);
-        await Future.delayed(const Duration(seconds: 5));
-        await widget.onLogoutRequested!();
-      }
 
       _updateStep(
         MusicRiskStep.complete,
@@ -293,6 +393,14 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView> {
             ? AppStrings.unlockMusicSuccess
             : AppStrings.collectiblesSuccess,
       );
+
+      if (_autoLogout && widget.onExitToTitle != null) {
+        // 让成功状态先显示一下，再交给 HomePage 结算、退登并 pop 回主标题。
+        await Future.delayed(const Duration(seconds: 2));
+        if (!mounted) return;
+        _updateStep(MusicRiskStep.logout, AppStrings.exitingToTitle);
+        await widget.onExitToTitle!();
+      }
     } on TitleApiException catch (e) {
       _updateStep(MusicRiskStep.failed, e.message);
       setState(() => _error = e.message);
@@ -336,8 +444,8 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView> {
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: responsiveMaxWidth(context)),
+      child: responsiveBody(
+        context,
         child: Column(
           children: [
             if (widget.loginDateTime == null) _buildNotLoggedInBanner(theme),
@@ -512,9 +620,104 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView> {
               enabled: enabled,
               onChanged: (v) => setState(() => _unlockRemaster = v),
             ),
+            const SizedBox(height: 8),
+            _buildAddButton(theme, onPressed: enabled ? _addMusicToList : null),
+            _buildPendingList(
+              theme,
+              title: AppStrings.unlockPendingTitle,
+              emptyHint: AppStrings.unlockPendingEmpty,
+              count: _pendingMusics.length,
+              rows: [
+                for (var i = 0; i < _pendingMusics.length; i++)
+                  _buildPendingRow(
+                    theme,
+                    leading: '#${_pendingMusics[i].musicId}',
+                    trailing: _pendingMusics[i].optionLabel,
+                    onRemove: () => setState(() => _pendingMusics.removeAt(i)),
+                  ),
+              ],
+            ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildAddButton(ThemeData theme, {VoidCallback? onPressed}) {
+    return SizedBox(
+      width: double.infinity,
+      child: OutlinedButton.icon(
+        onPressed: onPressed,
+        icon: const Icon(Icons.add, size: 18),
+        label: const Text(AppStrings.listAddButton),
+        style: OutlinedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPendingList(
+    ThemeData theme, {
+    required String title,
+    required String emptyHint,
+    required int count,
+    required List<Widget> rows,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 14),
+        Text(
+          '$title ($count)',
+          style: theme.textTheme.labelLarge?.copyWith(
+            color: theme.colorScheme.primary,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 6),
+        if (count == 0)
+          Text(
+            emptyHint,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          )
+        else
+          ...rows,
+      ],
+    );
+  }
+
+  Widget _buildPendingRow(
+    ThemeData theme, {
+    required String leading,
+    required String trailing,
+    required VoidCallback onRemove,
+  }) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            '$leading  $trailing',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: theme.textTheme.bodySmall?.copyWith(
+              fontFamily: 'monospace',
+            ),
+          ),
+        ),
+        IconButton(
+          icon: const Icon(Icons.close, size: 18),
+          tooltip: AppStrings.listRemoveTooltip,
+          onPressed: _running ? null : onRemove,
+          color: theme.colorScheme.onSurfaceVariant,
+          visualDensity: VisualDensity.compact,
+        ),
+      ],
     );
   }
 
@@ -594,6 +797,24 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView> {
                 ),
                 contentPadding: const EdgeInsets.all(14),
               ),
+            ),
+            const SizedBox(height: 8),
+            _buildAddButton(theme, onPressed: enabled ? _addItemToList : null),
+            _buildPendingList(
+              theme,
+              title: AppStrings.collectiblesPendingTitle,
+              emptyHint: AppStrings.collectiblesPendingEmpty,
+              count: _pendingItems.length,
+              rows: [
+                for (var i = 0; i < _pendingItems.length; i++)
+                  _buildPendingRow(
+                    theme,
+                    leading:
+                        '${AppStrings.collectiblesItemKindName(_pendingItems[i].kind)} (${_pendingItems[i].kind})',
+                    trailing: '#${_pendingItems[i].id}',
+                    onRemove: () => setState(() => _pendingItems.removeAt(i)),
+                  ),
+              ],
             ),
           ],
         ),
@@ -693,7 +914,7 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView> {
   }
 
   Widget _buildAutoLogoutToggle(ThemeData theme) {
-    final enabled = widget.onLogoutRequested != null && !_running;
+    final enabled = widget.onExitToTitle != null && !_running;
     return InkWell(
       borderRadius: BorderRadius.circular(10),
       onTap: enabled
@@ -712,7 +933,7 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView> {
             ),
             Expanded(
               child: Text(
-                AppStrings.unlockAutoLogout,
+                AppStrings.autoLogoutAndExit,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: enabled
                       ? null

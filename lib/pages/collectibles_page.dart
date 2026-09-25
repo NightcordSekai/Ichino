@@ -13,7 +13,7 @@ class CollectiblesPage extends StatelessWidget {
   final int? loginDateTime;
   final int? loginId;
   final String? lastLoginDate;
-  final Future<void> Function()? onLogoutRequested;
+  final Future<void> Function()? onExitToTitle;
 
   const CollectiblesPage({
     super.key,
@@ -22,7 +22,7 @@ class CollectiblesPage extends StatelessWidget {
     this.loginDateTime,
     this.loginId,
     this.lastLoginDate,
-    this.onLogoutRequested,
+    this.onExitToTitle,
   });
 
   @override
@@ -37,7 +37,7 @@ class CollectiblesPage extends StatelessWidget {
         loginDateTime: loginDateTime,
         loginId: loginId,
         lastLoginDate: lastLoginDate,
-        onLogoutRequested: onLogoutRequested,
+        onExitToTitle: onExitToTitle,
         mode: MusicRiskFeatureMode.collectibles,
         featureTitle: AppStrings.collectiblesFeatureTitle,
         featureDesc: AppStrings.collectiblesFeatureDesc,

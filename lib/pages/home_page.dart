@@ -177,7 +177,10 @@ class _HomePageState extends State<HomePage> {
     }
     _session.reset();
     if (mounted) {
-      Navigator.of(context).pop();
+      // 解锁/收藏品/旅行伙伴这些页是 push 在 HomePage 之上的，只 pop() 一层会
+      // 退回「风险」hub，而此时 _loggingOut 仍为 true，PopScope(canPop:false) +
+      // 返回键转圈 = 卡死。必须一路 pop 回根路由（主标题）。
+      Navigator.of(context).popUntil((route) => route.isFirst);
     }
   }
 
@@ -233,8 +236,8 @@ class _HomePageState extends State<HomePage> {
                   loginDateTime: _session.gameLogin?.loginDateTime,
                   loginId: _session.gameLogin?.loginId,
                   lastLoginDate: _session.gameLogin?.lastLoginDate,
-                  onLogoutRequested:
-                      _session.gameLogin != null ? _logoutSession : null,
+                  onExitToTitle:
+                      _session.gameLogin != null ? _performLogoutAndExit : null,
                 ),
                 SettingsPage(showAppBar: false),
                 const AboutPage(),
@@ -357,8 +360,8 @@ class _HomePageState extends State<HomePage> {
   }) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: responsiveMaxWidth(context)),
+      child: responsiveBody(
+        context,
         child: Column(
           children: [
             if (preview.errorId != 0) _ErrorIdBanner(theme: theme, errorId: preview.errorId),
@@ -429,8 +432,8 @@ class _HomePageState extends State<HomePage> {
   ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxWidth: responsiveMaxWidth(context)),
+      child: responsiveBody(
+        context,
         child: Column(
           children: [
             _ProfileFromUserDataCard(theme: theme, data: data),

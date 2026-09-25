@@ -74,8 +74,8 @@ class ConfigExportImportPage extends StatelessWidget {
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: responsiveMaxWidth(context)),
+          child: responsiveBody(
+            context,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -11,7 +11,7 @@ class UnlockMusicPage extends StatelessWidget {
   final int? loginDateTime;
   final int? loginId;
   final String? lastLoginDate;
-  final Future<void> Function()? onLogoutRequested;
+  final Future<void> Function()? onExitToTitle;
 
   const UnlockMusicPage({
     super.key,
@@ -20,7 +20,7 @@ class UnlockMusicPage extends StatelessWidget {
     this.loginDateTime,
     this.loginId,
     this.lastLoginDate,
-    this.onLogoutRequested,
+    this.onExitToTitle,
   });
 
   @override
@@ -35,7 +35,7 @@ class UnlockMusicPage extends StatelessWidget {
         loginDateTime: loginDateTime,
         loginId: loginId,
         lastLoginDate: lastLoginDate,
-        onLogoutRequested: onLogoutRequested,
+        onExitToTitle: onExitToTitle,
         mode: MusicRiskFeatureMode.unlockMusic,
         featureTitle: AppStrings.unlockFeatureTitle,
         featureDesc: AppStrings.unlockFeatureDesc,

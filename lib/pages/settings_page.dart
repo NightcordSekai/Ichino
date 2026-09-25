@@ -107,8 +107,8 @@ class _SettingsPageState extends State<SettingsPage> {
           : null,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: responsiveMaxWidth(context)),
+        child: responsiveBody(
+          context,
           child: Form(
             key: _formKey,
             child: Column(
