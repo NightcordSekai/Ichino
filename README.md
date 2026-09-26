@@ -15,7 +15,7 @@ Android / iOS / Windows / macOS / Linux。
 | 主页 | Aime 登录（QR / 令牌）、Rating 详情、入坑信息、游玩统计、状态 |
 | 票据 | 功能票查询与使用 |
 | B50 | Best 50 成绩图，可导出 PNG（移植自 Empurple 的 `Best50ImageRenderer`） |
-| 风险 | 歌曲解锁、收藏品获取、旅行伙伴发放与编组 |
+| 风险 | 歌曲解锁、收藏品获取、旅行伙伴发放与编组（含等级）、修改总 Rating、添加舞里程、一键跑图、万花筒专区 |
 | 设置 | Title Server / Auth Server / 机器参数，支持配置导入导出 |
 
 ## 开发
@@ -65,6 +65,51 @@ lib/
   `upsertUserAll.userCharacterList`（`{characterId, level, awakening, useCount}`）；
   搭档是 `ItemKind.Partner = 10`，走 `userItemList`。出战编组是
   `UserDetail.charaSlot`（`int[5]`，槽 0 为队长）。
+- **角色 ID 必须在机台的 Chara 表里**：合法 ID 是三位数（101-105 / 201-205 /
+  301-306 / 392-395 / 401-405 / 501-505 / 601-605，取自客户端
+  `PlInformationProcess.AddDefaultCharacter`），不是四位数的 `1001`。填了表里
+  没有的 ID，服务器照样返回 `returnCode: 1`，但客户端 `CharacterSelectProces`
+  会静默跳过，游戏里看起来就是「加不上」。因此上传后会复查
+  `GetUserCharacterApi`，用来区分「服务器没写入」与「写入了但机台不认这个 ID」。
+  角色的 `awakening` 由客户端从 `level` 反推（`UserChara.CalcLevelToAwake`），
+  读回时并不取服务端值。
+- **舞里程 = `UserDetail.point`**（余额），`totalPoint` 是累计获得量。客户端只在
+  「获得」时钳到 99999（`UserDetail.AddMile`），商店扣款走不带钳位的
+  `Point -= cost`，展示是裸的 `num.ToString()`，所以直接写更大的值不会被覆回。
+  取值是整个 int32 区间 `-2147483648 ~ 2147483647`——同 `playSpecial` 那次一样，
+  超出 C# `int` 会让服务器反序列化失败并回 500。允许负值，所以累加模式填负数
+  就是扣里程。
+- **总 Rating 只改两处**：`userData.playerRating` 与 `userRating.rating`，取值钳在
+  `0 ~ 99999`。`ratingList` / `newRatingList` 里每首歌各自的 Rating 原样带回，
+  不重排也不改值。占位 playlog 的 `before/afterRating`（及 `DeluxRating`）一起对齐成
+  新写的值，否则存档里那条记录与 `playerRating` 自相矛盾。
+- **万花筒的门和钥匙在同一行**：`upsertUserAll.userKaleidxScopeList`，
+  `UserKaleidxScope` 共 15 个字段、主键 `gateId`，「发现门」是 `isGateFound`、
+  「获取钥匙」是 `isKeyFound`。钥匙**不走** `userItemList`——`ExportUserItems`
+  从不输出 itemKind 15，下行也没有读它的路径；`15000000 + keyId` 只是 present
+  ID 的编码段位。
+  客户端状态机（`KaleidxScopeGateListController.cs:144-159`）里
+  `!isGateFound && isKeyFound` 判的是 **AnimState.None（隐形）**，不是「锁着的门」，
+  所以给钥匙必须连带把门标为已发现；`found && !key` 才是可见未解锁。
+  又因为上行是**整行替换**，页面上会先 `GetUserKaleidxScopeApi` 读回原行、
+  只叠加那两个布尔位再发出去，否则 best 成绩 / `playCount` / 日期会被清零。
+  合法 `gateId` 只存在于机台的 `KaleidxScopeGate.xml`，代码里除了
+  `ForceAddMasterKey` 写死的 `gateId = 7`（万能钥匙门）以外没有任何清单，
+  而且还要该门绑定的活动处于开启状态才会显示。
+- **旅行伙伴等级**：真实等级区间 `1 ~ 999999`，界面显示的等级是 `level % 10000`、
+  转生次数是 `level ~/ 10000`，所以 `999999` = 99 转生 + 9999 级。给已有角色改等级要发
+  `isNewCharacterList` 对应位为 `'0'` 的更新行（`'1'` 是插入），且必须带上原有
+  `useCount`，否则整行覆盖会把使用次数清零。
+- **一键跑图只发得动「完成态」**：区域进度是 `upsertUserAll.userMapList`，行结构
+  `{mapId, distance, isLock, isClear, isComplete, unlockFlag}`，主键 mapId。
+  `isClear` / `isComplete` 在客户端是从 `distance` 派生的
+  （`MapMaster.CreateUserDataMapList` 拿 distance 与该区域的 ReleaseFlag / End
+  里程针比较，没有对应针时甚至强制写回 false），所以单发 flag 下次进区域选择页就被冲掉；
+  这里把 `distance` 直接推到 `UserMapData.MaxDistance = 999999999`。`unlockFlag`
+  语义是反的（`IsFinishedOpening ? 0 : 1`，取 0 才是已开启），`isLock` 客户端根本不回读。
+  **该区域的收藏品发不了**：`区域 → 宝藏 → 物品` 的对应关系在机台的 `Map.xml` /
+  `MapTreasure.xml` 里（`DataManager.LoadMaps` / `LoadMapTresures` 从本地数据目录读，
+  不经 title server），App 没有这份表，页面里也明写了这个限制。
 
 ## 构建环境注意事项
 

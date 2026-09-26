@@ -6,11 +6,14 @@ import '../config/responsive.dart';
 import '../config/strings.dart';
 import '../config/title_server_config.dart';
 import 'collectibles_page.dart';
+import 'kaleidx_scope_page.dart';
+import 'map_traverse_page.dart';
+import 'number_patch_page.dart';
 import 'travel_partner_page.dart';
 import 'unlock_music_page.dart';
 
-/// 高危功能中转页：导航到 UnlockMusic (解锁歌曲) / 收藏品获取。
-/// 两个 feature 互相独立，各自的执行流程互不影响。
+/// 高危功能中转页：导航到解锁歌曲 / 收藏品获取 / 旅行伙伴 / 数值修改。
+/// 各 feature 互相独立，执行流程互不影响。
 class HighRiskFeaturePage extends StatefulWidget {
   final int userId;
   final String? cookies;
@@ -135,6 +138,49 @@ class _HighRiskFeaturePageState extends State<HighRiskFeaturePage> {
     );
   }
 
+  void _openNumberPatch(NumberPatchMode mode) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => NumberPatchPage(
+          userId: widget.userId,
+          cookies: widget.cookies,
+          loginDateTime: widget.loginDateTime,
+          loginId: widget.loginId,
+          onExitToTitle: widget.onExitToTitle,
+          mode: mode,
+        ),
+      ),
+    );
+  }
+
+  void _openMapTraverse() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => MapTraversePage(
+          userId: widget.userId,
+          cookies: widget.cookies,
+          loginDateTime: widget.loginDateTime,
+          loginId: widget.loginId,
+          onExitToTitle: widget.onExitToTitle,
+        ),
+      ),
+    );
+  }
+
+  void _openKaleidxScope() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => KaleidxScopePage(
+          userId: widget.userId,
+          cookies: widget.cookies,
+          loginDateTime: widget.loginDateTime,
+          loginId: widget.loginId,
+          onExitToTitle: widget.onExitToTitle,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -190,6 +236,38 @@ class _HighRiskFeaturePageState extends State<HighRiskFeaturePage> {
               title: AppStrings.travelPartnerFeatureTitle,
               desc: AppStrings.travelPartnerFeatureDesc,
               onTap: _openTravelPartner,
+            ),
+            const SizedBox(height: 12),
+            _buildNavCard(
+              theme,
+              icon: Icons.speed,
+              title: AppStrings.ratingFeatureTitle,
+              desc: AppStrings.ratingFeatureDesc,
+              onTap: () => _openNumberPatch(NumberPatchMode.rating),
+            ),
+            const SizedBox(height: 12),
+            _buildNavCard(
+              theme,
+              icon: Icons.commute,
+              title: AppStrings.maiMileFeatureTitle,
+              desc: AppStrings.maiMileFeatureDesc,
+              onTap: () => _openNumberPatch(NumberPatchMode.maiMile),
+            ),
+            const SizedBox(height: 12),
+            _buildNavCard(
+              theme,
+              icon: Icons.map_outlined,
+              title: AppStrings.mapFeatureTitle,
+              desc: AppStrings.mapFeatureDesc,
+              onTap: _openMapTraverse,
+            ),
+            const SizedBox(height: 12),
+            _buildNavCard(
+              theme,
+              icon: Icons.science_outlined,
+              title: AppStrings.kaleidxFeatureTitle,
+              desc: AppStrings.kaleidxFeatureDesc,
+              onTap: _openKaleidxScope,
             ),
           ],
         ),

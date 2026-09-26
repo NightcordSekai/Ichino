@@ -254,13 +254,38 @@ class AppStrings {
   static const travelPartnerGrantTitle = '发放新的旅行伙伴';
   static const travelPartnerGrantEmpty = '未添加待发放角色。';
   static const travelPartnerCharacterIdLabel = '旅行伙伴 ID';
-  static const travelPartnerCharacterIdHint = '例如 1001';
+  static const travelPartnerCharacterIdHint = '例如 101';
   static const travelPartnerNeedCharacterId = '请填写旅行伙伴 ID。';
   static const travelPartnerAlreadyOwned = '该旅行伙伴已拥有，无需重复发放。';
+
+  static const travelPartnerIdRangeTitle = '角色 ID 对照';
+  static const travelPartnerIdRangeBody =
+      '101-105 · 201-205 · 301-306 · 392-395 · 401-405 · 501-505 · 601-605\n'
+      '编号按颜色分段，每段内递增。这个表取自客户端内置的默认发放清单，机台的 '
+      'Chara.xml 可能更多。\n\n'
+      'ID 不在机台表里时服务器照样保存，但客户端 CharacterSelectProces 会静默跳过，'
+      '游戏里就是「加不上」。';
+  static const travelPartnerIdUnknown = '该 ID 不在已知的默认角色清单里，机台表里也可能有，注意确认。';
+
+  // 上传后复查 GetUserCharacterApi，用来区分「服务器没存」和「存了但游戏不显示」
+  static String travelPartnerVerified(int count) =>
+      '旅行伙伴数据上传完成，复查 GetUserCharacterApi 已确认服务器保存了 $count 个角色。'
+      '若游戏里仍看不到，说明这些 ID 不在机台的 Chara 表里。';
+  static String travelPartnerNotSaved(String ids) =>
+      '数据包已被接受，但复查时服务器上没有 #$ids —— '
+      '服务器没有写入 upsertUserAll.userCharacterList。';
+  static String travelPartnerVerifyFailed(String error) =>
+      '旅行伙伴数据上传完成，但复查角色列表失败，无法确认是否写入：$error';
+
   static const travelPartnerSlotTitle = '编组出战槽位';
   static const travelPartnerSlotNone = '空';
   static String travelPartnerSlotLabel(int index) =>
       index == 0 ? '槽 0（队长）' : '槽 $index';
+  static const travelPartnerLevelLabel = '等级（留空不改）';
+  static const travelPartnerLevelHint = '1 ~ 999999';
+  static const travelPartnerLevelInvalid = '旅行伙伴等级需要在 1 ~ 999999 之间。';
+  static String travelPartnerLevelConverted(int realLevel) =>
+      '真实等级 $realLevel = ${realLevel ~/ 10000} 转生 + ${realLevel % 10000} 级';
   static const travelPartnerCopySlot0 = '把槽 0 复制到其他槽位';
   static const travelPartnerCopyNeedSlot0 = '槽 0 还没有选择旅行伙伴。';
   static const travelPartnerNotOwnedHint = '编组失败：你并不拥有该旅行伙伴。';
@@ -269,6 +294,124 @@ class AppStrings {
   static const travelPartnerSuccess = '旅行伙伴数据上传完成';
   static const travelPartnerStepFetch = '拉取角色与用户数据';
   static const travelPartnerStepUpload = '上传旅行伙伴数据';
+
+  // MapTraveller 一键跑图（UserMap 走 userMapList，收藏品另走 userItemList）
+  static const mapFeatureTitle = '一键跑图';
+  static const mapFeatureDesc =
+      '把区域标记为已完成。isClear / isComplete 在客户端是从 distance 派生的，'
+      '所以这里把 distance 直接推到 999999999（UserMapData.MaxDistance），'
+      '超过任何一张图的 End 里程针，状态才不会被下一次进区域选择页冲掉。';
+  static const mapNotLoggedIn = '尚未登录游戏服务器，无法操作区域进度。';
+  static String mapCooldownNotice(int remaining) =>
+      '登录后需冷却 $ticketCooldownSeconds 秒，剩余 $remaining 秒后可操作区域进度。';
+  static const mapIdLabel = '区域 ID';
+  static const mapIdHint = '例如 550001';
+  static const mapNeedMapId = '请填写要标记完成的区域 ID。';
+  static const mapPendingEmpty = '列表为空，可在上方填写区域 ID 后添加。';
+  static const mapRun = '标记区域已完成';
+  static const mapRunning = '执行中...';
+  static const mapStepFetch = '拉取区域进度';
+  static const mapStepUpload = '上传区域进度';
+  static const mapFetchData = '拉取区域数据';
+  static const mapFetched = '区域数据已拉取';
+  static const mapNoData = '⚠️ 尚未拉取区域进度。';
+  static String mapCompleted(int mapId) => '区域 #$mapId 已标记为完成';
+  static String mapVerified(int count) =>
+      '上传完成，复查 GetUserMapApi 已确认 $count 个区域的进度被保存。'
+      '若游戏里区域仍显示未解锁，多半是 distance 还不够或该 mapId 不在机台表里。';
+  static String mapNotSaved(String ids) =>
+      '数据包已被接受，但复查时服务器上没有 #$ids 的完成记录 —— '
+      '服务器没有写入 upsertUserAll.userMapList。';
+  static String mapVerifyFailed(String error) =>
+      '上传完成，但复查区域进度失败，无法确认是否写入：$error';
+  static const mapCollectiblesNotice =
+      '只标记完成，不发放该区域的收藏品——对应关系在机台的 Map.xml / '
+      'MapTreasure.xml 里，App 拿不到。要收藏品请用「收藏品获取」。';
+
+  // Kaleidoscope 万花筒专区（UserKaleidxScope 走 userKaleidxScopeList）
+  static const kaleidxFeatureTitle = '万花筒专区';
+  static const kaleidxFeatureDesc =
+      '发现新的宿命之门、获取门的钥匙。两者都是 userKaleidxScopeList 里同一行的 '
+      'isGateFound / isKeyFound，钥匙不走 userItemList。每行是整行替换，'
+      '所以上传前会先读回原行的成绩与日期再合并。';
+  static const kaleidxNotLoggedIn = '尚未登录游戏服务器，无法操作万花筒。';
+  static String kaleidxCooldownNotice(int remaining) =>
+      '登录后需冷却 $ticketCooldownSeconds 秒，剩余 $remaining 秒后可操作万花筒。';
+  static const kaleidxGateIdLabel = '门 ID (gateId)';
+  static const kaleidxGateIdHint = '例如 3';
+  static const kaleidxNeedGateId = '请填写门 ID。';
+  static const kaleidxNeedAction = '请至少勾选一项：发现门或获取钥匙。';
+  static const kaleidxPendingEmpty = '列表为空，可在上方填写门 ID 后添加。';
+  static const kaleidxActionDiscover = '发现门 (isGateFound)';
+  static const kaleidxActionKey = '获取钥匙 (isKeyFound)';
+  static const kaleidxKeyNeedsGate =
+      '只给钥匙不给门的话这扇门是隐形的（客户端状态机把 !found && key 判为 None），'
+      '所以勾了钥匙会连带把门标为已发现。';
+  static const kaleidxRun = '执行万花筒操作';
+  static const kaleidxRunning = '执行中...';
+  static const kaleidxStepFetch = '拉取万花筒进度';
+  static const kaleidxStepUpload = '上传万花筒进度';
+  static const kaleidxFetchData = '拉取门进度';
+  static const kaleidxFetched = '门进度已拉取';
+  static const kaleidxNoData = '⚠️ 尚未拉取门进度，无法合并原行字段。';
+  static const kaleidxGateIdDuplicated = '同一扇门只能出现一次。';
+  static String kaleidxVerified(int count) =>
+      '上传完成，复查 GetUserKaleidxScopeApi 已确认 $count 扇门的状态被保存。'
+      '若游戏里仍看不到，说明这个 gateId 不在机台的 KaleidxScopeGate.xml 里，'
+      '或它绑定的活动没在开。';
+  static String kaleidxNotSaved(String ids) =>
+      '数据包已被接受，但复查时服务器上没有 #$ids 的行 —— '
+      '服务器没有写入 upsertUserAll.userKaleidxScopeList。';
+  static String kaleidxVerifyFailed(String error) =>
+      '上传完成，但复查万花筒进度失败，无法确认是否写入：$error';
+
+  static String kaleidxGateState(bool found, bool key, bool clear) {
+    if (!found && key) return '隐形（有钥匙但没发现门）';
+    if (!found) return '未见过';
+    if (!key) return '已发现 · 未解锁';
+    if (!clear) return '可挑战';
+    return '已通关';
+  }
+
+  // NumberPatch 数值修改（修改 Rating / 添加舞里程），都走 UpsertUserAllApi
+  static const numberPatchNotLoggedIn = '尚未登录游戏服务器，无法执行修改。';
+  static const numberPatchRun = '执行修改';
+  static const numberPatchStepUpload = '上传修改后的数据';
+  static String numberPatchCooldownNotice(int remaining) =>
+      '登录后需冷却 $ticketCooldownSeconds 秒，剩余 $remaining 秒后可执行修改。';
+  static String numberPatchOutOfRange(int min, int max) =>
+      '数值超出范围（$min ~ $max）。';
+  static String numberPatchRangeHint(int min, int max) => '可填 $min ~ $max';
+  static String numberPatchPreview(String label, int current, int target) =>
+      '$label: $current → $target';
+
+  // Rating 修改（只改总 Rating，不动每首歌的 Rating）
+  static const ratingFeatureTitle = '修改 Rating';
+  static const ratingFeatureDesc =
+      '只写总 Rating（userData.playerRating 与 userRating.rating 两处），取值 0 ~ 99999。'
+      'ratingList / newRatingList 里每首歌各自的 Rating 原样带回不动。'
+      '包里带一条占位 playlog，before/after Rating 一并改成新旧值。';
+  static const ratingValueLabel = '目标总 Rating';
+  static const ratingValueHint = '例如 15000';
+  static const ratingNeedValue = '请填写目标 Rating。';
+  static const ratingSuccess = 'Rating 上传完成';
+  static const ratingCurrentValue = '当前总 Rating';
+
+  // MaiMile 舞里程（UserDetail.point 余额 / totalPoint 累计）
+  static const maiMileFeatureTitle = '添加舞里程';
+  static const maiMileFeatureDesc =
+      '舞里程就是 UserDetail.point（余额），totalPoint 为累计获得量。'
+      '客户端只在「获得」时把余额钳到 99999（UserDetail.AddMile），'
+      '商店扣款走不带钳位的 Point -= cost，所以写更大的值不会被覆回。'
+      '取值是整个 int32 区间，累加模式填负数即为扣减。';
+  static const maiMileValueLabel = '舞里程数值';
+  static const maiMileValueHint = '例如 10000';
+  static const maiMileNeedValue = '请填写舞里程数值。';
+  static const maiMileModeLabel = '写入方式';
+  static const maiMileModeAdd = '累加（当前值 + N）';
+  static const maiMileModeSet = '直接设定为 N';
+  static const maiMileCurrentBalance = '当前舞里程';
+  static const maiMileSuccess = '舞里程上传完成';
 
   // HighRiskFeature hub (中转页)
   static const musicRiskHubTitle = '高危功能';

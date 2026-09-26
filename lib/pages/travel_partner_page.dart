@@ -48,6 +48,12 @@ class _TravelPartnerPageState extends State<TravelPartnerPage> {
 
   final _grantIdController = TextEditingController();
 
+  /// 每个出战槽位一个等级输入框，留空表示不改该角色的等级。
+  final _slotLevelControllers = List<TextEditingController>.generate(
+    5,
+    (_) => TextEditingController(),
+  );
+
   List<UserCharacterBean> _owned = const [];
   Map<String, Map<String, dynamic>> _userAllData = const {};
   final List<int> _pendingGrant = [];
@@ -82,6 +88,9 @@ class _TravelPartnerPageState extends State<TravelPartnerPage> {
   void dispose() {
     _cooldownTimer?.cancel();
     _grantIdController.dispose();
+    for (final c in _slotLevelControllers) {
+      c.dispose();
+    }
     super.dispose();
   }
 
@@ -192,7 +201,26 @@ class _TravelPartnerPageState extends State<TravelPartnerPage> {
     }
     setState(() {
       _slots = normalizeCharaSlot([for (var i = 0; i < 5; i++) leader]);
+      // 五个槽位这时都是同一个角色，等级跟着一起复制才对得上。
+      final leaderLevel = _slotLevelControllers[0].text;
+      for (var i = 1; i < 5; i++) {
+        _slotLevelControllers[i].text = leaderLevel;
+      }
     });
+  }
+
+  /// 槽位上填了的等级 -> characterId -> level。同一角色占多个槽位时取最高的，
+  /// 否则两个槽位填了不同等级就没有确定答案。
+  Map<int, int> _slotLevelsById() {
+    final result = <int, int>{};
+    for (var i = 0; i < 5; i++) {
+      final id = _slots[i];
+      final level = int.tryParse(_slotLevelControllers[i].text.trim());
+      if (id == 0 || level == null) continue;
+      final existing = result[id];
+      if (existing == null || level > existing) result[id] = level;
+    }
+    return result;
   }
 
   String? _validate() {
@@ -204,6 +232,11 @@ class _TravelPartnerPageState extends State<TravelPartnerPage> {
       if (slot != 0 && !_isAvailable(slot)) {
         return AppStrings.travelPartnerNotOwnedHint;
       }
+    }
+    const min = UserAllPayloadBuilder.minCharacterLevel;
+    const max = UserAllPayloadBuilder.maxCharacterLevel;
+    for (final level in _slotLevelsById().values) {
+      if (level < min || level > max) return AppStrings.travelPartnerLevelInvalid;
     }
     return null;
   }
@@ -252,21 +285,51 @@ class _TravelPartnerPageState extends State<TravelPartnerPage> {
         generalUserInfo: data,
       );
 
-      if (_pendingGrant.isNotEmpty) {
-        // 新角色给最小可用值；已拥有的不重发，避免把 level/awakening 打回。
+      final levels = _slotLevelsById();
+      final grantRows = [
+        for (final id in _pendingGrant)
+          {
+            // 新角色默认最小可用值；槽位上填了等级就顺手带上，省一次操作。
+            'characterId': id,
+            'level': UserAllPayloadBuilder.clampCharacterLevel(
+              levels[id] ?? 1,
+            ),
+            'awakening': 0,
+            'useCount': 0,
+          },
+      ];
+      // 已拥有且槽位要求改等级的，发 isNew='0' 的更新行。必须带上原有
+      // useCount / awakening，否则整行被覆盖会把使用次数清零。
+      final ownedById = {for (final c in _owned) c.characterId: c};
+      final levelRows = <Map<String, dynamic>>[];
+      for (final entry in levels.entries) {
+        if (_pendingGrant.contains(entry.key)) continue;
+        final owned = ownedById[entry.key];
+        if (owned == null) continue;
+        final level = UserAllPayloadBuilder.clampCharacterLevel(entry.value);
+        if (level == owned.level) continue;
+        levelRows.add(owned.copyWith(level: level).toWireJson());
+      }
+      if (grantRows.isNotEmpty || levelRows.isNotEmpty) {
         builder.applyCharacterListPatch(
           packet,
-          characters: [
-            for (final id in _pendingGrant)
-              {'characterId': id, 'level': 1, 'awakening': 0, 'useCount': 0},
-          ],
+          characters: [...grantRows, ...levelRows],
+          newFlags: '${'1' * grantRows.length}${'0' * levelRows.length}',
         );
       }
       builder.applyCharaSlotPatch(packet, charaSlot: _slots);
 
       await service.upsertUserAll(packet, widget.userId);
 
-      _updateStep(_Step.complete, AppStrings.travelPartnerSuccess);
+      // 两种失败在返回值上完全一样（returnCode 都是 1），只能靠回读区分：
+      // 服务器没写入 userCharacterList，还是写入了但 ID 不在机台 Chara 表里
+      // 被客户端 CharacterSelectProces 静默跳过。
+      _updateStep(
+        _Step.complete,
+        _pendingGrant.isEmpty
+            ? AppStrings.travelPartnerSuccess
+            : await _verifyGranted(service),
+      );
 
       if (_autoLogout && widget.onExitToTitle != null) {
         await Future.delayed(const Duration(seconds: 2));
@@ -281,6 +344,22 @@ class _TravelPartnerPageState extends State<TravelPartnerPage> {
     } finally {
       if (mounted) setState(() => _running = false);
     }
+  }
+
+  Future<String> _verifyGranted(TitleApiService service) async {
+    final requested = List<int>.from(_pendingGrant);
+    List<UserCharacterBean> owned;
+    try {
+      owned = await service.getUserCharacters(widget.userId);
+    } catch (e) {
+      return AppStrings.travelPartnerVerifyFailed('$e');
+    }
+    if (mounted) setState(() => _owned = owned);
+
+    final saved = owned.map((c) => c.characterId).toSet();
+    final missing = requested.where((id) => !saved.contains(id)).toList();
+    if (missing.isEmpty) return AppStrings.travelPartnerVerified(requested.length);
+    return AppStrings.travelPartnerNotSaved(missing.join(' / '));
   }
 
   Map<String, dynamic> _placeholderMusicData() => {
@@ -527,9 +606,47 @@ class _TravelPartnerPageState extends State<TravelPartnerPage> {
                 : theme.colorScheme.onSurface,
           ),
         ),
+        const SizedBox(height: 12),
+        Text(
+          AppStrings.travelPartnerIdRangeTitle,
+          style: theme.textTheme.labelMedium?.copyWith(
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          AppStrings.travelPartnerIdRangeBody,
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+            height: 1.5,
+          ),
+        ),
+        if (_pendingGrant.any(_isSuspectId)) ...[
+          const SizedBox(height: 8),
+          Text(
+            AppStrings.travelPartnerIdUnknown,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.error,
+            ),
+          ),
+        ],
       ],
     );
   }
+
+  /// 客户端 `PlInformationProcess.AddDefaultCharacter` 里的默认发放清单，
+  /// 是已知一定存在于机台 Chara 表的那批 ID。
+  static const List<int> _knownCharacterIds = [
+    101, 102, 103, 104, 105,
+    201, 202, 203, 204, 205,
+    301, 302, 303, 304, 305, 306,
+    392, 393, 394, 395,
+    401, 402, 403, 404, 405,
+    501, 502, 503, 504, 505,
+    601, 602, 603, 604, 605,
+  ];
+
+  bool _isSuspectId(int id) => !_knownCharacterIds.contains(id);
 
   Widget _slotCard(ThemeData theme) {
     // 下拉选项 = 已拥有 ∪ 待发放 ∪ 当前槽位已有值。
@@ -548,37 +665,64 @@ class _TravelPartnerPageState extends State<TravelPartnerPage> {
         const SizedBox(height: 14),
         for (var i = 0; i < 5; i++)
           Padding(
-            padding: const EdgeInsets.only(bottom: 8),
-            child: DropdownButtonFormField<int>(
-              initialValue: _slots[i],
-              decoration: InputDecoration(
-                labelText: AppStrings.travelPartnerSlotLabel(i),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 12,
-                ),
-              ),
-              items: [
-                DropdownMenuItem(
-                  value: 0,
-                  child: Text(
-                    AppStrings.travelPartnerSlotNone,
-                    style: theme.textTheme.bodyMedium,
+            padding: const EdgeInsets.only(bottom: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                DropdownButtonFormField<int>(
+                  initialValue: _slots[i],
+                  decoration: InputDecoration(
+                    labelText: AppStrings.travelPartnerSlotLabel(i),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 12,
+                    ),
                   ),
+                  items: [
+                    DropdownMenuItem(
+                      value: 0,
+                      child: Text(
+                        AppStrings.travelPartnerSlotNone,
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                    ),
+                    for (final id in optionIds)
+                      DropdownMenuItem(value: id, child: Text('#$id')),
+                  ],
+                  onChanged: _running
+                      ? null
+                      : (v) => setState(() {
+                          final next = [..._slots];
+                          next[i] = v ?? 0;
+                          _slots = next;
+                        }),
                 ),
-                for (final id in optionIds)
-                  DropdownMenuItem(value: id, child: Text('#$id')),
+                if (_slots[i] != 0) ...[
+                  const SizedBox(height: 6),
+                  TextField(
+                    controller: _slotLevelControllers[i],
+                    enabled: !_running,
+                    keyboardType: TextInputType.number,
+                    onChanged: (_) => setState(() {}),
+                    decoration: InputDecoration(
+                      isDense: true,
+                      labelText: AppStrings.travelPartnerLevelLabel,
+                      hintText: AppStrings.travelPartnerLevelHint,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
+                    ),
+                  ),
+                  ..._levelHintLines(theme, _slotLevelControllers[i].text),
+                ],
               ],
-              onChanged: _running
-                  ? null
-                  : (v) => setState(() {
-                      final next = [..._slots];
-                      next[i] = v ?? 0;
-                      _slots = next;
-                    }),
             ),
           ),
         SizedBox(
@@ -597,6 +741,25 @@ class _TravelPartnerPageState extends State<TravelPartnerPage> {
         ),
       ],
     );
+  }
+
+  /// 真实等级和界面等级不是一回事（`UserChara`：显示 = level % 10000、
+  /// 转生 = level ~/ 10000），只在会混淆时才说明。
+  List<Widget> _levelHintLines(ThemeData theme, String raw) {
+    final level = int.tryParse(raw.trim());
+    if (level == null || level < UserAllPayloadBuilder.minCharacterLevel) {
+      return const [];
+    }
+    if (level <= 9999) return const [];
+    return [
+      const SizedBox(height: 4),
+      Text(
+        AppStrings.travelPartnerLevelConverted(level),
+        style: theme.textTheme.labelSmall?.copyWith(
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+      ),
+    ];
   }
 
   Widget _ownedCard(ThemeData theme) {

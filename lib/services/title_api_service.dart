@@ -10,6 +10,7 @@ import 'package:pointycastle/export.dart';
 import '../config/title_server_config.dart';
 import '../models/user_data.dart';
 import '../models/user_character.dart';
+import '../models/user_kaleidx_scope.dart';
 import '../models/user_preview.dart';
 import '../models/user_rating.dart';
 
@@ -567,6 +568,46 @@ class TitleApiService {
       userId,
     );
     return UserCharacterBean.listFromResponse(json);
+  }
+
+  /// 区域进度列表，对应 UserMapResponseVO。
+  ///
+  /// 客户端 `PacketGetUserMap.cs:51-57` 是分页拉的：`nextIndex != 0` 就用它续拉，
+  /// 把所有页的 `userMapList` 拼起来。这里照做，否则只能看到第一页的区域。
+  Future<List<Map<String, dynamic>>> getUserMaps(int userId) async {
+    const apiName = 'GetUserMapApi';
+    final all = <Map<String, dynamic>>[];
+    var nextIndex = 0;
+    var pages = 0;
+
+    do {
+      final json = await _callApi(apiName, {
+        'userId': userId,
+        'nextIndex': nextIndex,
+      }, userId);
+
+      final list = json['userMapList'];
+      if (list is List) {
+        all.addAll(list.whereType<Map<String, dynamic>>());
+      }
+      nextIndex = (json['nextIndex'] as num?)?.toInt() ?? 0;
+      pages++;
+    } while (nextIndex != 0 && pages < 20);
+
+    return all;
+  }
+
+  /// 万花宿命之门进度，对应 UserKaleidxScopeResponseVO。
+  ///
+  /// 与 `GetUserMapApi` 不同，这个接口不分页（`UserKaleidxScopeRequestVO`
+  /// 只有 `userId` 一个字段），一次拿全。
+  Future<List<UserKaleidxScopeBean>> getUserKaleidxScopes(int userId) async {
+    final json = await _callApi(
+      'GetUserKaleidxScopeApi',
+      {'userId': userId},
+      userId,
+    );
+    return UserKaleidxScopeBean.listFromResponse(json);
   }
 }
 
