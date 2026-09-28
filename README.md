@@ -41,13 +41,27 @@ flutter build ios --release --no-codesign   # iOS（无证书时只验证可编�
 
 ```
 lib/
-├── main.dart            # 入口 + 登录页
+├── main.dart            # 入口（MyApp + MaterialApp）
 ├── config/              # 字符串、响应式布局、Title Server 配置
-├── models/              # API 数据模型（UserData / UserPreview / UserRating / UserCharacter）
-├── pages/               # 各功能页面
-├── services/            # 传输层、乐曲元数据、导出、RA 计算
-└── widgets/             # 可复用视觉组件（B50 海报）
+├── models/              # API 数据模型（UserData / UserPreview / UserRating / UserCharacter / UserKaleidxScope / Session）
+├── pages/               # 登录页与各功能页面
+├── services/            # 传输层、payload 组装、乐曲元数据、导出、RA 计算、调试日志
+└── widgets/             # 可复用视觉组件（B50 海报、卡片/提示、冷却 mixin、阶段进度卡）
 ```
+
+### 共享抽象
+
+功能票 / 解锁歌曲 / 收藏品 / 旅行伙伴 / 数值修改 / 一键跑图 / 万花筒 / 高危 hub
+这些页面以前各抄一份脚手架，现已收口到：
+
+- `widgets/cooldown_mixin.dart` —`CooldownMixin`：登录后冷却倒计时（`Timer.periodic`）。
+- `widgets/step_progress.dart` —`RiskStep` + `StepProgressCard`：执行阶段枚举与进度卡。
+- `widgets/app_card.dart` —`AppCard` / `SectionTitle` / `AutoLogoutToggle`。
+- `widgets/app_notice.dart` —`AppNotice`（未登录/冷却/错误横幅）与 `context.showSnack`。
+- `services/title_api_service.dart` —`TitleApiService.fromHolder()` 统一构建会话，`config` getter
+  供 payload builder 复用。
+- `services/user_all_payload_builder.dart` — 占位 `musicData`（`placeholderMusicData`）。
+- `services/api_log.dart` —`ApiLog`：传输层日志，仅 debug 输出，release 下不落 token/cookie。
 
 平台差异只体现在原生侧：QR 解码由 Android 的 `MainActivity` 与 iOS 的
 `SceneDelegate` 通过 `dev.naominet.ichino/qr_scanner` 这个 MethodChannel 提供，

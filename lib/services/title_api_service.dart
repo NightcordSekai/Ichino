@@ -9,6 +9,7 @@ import 'package:pointycastle/export.dart';
 
 import '../config/title_server_config.dart';
 import '../models/user_data.dart';
+import 'api_log.dart';
 import '../models/user_character.dart';
 import '../models/user_kaleidx_scope.dart';
 import '../models/user_preview.dart';
@@ -45,7 +46,20 @@ class TitleApiService {
 
   TitleApiService(this._config, {this._cookies});
 
+  /// 从 [TitleServerConfigHolder] 构造；未配置时返回 `null`。
+  ///
+  /// 各页原本都写 `if (!holder.isConfigured) ...; TitleApiService(holder.config!, ...)`，
+  /// 收口成一个工厂，避免 `config!` 与 `isConfigured` 散落在十几个地方。
+  static TitleApiService? fromHolder({String? cookies}) {
+    final holder = TitleServerConfigHolder();
+    if (!holder.isConfigured) return null;
+    return TitleApiService(holder.config!, cookies: cookies);
+  }
+
   String? get cookies => _cookies;
+
+  /// 组装 payload 时需要同一份配置（地点 / 区域 / clientId）。
+  TitleServerConfig get config => _config;
 
   Uint8List _aesEncrypt(Uint8List plaintext) {
     final cipher = PaddedBlockCipherImpl(
@@ -107,8 +121,7 @@ class TitleApiService {
           RegExp(r'JSESSIONID=([^;,]+)', caseSensitive: false).firstMatch(value);
       if (match != null) {
         _cookies = 'JSESSIONID=${match.group(1)!.trim()}';
-        // ignore: avoid_print
-        print('[$apiName] >>> Captured session cookie: $_cookies');
+        ApiLog.log('[$apiName] >>> Captured session cookie: $_cookies');
         return;
       }
     }
@@ -135,31 +148,23 @@ class TitleApiService {
   Future<Map<String, dynamic>> _callApi(
     String apiName,
     Map<String, dynamic> packet,
-    int userId,
-  ) async {
+    int userId, {
+    bool captureRaw = false,
+  }) async {
     final hash = _buildHash(apiName);
     final body = _buildRequestBody(packet);
     final baseUrl = _normalizeUrl(_config.titleServerUrl);
     final url = Uri.parse('$baseUrl/$hash');
 
-    // ignore: avoid_print
-    print('══════════════════════════════════════');
-    // ignore: avoid_print
-    print('[$apiName] >>> REQUEST >>>');
-    // ignore: avoid_print
-    print('[$apiName] URL: $url');
-    // ignore: avoid_print
-    print('[$apiName] userId: $userId');
-    // ignore: avoid_print
-    print('[$apiName] hash: $hash');
-    // ignore: avoid_print
-    print('[$apiName] body (encrypted): ${body.length} bytes');
-    // ignore: avoid_print
+    ApiLog.log('══════════════════════════════════════');
+    ApiLog.log('[$apiName] >>> REQUEST >>>');
+    ApiLog.log('[$apiName] URL: $url');
+    ApiLog.log('[$apiName] userId: $userId');
+    ApiLog.log('[$apiName] hash: $hash');
+    ApiLog.log('[$apiName] body (encrypted): ${body.length} bytes');
     final packetStr = const JsonEncoder.withIndent('  ').convert(packet);
-    // ignore: avoid_print
-    print('[$apiName] packet (plain):');
-    // ignore: avoid_print
-    print(packetStr);
+    ApiLog.log('[$apiName] packet (plain):');
+    ApiLog.log(packetStr);
 
     final uaSuffix = userId != 0 ? '$userId' : _config.clientId;
     final headers = <String, String>{
@@ -174,8 +179,7 @@ class TitleApiService {
     final cookies = _cookies;
     if (cookies != null) {
       headers['Cookie'] = cookies;
-      // ignore: avoid_print
-      print('[$apiName] Cookie: $cookies');
+      ApiLog.log('[$apiName] Cookie: $cookies');
     }
 
     final response = await http
@@ -188,10 +192,8 @@ class TitleApiService {
 
     _captureCookiesFromResponse(response, apiName);
 
-    // ignore: avoid_print
-    print('[$apiName] HTTP status: ${response.statusCode}');
-    // ignore: avoid_print
-    print('[$apiName] response bytes: ${response.bodyBytes.length}');
+    ApiLog.log('[$apiName] HTTP status: ${response.statusCode}');
+    ApiLog.log('[$apiName] response bytes: ${response.bodyBytes.length}');
 
     if (response.statusCode != 200) {
       throw TitleApiException('$apiName returned ${response.statusCode}');
@@ -203,12 +205,10 @@ class TitleApiService {
 
     final json = _processResponseBody(response.bodyBytes);
     final raw = const JsonEncoder.withIndent('  ').convert(json);
-    // ignore: avoid_print
-    print('[$apiName] <<< RESPONSE <<<');
-    // ignore: avoid_print
-    print(raw);
-    // ignore: avoid_print
-    print('══════════════════════════════════════');
+    if (captureRaw) lastRawResponse = raw;
+    ApiLog.log('[$apiName] <<< RESPONSE <<<');
+    ApiLog.log(raw);
+    ApiLog.log('══════════════════════════════════════');
 
     return json;
   }
@@ -243,99 +243,20 @@ class TitleApiService {
     required int userId,
     required String token,
   }) async {
-    // ignore: avoid_print
-    print('[getUserPreview] ===== START =====');
-    // ignore: avoid_print
-    print('[getUserPreview] userId=$userId');
-    // ignore: avoid_print
-    print('[getUserPreview] token=$token');
-    // ignore: avoid_print
-    print('[getUserPreview] clientId=${_config.clientId}');
-    // ignore: avoid_print
-    print('[getUserPreview] titleServerUrl=${_config.titleServerUrl}');
-    // ignore: avoid_print
-    print('[getUserPreview] aesKey.len=${_config.aesKeyBytes.length} aesIv.len=${_config.aesIvBytes.length}');
-
-    const apiName = 'GetUserPreviewApi';
-    final hash = _buildHash(apiName);
-    // ignore: avoid_print
-    print('[getUserPreview] hash=$hash');
-
-    final packet = {
-      'userId': userId,
-      'segaIdAuthKey': '',
-      'token': token,
-      'clientId': _config.clientId,
-    };
-    // ignore: avoid_print
-    print('[getUserPreview] packet=${jsonEncode(packet)}');
-
-    // ignore: avoid_print
-    print('[getUserPreview] building request body (compress + encrypt)...');
-    final body = _buildRequestBody(packet);
-    // ignore: avoid_print
-    print('[getUserPreview] body size=${body.length} bytes');
-
-    final baseUrl = _normalizeUrl(_config.titleServerUrl);
-    final url = Uri.parse('$baseUrl/$hash');
-    // ignore: avoid_print
-    print('[getUserPreview] POST $url');
-
-    try {
-      final previewHeaders = <String, String>{
-        'User-Agent': '$hash#$userId',
-        'Content-Type': 'application/json',
-        'Mai-Encoding': _config.apiVersion,
-        'Accept-Encoding': '',
-        'Charset': 'UTF-8',
-        'Content-Encoding': 'deflate',
-        'number': '0',
-      };
-      final previewCookies = _cookies;
-      if (previewCookies != null) {
-        previewHeaders['Cookie'] = previewCookies;
-        // ignore: avoid_print
-        print('[getUserPreview] Cookie: $previewCookies');
-      }
-
-      final response = await http
-          .post(
-            url,
-            headers: previewHeaders,
-            body: body,
-          )
-          .timeout(const Duration(seconds: 15));
-
-      // ignore: avoid_print
-      print('[getUserPreview] HTTP status=${response.statusCode}');
-      // ignore: avoid_print
-      print('[getUserPreview] response body size=${response.bodyBytes.length} bytes');
-
-      if (response.statusCode != 200) {
-        // ignore: avoid_print
-        print('[getUserPreview] non-200 response body: ${utf8.decode(response.bodyBytes.take(500).toList())}');
-        throw TitleApiException(
-          'Server returned ${response.statusCode}',
-        );
-      }
-
-      // ignore: avoid_print
-      print('[getUserPreview] decrypting + decompressing...');
-      final json = _processResponseBody(response.bodyBytes);
-      final raw = const JsonEncoder.withIndent('  ').convert(json);
-      lastRawResponse = raw;
-      // ignore: avoid_print
-      print('[getUserPreview] === RESPONSE ===');
-      // ignore: avoid_print
-      print(raw);
-      // ignore: avoid_print
-      print('[getUserPreview] ===== END =====');
-      return UserPreviewDataBean.fromJson(json);
-    } catch (e) {
-      // ignore: avoid_print
-      print('[getUserPreview] ERROR: $e');
-      rethrow;
-    }
+    // 走通用传输层，保留 `lastRawResponse`（主页调试卡要用 GetUserPreviewApi
+    // 的原文，而不是随后 UserLoginApi / GetUserDataApi 的）。
+    final json = await _callApi(
+      'GetUserPreviewApi',
+      {
+        'userId': userId,
+        'segaIdAuthKey': '',
+        'token': token,
+        'clientId': _config.clientId,
+      },
+      userId,
+      captureRaw: true,
+    );
+    return UserPreviewDataBean.fromJson(json);
   }
 
   // ---- Generic data APIs ----

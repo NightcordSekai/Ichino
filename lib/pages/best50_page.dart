@@ -75,10 +75,7 @@ class _Best50PageState extends State<Best50Page> {
     });
 
     try {
-      final service = TitleApiService(
-        TitleServerConfigHolder().config!,
-        cookies: widget.cookies,
-      );
+      final service = TitleApiService.fromHolder(cookies: widget.cookies)!;
       final rating = await service.getUserRatingTyped(widget.userId);
       if (!mounted) return;
       setState(() {
