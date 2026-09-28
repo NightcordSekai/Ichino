@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../config/responsive.dart';
 import '../config/strings.dart';
+import '../widgets/app_card.dart';
+import '../widgets/app_notice.dart';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
@@ -16,16 +18,20 @@ class AboutPage extends StatelessWidget {
         context,
         child: Column(
           children: [
-            const SizedBox(height: 32),
-            Icon(Icons.qr_code_scanner, size: 64, color: theme.colorScheme.primary),
-            const SizedBox(height: 16),
+            const SizedBox(height: 24),
+            Icon(
+              Icons.qr_code_scanner,
+              size: 56,
+              color: theme.colorScheme.primary,
+            ),
+            const SizedBox(height: 12),
             Text(
               AppStrings.aboutTitle,
               style: theme.textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 6),
             Text(
               AppStrings.aboutDesc,
               style: theme.textTheme.bodyMedium?.copyWith(
@@ -33,35 +39,48 @@ class AboutPage extends StatelessWidget {
               ),
               textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 24),
-            Card(
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-                side: BorderSide(
-                  color: theme.colorScheme.outline.withValues(alpha: 0.3),
-                ),
+            const SizedBox(height: 28),
+            AppCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SectionTitle(
+                    icon: Icons.info_outline,
+                    title: AppStrings.aboutBasics,
+                  ),
+                  const SizedBox(height: 14),
+                  _row(theme, AppStrings.creditBuiltWith, 'Flutter'),
+                  _row(
+                    theme,
+                    AppStrings.aboutPlatforms,
+                    'Android · iOS · Windows · macOS · Linux',
+                  ),
+                  _row(theme, AppStrings.aboutPackageId, 'dev.naominet.ichino'),
+                  _row(theme, AppStrings.creditLicense, 'MIT'),
+                ],
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      AppStrings.credits,
-                      style: theme.textTheme.labelLarge?.copyWith(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    _creditRow(theme, AppStrings.creditBuiltWith, 'Flutter'),
-                    _creditRow(theme, AppStrings.creditQRDecode, 'jsQR (web)'),
-                    _creditRow(theme, AppStrings.creditIconAssets, 'assets2.lxns.net'),
-                    _creditRow(theme, AppStrings.creditLicense, 'MIT'),
-                  ],
-                ),
+            ),
+            const SizedBox(height: 12),
+            AppCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SectionTitle(
+                    icon: Icons.group_outlined,
+                    title: AppStrings.credits,
+                  ),
+                  const SizedBox(height: 14),
+                  _row(theme, AppStrings.creditProtocol, 'empurple · eaquira'),
+                  _row(theme, AppStrings.creditB50, 'Empurple'),
+                  _row(theme, AppStrings.creditQRDecode, '原生 MethodChannel'),
+                  _row(theme, AppStrings.creditIconAssets, 'assets2.lxns.net'),
+                ],
               ),
+            ),
+            const SizedBox(height: 12),
+            const AppNotice(
+              AppStrings.aboutRiskNotice,
+              icon: Icons.warning_amber_rounded,
             ),
           ],
         ),
@@ -69,13 +88,14 @@ class AboutPage extends StatelessWidget {
     );
   }
 
-  Widget _creditRow(ThemeData theme, String label, String value) {
+  Widget _row(ThemeData theme, String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 120,
+            width: 104,
             child: Text(
               label,
               style: theme.textTheme.bodySmall?.copyWith(
@@ -83,9 +103,7 @@ class AboutPage extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(
-            child: Text(value, style: theme.textTheme.bodyMedium),
-          ),
+          Expanded(child: Text(value, style: theme.textTheme.bodyMedium)),
         ],
       ),
     );

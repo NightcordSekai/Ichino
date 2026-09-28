@@ -10,23 +10,33 @@ import '../models/session_model.dart';
 import '../models/user_data.dart';
 import '../models/user_preview.dart';
 import '../services/title_api_service.dart';
+import '../widgets/app_notice.dart';
+import '../widgets/connection_share_card.dart';
 import 'about_page.dart';
 import 'best50_page.dart';
 import 'high_risk_feature_page.dart';
 import 'settings_page.dart';
 import 'ticket_page.dart';
 
-
 class HomePage extends StatefulWidget {
   final int userId;
   final String token;
   final bool forcePreviewApi;
+
+  /// 会话由登录页粘贴「连接信息」恢复而来：登录态（或 Cookie）已经是现成的，
+  /// 主页不要再发一次 UserLoginApi 去顶掉它。
+  final bool sessionRestored;
+
+  /// 恢复会话时验证 Cookie 顺手拉到的用户数据，直接展示、省一次请求。
+  final UserDataBean? initialUserData;
 
   const HomePage({
     super.key,
     required this.userId,
     required this.token,
     this.forcePreviewApi = false,
+    this.sessionRestored = false,
+    this.initialUserData,
   });
 
   @override
@@ -73,7 +83,19 @@ class _HomePageState extends State<HomePage> {
       _preview = null;
       _userData = null;
     });
-    _session.setGameLogin(null);
+
+    final seed = widget.initialUserData;
+    if (seed != null) {
+      // 恢复来的 JSESSIONID 已在 SessionModel._probeCookieSession 里验证过并
+      // 带回全量数据，这里直接展示，不再发 GetUserPreviewApi / UserLoginApi。
+      setState(() {
+        _userData = seed;
+        _loading = false;
+      });
+      return;
+    }
+
+    if (!widget.sessionRestored) _session.setGameLogin(null);
 
     final service = TitleApiService.fromHolder(cookies: _session.cookies)!;
 
@@ -88,19 +110,21 @@ class _HomePageState extends State<HomePage> {
 
       // isLogin == true => 已有人登录, 不再走完整登录, 直接展示 preview 概要
       // forcePreviewApi => 跳过 UserLoginApi, 仅展示 preview + Login 按钮
-      if (preview.isLogin || widget.forcePreviewApi) {
+      // 但恢复来的登录态就是自己这次会话，isLogin 为 true 不代表「别人在玩」。
+      final ownsLogin = _session.gameLogin != null;
+      if (!ownsLogin && (preview.isLogin || widget.forcePreviewApi)) {
         setState(() => _loading = false);
         return;
       }
 
-      await _session.loginGame(
-        userId: widget.userId,
-        token: widget.token,
-      );
-      if (!mounted) return;
+      if (!ownsLogin) {
+        await _session.loginGame(userId: widget.userId, token: widget.token);
+        if (!mounted) return;
+      }
 
-      final userDataService =
-          TitleApiService.fromHolder(cookies: _session.cookies)!;
+      final userDataService = TitleApiService.fromHolder(
+        cookies: _session.cookies,
+      )!;
       final userData = await userDataService.getUserDataTyped(widget.userId);
       if (!mounted) return;
       _session.updateCookies(userDataService.cookies);
@@ -131,10 +155,7 @@ class _HomePageState extends State<HomePage> {
     });
 
     try {
-      await _session.loginGame(
-        userId: widget.userId,
-        token: widget.token,
-      );
+      await _session.loginGame(userId: widget.userId, token: widget.token);
       if (!mounted) return;
 
       final service = TitleApiService.fromHolder(cookies: _session.cookies)!;
@@ -170,7 +191,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> _performLogoutAndExit() async {
     setState(() => _loggingOut = true);
     if (_session.gameLogin != null) {
-      await Future.delayed(const Duration(seconds: 5));
+      await Future.delayed(const Duration(seconds: 2));
       await _logoutSession();
     }
     _session.reset();
@@ -185,6 +206,9 @@ class _HomePageState extends State<HomePage> {
   /// 主页上的原生返回手势 = 结束应用。
   void _exitApp() {
     // iOS 不允许程序化退出，且根路由本来也没有返回手势。
+    if (_session.gameLogin != null) {
+      _logoutSession();
+    }
     if (Platform.isIOS) return;
     SystemNavigator.pop();
   }
@@ -227,15 +251,19 @@ class _HomePageState extends State<HomePage> {
                   userId: widget.userId,
                   cookies: _session.cookies,
                   loginDateTime: _session.gameLogin?.loginDateTime,
-                  playerRating: _userData?.playerRating ?? _preview?.playerRating ?? 0,
-                  onLogoutRequested: _session.gameLogin != null ? _logoutSession : null,
+                  playerRating:
+                      _userData?.playerRating ?? _preview?.playerRating ?? 0,
+                  onLogoutRequested: _session.gameLogin != null
+                      ? _logoutSession
+                      : null,
                 ),
                 Best50Page(
                   userId: widget.userId,
                   cookies: _session.cookies,
                   userName: _userData?.userName ?? _preview?.userName ?? '',
                   iconId: _userData?.iconId ?? _preview?.iconId ?? 0,
-                  playerRating: _userData?.playerRating ?? _preview?.playerRating ?? 0,
+                  playerRating:
+                      _userData?.playerRating ?? _preview?.playerRating ?? 0,
                 ),
                 HighRiskFeaturePage(
                   userId: widget.userId,
@@ -243,8 +271,9 @@ class _HomePageState extends State<HomePage> {
                   loginDateTime: _session.gameLogin?.loginDateTime,
                   loginId: _session.gameLogin?.loginId,
                   lastLoginDate: _session.gameLogin?.lastLoginDate,
-                  onExitToTitle:
-                      _session.gameLogin != null ? _performLogoutAndExit : null,
+                  onExitToTitle: _session.gameLogin != null
+                      ? _performLogoutAndExit
+                      : null,
                 ),
                 SettingsPage(showAppBar: false),
                 const AboutPage(),
@@ -254,12 +283,36 @@ class _HomePageState extends State<HomePage> {
               selectedIndex: _currentTab,
               onDestinationSelected: (i) => setState(() => _currentTab = i),
               destinations: const [
-                NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home), label: AppStrings.tabHome),
-                NavigationDestination(icon: Icon(Icons.confirmation_number_outlined), selectedIcon: Icon(Icons.confirmation_number), label: AppStrings.tabTickets),
-                NavigationDestination(icon: Icon(Icons.bar_chart_outlined), selectedIcon: Icon(Icons.bar_chart), label: AppStrings.tabBest50),
-                NavigationDestination(icon: Icon(Icons.warning_outlined), selectedIcon: Icon(Icons.inventory_2), label: AppStrings.tabRisk),
-                NavigationDestination(icon: Icon(Icons.settings_outlined), selectedIcon: Icon(Icons.settings), label: AppStrings.tabSettings),
-                NavigationDestination(icon: Icon(Icons.info_outlined), selectedIcon: Icon(Icons.info), label: AppStrings.tabAbout),
+                NavigationDestination(
+                  icon: Icon(Icons.home_outlined),
+                  selectedIcon: Icon(Icons.home),
+                  label: AppStrings.tabHome,
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.confirmation_number_outlined),
+                  selectedIcon: Icon(Icons.confirmation_number),
+                  label: AppStrings.tabTickets,
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.bar_chart_outlined),
+                  selectedIcon: Icon(Icons.bar_chart),
+                  label: AppStrings.tabBest50,
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.warning_outlined),
+                  selectedIcon: Icon(Icons.inventory_2),
+                  label: AppStrings.tabRisk,
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.settings_outlined),
+                  selectedIcon: Icon(Icons.settings),
+                  label: AppStrings.tabSettings,
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.info_outlined),
+                  selectedIcon: Icon(Icons.info),
+                  label: AppStrings.tabAbout,
+                ),
               ],
             ),
           ),
@@ -276,7 +329,11 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.settings_ethernet, size: 64, color: theme.colorScheme.primary),
+              Icon(
+                Icons.settings_ethernet,
+                size: 64,
+                color: theme.colorScheme.primary,
+              ),
               const SizedBox(height: 16),
               Text(
                 AppStrings.titleServerNotConfigured,
@@ -313,7 +370,11 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.error_outline, size: 48, color: theme.colorScheme.error),
+              Icon(
+                Icons.error_outline,
+                size: 48,
+                color: theme.colorScheme.error,
+              ),
               const SizedBox(height: 12),
               Text(AppStrings.loadFailed, style: theme.textTheme.titleMedium),
               const SizedBox(height: 8),
@@ -337,23 +398,24 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
-    final preview = _preview;
     final userData = _userData;
+    if (userData != null) {
+      return _buildFullData(theme, _preview, userData);
+    }
+
+    final preview = _preview;
     if (preview == null) {
       return const SizedBox.shrink();
     }
 
-    if ((preview.isLogin || (widget.forcePreviewApi && _session.gameLogin == null)) && userData == null) {
+    if (preview.isLogin ||
+        (widget.forcePreviewApi && _session.gameLogin == null)) {
       return _buildPreviewOnly(
         theme,
         preview,
         showLoginButton: widget.forcePreviewApi && _session.gameLogin == null,
         onLoginPressed: _performLogin,
       );
-    }
-
-    if (userData != null) {
-      return _buildFullData(theme, preview, userData);
     }
 
     return const SizedBox.shrink();
@@ -371,16 +433,21 @@ class _HomePageState extends State<HomePage> {
         context,
         child: Column(
           children: [
-            if (preview.errorId != 0) _ErrorIdBanner(theme: theme, errorId: preview.errorId),
+            if (preview.errorId != 0)
+              _ErrorIdBanner(theme: theme, errorId: preview.errorId),
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                color: theme.colorScheme.tertiaryContainer.withValues(alpha: 0.4),
+                color: theme.colorScheme.tertiaryContainer.withValues(
+                  alpha: 0.4,
+                ),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Text(
-                showLoginButton ? 'Preview API 模式，点击下方按钮登录。' : AppStrings.inheritedAccountNotice,
+                showLoginButton
+                    ? 'Preview API 模式，点击下方按钮登录。'
+                    : AppStrings.inheritedAccountNotice,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onTertiaryContainer,
                 ),
@@ -399,7 +466,9 @@ class _HomePageState extends State<HomePage> {
                           child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Icon(Icons.login, size: 20),
-                  label: Text(_loading ? AppStrings.loggingIn : AppStrings.login),
+                  label: Text(
+                    _loading ? AppStrings.loggingIn : AppStrings.login,
+                  ),
                   style: FilledButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
@@ -419,6 +488,8 @@ class _HomePageState extends State<HomePage> {
                 _PreviewStatusCard(theme: theme, preview: preview),
               ],
             ),
+            const SizedBox(height: 12),
+            ConnectionShareCard(userId: widget.userId, token: widget.token),
             if (TitleApiService.lastRawResponse != null) ...[
               const SizedBox(height: 12),
               _DebugRawJsonCard(
@@ -434,7 +505,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildFullData(
     ThemeData theme,
-    UserPreviewDataBean preview,
+    UserPreviewDataBean? preview,
     UserDataBean data,
   ) {
     return SingleChildScrollView(
@@ -443,6 +514,11 @@ class _HomePageState extends State<HomePage> {
         context,
         child: Column(
           children: [
+            if (widget.sessionRestored && _session.gameLogin == null)
+              AppNotice(
+                AppStrings.sessionRestoredNotice,
+                icon: Icons.science_outlined,
+              ),
             _ProfileFromUserDataCard(theme: theme, data: data),
             const SizedBox(height: 12),
             ...responsiveGrid(
@@ -452,10 +528,16 @@ class _HomePageState extends State<HomePage> {
                 _FirstPlayCard(theme: theme, data: data),
                 _GameInfoFromUserDataCard(theme: theme, data: data),
                 _PlayStatsCard(theme: theme, data: data),
-                _StatusFromUserDataCard(theme: theme, preview: preview, data: data),
+                _StatusFromUserDataCard(
+                  theme: theme,
+                  preview: preview,
+                  data: data,
+                ),
                 _UserDataDetailCard(theme: theme, data: data),
               ],
             ),
+            const SizedBox(height: 12),
+            ConnectionShareCard(userId: widget.userId, token: widget.token),
             if (TitleApiService.lastRawResponse != null) ...[
               const SizedBox(height: 12),
               _DebugRawJsonCard(
@@ -486,7 +568,9 @@ class _ProfileFromPreviewCard extends StatelessWidget {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+        side: BorderSide(
+          color: theme.colorScheme.outline.withValues(alpha: 0.3),
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -499,8 +583,12 @@ class _ProfileFromPreviewCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    preview.userName.isEmpty ? AppStrings.unknownUser : preview.userName,
-                    style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                    preview.userName.isEmpty
+                        ? AppStrings.unknownUser
+                        : preview.userName,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -554,7 +642,9 @@ class _PreviewStatusCard extends StatelessWidget {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+        side: BorderSide(
+          color: theme.colorScheme.outline.withValues(alpha: 0.3),
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -601,7 +691,9 @@ class _ProfileFromUserDataCard extends StatelessWidget {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+        side: BorderSide(
+          color: theme.colorScheme.outline.withValues(alpha: 0.3),
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -614,8 +706,12 @@ class _ProfileFromUserDataCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    data.userName.isEmpty ? AppStrings.unknownUser : data.userName,
-                    style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+                    data.userName.isEmpty
+                        ? AppStrings.unknownUser
+                        : data.userName,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
@@ -701,7 +797,10 @@ class _GameInfoFromUserDataCard extends StatelessWidget {
         (AppStrings.lastLogin, data.lastLoginDate),
         (AppStrings.romVersion, data.lastRomVersion),
         (AppStrings.dataVersion, data.lastDataVersion),
-        (AppStrings.lastRegion, '${data.lastRegionName}${data.lastRegionId > 0 ? ' (${data.lastRegionId})' : ''}'),
+        (
+          AppStrings.lastRegion,
+          '${data.lastRegionName}${data.lastRegionId > 0 ? ' (${data.lastRegionId})' : ''}',
+        ),
       ],
     );
   }
@@ -732,7 +831,9 @@ class _PlayStatsCard extends StatelessWidget {
 
 class _StatusFromUserDataCard extends StatelessWidget {
   final ThemeData theme;
-  final UserPreviewDataBean preview;
+
+  /// 用连接信息（仅 JSESSIONID）恢复的会话没有走 GetUserPreviewApi，可为空。
+  final UserPreviewDataBean? preview;
   final UserDataBean data;
 
   const _StatusFromUserDataCard({
@@ -743,11 +844,15 @@ class _StatusFromUserDataCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final p = preview;
+
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+        side: BorderSide(
+          color: theme.colorScheme.outline.withValues(alpha: 0.3),
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -763,7 +868,7 @@ class _StatusFromUserDataCard extends StatelessWidget {
             ),
             const SizedBox(height: 14),
             _statusChip(theme, AppStrings.netMember, data.isNetMember),
-            _statusChip(theme, AppStrings.inherit, preview.isInherit),
+            if (p != null) _statusChip(theme, AppStrings.inherit, p.isInherit),
             _statusChip(
               theme,
               AppStrings.banState,
@@ -808,7 +913,9 @@ class _UserDataDetailCardState extends State<_UserDataDetailCard> {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+        side: BorderSide(
+          color: theme.colorScheme.outline.withValues(alpha: 0.3),
+        ),
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
@@ -841,7 +948,11 @@ class _UserDataDetailCardState extends State<_UserDataDetailCard> {
                 _detailRow(theme, AppStrings.point, '${data.point}'),
                 _detailRow(theme, AppStrings.totalPoint, '${data.totalPoint}'),
                 _detailRow(theme, AppStrings.iconId, '${data.iconId}'),
-                _detailRow(theme, AppStrings.nameplateId, '${data.nameplateId}'),
+                _detailRow(
+                  theme,
+                  AppStrings.nameplateId,
+                  '${data.nameplateId}',
+                ),
                 _detailRow(theme, AppStrings.plateId, '${data.plateId}'),
                 _detailRow(theme, AppStrings.frameId, '${data.frameId}'),
                 _detailRow(theme, AppStrings.titleId, '${data.titleId}'),
@@ -872,9 +983,7 @@ class _UserDataDetailCardState extends State<_UserDataDetailCard> {
               ),
             ),
           ),
-          Expanded(
-            child: Text(value, style: theme.textTheme.bodyMedium),
-          ),
+          Expanded(child: Text(value, style: theme.textTheme.bodyMedium)),
         ],
       ),
     );
@@ -902,7 +1011,9 @@ class _SectionCard extends StatelessWidget {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
+        side: BorderSide(
+          color: theme.colorScheme.outline.withValues(alpha: 0.3),
+        ),
       ),
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -1021,10 +1132,7 @@ class _DebugRawJsonCard extends StatefulWidget {
   final ThemeData theme;
   final String rawJson;
 
-  const _DebugRawJsonCard({
-    required this.theme,
-    required this.rawJson,
-  });
+  const _DebugRawJsonCard({required this.theme, required this.rawJson});
 
   @override
   State<_DebugRawJsonCard> createState() => _DebugRawJsonCardState();
@@ -1076,8 +1184,9 @@ class _DebugRawJsonCardState extends State<_DebugRawJsonCard> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.surfaceContainerHighest
-                        .withValues(alpha: 0.5),
+                    color: theme.colorScheme.surfaceContainerHighest.withValues(
+                      alpha: 0.5,
+                    ),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: SelectableText(
@@ -1115,8 +1224,11 @@ class _ErrorIdBanner extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.warning_amber_rounded,
-              size: 20, color: theme.colorScheme.onErrorContainer),
+          Icon(
+            Icons.warning_amber_rounded,
+            size: 20,
+            color: theme.colorScheme.onErrorContainer,
+          ),
           const SizedBox(width: 10),
           Expanded(
             child: Text(

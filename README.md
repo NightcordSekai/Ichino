@@ -17,6 +17,7 @@ Android / iOS / Windows / macOS / Linux。
 | B50 | Best 50 成绩图，可导出 PNG（移植自 Empurple 的 `Best50ImageRenderer`） |
 | 风险 | 歌曲解锁、收藏品获取、旅行伙伴发放与编组（含等级）、修改总 Rating、添加舞里程、一键跑图、万花筒专区 |
 | 设置 | Title Server / Auth Server / 机器参数，支持配置导入导出 |
+| 连接信息（实验性） | 主页导出 uid + JSESSIONID + token 的 Base64 快照，登录页粘贴即可恢复会话；内容未加密，请勿外传 |
 
 ## 开发
 
