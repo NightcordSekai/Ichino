@@ -4,6 +4,7 @@ import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
 
 import '../config/title_server_config.dart';
+import 'api_log.dart';
 
 class LoginResult {
   final bool success;
@@ -71,10 +72,8 @@ class ApiService {
       'timestamp': timestamp,
     });
 
-    // ignore: avoid_print
-    print('[login] POST $_aimeUrl');
-    // ignore: avoid_print
-    print('[login] chipId=$chipId openGameID=$_openGameID');
+    ApiLog.log('[login] POST $_aimeUrl');
+    ApiLog.log('[login] chipId=$chipId openGameID=$_openGameID');
 
     final response = await http
         .post(

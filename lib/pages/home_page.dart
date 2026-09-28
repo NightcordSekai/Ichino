@@ -75,10 +75,7 @@ class _HomePageState extends State<HomePage> {
     });
     _session.setGameLogin(null);
 
-    final service = TitleApiService(
-      TitleServerConfigHolder().config!,
-      cookies: _session.cookies,
-    );
+    final service = TitleApiService.fromHolder(cookies: _session.cookies)!;
 
     try {
       final preview = await service.getUserPreview(
@@ -102,10 +99,8 @@ class _HomePageState extends State<HomePage> {
       );
       if (!mounted) return;
 
-      final userDataService = TitleApiService(
-        TitleServerConfigHolder().config!,
-        cookies: _session.cookies,
-      );
+      final userDataService =
+          TitleApiService.fromHolder(cookies: _session.cookies)!;
       final userData = await userDataService.getUserDataTyped(widget.userId);
       if (!mounted) return;
       _session.updateCookies(userDataService.cookies);
@@ -142,10 +137,7 @@ class _HomePageState extends State<HomePage> {
       );
       if (!mounted) return;
 
-      final service = TitleApiService(
-        TitleServerConfigHolder().config!,
-        cookies: _session.cookies,
-      );
+      final service = TitleApiService.fromHolder(cookies: _session.cookies)!;
       final userData = await service.getUserDataTyped(widget.userId);
       if (!mounted) return;
       _session.updateCookies(service.cookies);

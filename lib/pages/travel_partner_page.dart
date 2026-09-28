@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
 
@@ -8,6 +7,10 @@ import '../config/title_server_config.dart';
 import '../models/user_character.dart';
 import '../services/title_api_service.dart';
 import '../services/user_all_payload_builder.dart';
+import '../widgets/app_card.dart';
+import '../widgets/app_notice.dart';
+import '../widgets/cooldown_mixin.dart';
+import '../widgets/step_progress.dart';
 
 /// 旅行伙伴页：发放角色 + 编组出战槽位。
 ///
@@ -40,12 +43,8 @@ class TravelPartnerPage extends StatefulWidget {
   State<TravelPartnerPage> createState() => _TravelPartnerPageState();
 }
 
-enum _Step { idle, fetchData, upload, logout, complete, failed }
-
-class _TravelPartnerPageState extends State<TravelPartnerPage> {
-  /// 与解锁/收藏品一致：这些操作不写真实成绩，playlog 沿用同一条占位记录。
-  static const int _placeholderMusicId = 11538;
-
+class _TravelPartnerPageState extends State<TravelPartnerPage>
+    with CooldownMixin<TravelPartnerPage> {
   final _grantIdController = TextEditingController();
 
   /// 每个出战槽位一个等级输入框，留空表示不改该角色的等级。
@@ -62,31 +61,14 @@ class _TravelPartnerPageState extends State<TravelPartnerPage> {
   bool _loading = false;
   bool _running = false;
   bool _autoLogout = true;
-  _Step _step = _Step.idle;
+  RiskStep _step = RiskStep.idle;
   String _stepMessage = '';
 
-  Timer? _cooldownTimer;
-  int _cooldownRemaining = 0;
-
-  bool get _loggedIn => widget.loginDateTime != null;
-
   @override
-  void initState() {
-    super.initState();
-    _syncCooldown();
-  }
-
-  @override
-  void didUpdateWidget(covariant TravelPartnerPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.loginDateTime != widget.loginDateTime) {
-      _syncCooldown();
-    }
-  }
+  int? get cooldownLoginDateTime => widget.loginDateTime;
 
   @override
   void dispose() {
-    _cooldownTimer?.cancel();
     _grantIdController.dispose();
     for (final c in _slotLevelControllers) {
       c.dispose();
@@ -94,38 +76,7 @@ class _TravelPartnerPageState extends State<TravelPartnerPage> {
     super.dispose();
   }
 
-  void _syncCooldown() {
-    _cooldownTimer?.cancel();
-    final loginDateTime = widget.loginDateTime;
-    if (loginDateTime == null) {
-      setState(() => _cooldownRemaining = 0);
-      return;
-    }
-    setState(() => _cooldownRemaining = _computeRemaining(loginDateTime));
-    if (_cooldownRemaining <= 0) return;
-    _cooldownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (!mounted) return;
-      final remaining = _computeRemaining(loginDateTime);
-      setState(() => _cooldownRemaining = remaining);
-      if (remaining <= 0) {
-        _cooldownTimer?.cancel();
-        _cooldownTimer = null;
-      }
-    });
-  }
-
-  int _computeRemaining(int loginDateTime) {
-    final nowSec = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    final remaining =
-        AppStrings.ticketCooldownSeconds - (nowSec - loginDateTime);
-    return remaining < 0 ? 0 : remaining;
-  }
-
-  void _snack(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
-  }
+  void _snack(String message) => context.showSnack(message);
 
   bool _isAvailable(int characterId) =>
       characterId != 0 &&
@@ -137,8 +88,7 @@ class _TravelPartnerPageState extends State<TravelPartnerPage> {
     setState(() => _loading = true);
 
     try {
-      final config = TitleServerConfigHolder().config!;
-      final service = TitleApiService(config, cookies: widget.cookies);
+      final service = TitleApiService.fromHolder(cookies: widget.cookies)!;
       final results = await Future.wait([
         service.getUserCharacters(widget.userId),
         service.fetchUserAllData(widget.userId),
@@ -252,8 +202,8 @@ class _TravelPartnerPageState extends State<TravelPartnerPage> {
       _snack(AppStrings.travelPartnerNotLoggedIn);
       return;
     }
-    if (_cooldownRemaining > 0) {
-      _snack(AppStrings.travelPartnerCooldownNotice(_cooldownRemaining));
+    if (cooldownRemaining > 0) {
+      _snack(AppStrings.travelPartnerCooldownNotice(cooldownRemaining));
       return;
     }
     final validationError = _validate();
@@ -265,23 +215,22 @@ class _TravelPartnerPageState extends State<TravelPartnerPage> {
     setState(() => _running = true);
 
     try {
-      final config = TitleServerConfigHolder().config!;
-      final service = TitleApiService(config, cookies: widget.cookies);
-      final builder = UserAllPayloadBuilder(config);
+      final service = TitleApiService.fromHolder(cookies: widget.cookies)!;
+      final builder = UserAllPayloadBuilder(service.config);
 
       var data = _userAllData;
       if (data.isEmpty) {
-        _updateStep(_Step.fetchData);
+        _updateStep(RiskStep.fetchData);
         data = await service.fetchUserAllData(widget.userId);
         if (mounted) setState(() => _userAllData = data);
       }
 
-      _updateStep(_Step.upload);
+      _updateStep(RiskStep.upload);
       final packet = builder.build(
         userId: widget.userId,
         loginId: loginId,
         loginDateTime: loginDateTime,
-        musicData: _placeholderMusicData(),
+        musicData: UserAllPayloadBuilder.placeholderMusicData(),
         generalUserInfo: data,
       );
 
@@ -325,7 +274,7 @@ class _TravelPartnerPageState extends State<TravelPartnerPage> {
       // 服务器没写入 userCharacterList，还是写入了但 ID 不在机台 Chara 表里
       // 被客户端 CharacterSelectProces 静默跳过。
       _updateStep(
-        _Step.complete,
+        RiskStep.complete,
         _pendingGrant.isEmpty
             ? AppStrings.travelPartnerSuccess
             : await _verifyGranted(service),
@@ -334,13 +283,13 @@ class _TravelPartnerPageState extends State<TravelPartnerPage> {
       if (_autoLogout && widget.onExitToTitle != null) {
         await Future.delayed(const Duration(seconds: 2));
         if (!mounted) return;
-        _updateStep(_Step.logout, AppStrings.exitingToTitle);
+        _updateStep(RiskStep.logout, AppStrings.exitingToTitle);
         await widget.onExitToTitle!();
       }
     } on TitleApiException catch (e) {
-      _updateStep(_Step.failed, e.message);
+      _updateStep(RiskStep.failed, e.message);
     } catch (e) {
-      _updateStep(_Step.failed, '$e');
+      _updateStep(RiskStep.failed, '$e');
     } finally {
       if (mounted) setState(() => _running = false);
     }
@@ -362,19 +311,7 @@ class _TravelPartnerPageState extends State<TravelPartnerPage> {
     return AppStrings.travelPartnerNotSaved(missing.join(' / '));
   }
 
-  Map<String, dynamic> _placeholderMusicData() => {
-    'musicId': _placeholderMusicId,
-    'level': 0,
-    'playCount': 1,
-    'achievement': 0,
-    'comboStatus': 0,
-    'syncStatus': 0,
-    'deluxscoreMax': 0,
-    'scoreRank': 0,
-    'extNum1': 0,
-  };
-
-  void _updateStep(_Step step, [String? message]) {
+  void _updateStep(RiskStep step, [String? message]) {
     if (!mounted) return;
     setState(() {
       _step = step;
@@ -397,22 +334,19 @@ class _TravelPartnerPageState extends State<TravelPartnerPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (!_loggedIn)
-                _notice(
-                  theme,
+              if (!isLoggedIn)
+                const AppNotice(
                   AppStrings.travelPartnerNotLoggedIn,
                   error: true,
                 ),
-              if (_loggedIn && _cooldownRemaining > 0)
-                _notice(
-                  theme,
-                  AppStrings.travelPartnerCooldownNotice(_cooldownRemaining),
+              if (isLoggedIn && cooldownRemaining > 0)
+                AppNotice(
+                  AppStrings.travelPartnerCooldownNotice(cooldownRemaining),
                 ),
               _sectionCard(
                 theme,
                 icon: Icons.card_giftcard,
                 title: AppStrings.travelPartnerFeatureDesc,
-                children: const [],
               ),
               const SizedBox(height: 12),
               _fetchCard(theme),
@@ -423,37 +357,33 @@ class _TravelPartnerPageState extends State<TravelPartnerPage> {
               const SizedBox(height: 12),
               _ownedCard(theme),
               const SizedBox(height: 12),
-              _autoLogoutToggle(theme),
+              AutoLogoutToggle(
+                value: _autoLogout,
+                enabled: widget.onExitToTitle != null && !_running,
+                onChanged: (v) => setState(() => _autoLogout = v),
+              ),
               const SizedBox(height: 12),
               _runButton(theme),
-              if (_step != _Step.idle) ...[
+              if (_step != RiskStep.idle) ...[
                 const SizedBox(height: 16),
-                _progressCard(theme),
+                StepProgressCard(
+                  step: _step,
+                  message: _stepMessage,
+                  steps: [
+                    (
+                      RiskStep.fetchData,
+                      AppStrings.travelPartnerStepFetch,
+                    ),
+                    (
+                      RiskStep.upload,
+                      AppStrings.travelPartnerStepUpload,
+                    ),
+                    if (_autoLogout) (RiskStep.logout, AppStrings.stepLogout),
+                  ],
+                ),
               ],
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _notice(ThemeData theme, String text, {bool error = false}) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: error
-            ? theme.colorScheme.errorContainer
-            : theme.colorScheme.tertiaryContainer.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Text(
-        text,
-        style: theme.textTheme.bodySmall?.copyWith(
-          color: error
-              ? theme.colorScheme.onErrorContainer
-              : theme.colorScheme.onTertiaryContainer,
         ),
       ),
     );
@@ -463,51 +393,22 @@ class _TravelPartnerPageState extends State<TravelPartnerPage> {
     ThemeData theme, {
     required IconData icon,
     required String title,
-    required List<Widget> children,
+    List<Widget> children = const [],
   }) {
-    return _card(
-      theme,
+    return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(icon, size: 18, color: theme.colorScheme.primary),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  title,
-                  style: theme.textTheme.labelLarge?.copyWith(
-                    color: theme.colorScheme.primary,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-            ],
-          ),
+          SectionTitle(icon: icon, title: title),
           ...children,
         ],
       ),
     );
   }
 
-  Widget _card(ThemeData theme, {required Widget child}) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(
-          color: theme.colorScheme.outline.withValues(alpha: 0.3),
-        ),
-      ),
-      child: Padding(padding: const EdgeInsets.all(20), child: child),
-    );
-  }
-
   Widget _fetchCard(ThemeData theme) {
     final hasData = _userAllData.isNotEmpty && _owned.isNotEmpty;
-    return _card(
-      theme,
+    return AppCard(
       child: Row(
         children: [
           Icon(
@@ -806,38 +707,11 @@ class _TravelPartnerPageState extends State<TravelPartnerPage> {
     );
   }
 
-  Widget _autoLogoutToggle(ThemeData theme) {
-    final enabled = widget.onExitToTitle != null && !_running;
-    return _card(
-      theme,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(10),
-        onTap: enabled ? () => setState(() => _autoLogout = !_autoLogout) : null,
-        child: Row(
-          children: [
-            Checkbox(
-              value: _autoLogout,
-              onChanged: enabled
-                  ? (v) => setState(() => _autoLogout = v ?? false)
-                  : null,
-            ),
-            Expanded(
-              child: Text(
-                AppStrings.autoLogoutAndExit,
-                style: theme.textTheme.bodyMedium,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _runButton(ThemeData theme) {
     return SizedBox(
       width: double.infinity,
       child: FilledButton.icon(
-        onPressed: _running || !_loggedIn ? null : _run,
+        onPressed: _running || !isLoggedIn ? null : _run,
         icon: _running
             ? const SizedBox(
                 width: 20,
@@ -854,75 +728,6 @@ class _TravelPartnerPageState extends State<TravelPartnerPage> {
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _progressCard(ThemeData theme) {
-    final isFailed = _step == _Step.failed;
-    return _card(
-      theme,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _stepRow(theme, _Step.fetchData, AppStrings.travelPartnerStepFetch),
-          _stepRow(theme, _Step.upload, AppStrings.travelPartnerStepUpload),
-          if (_autoLogout)
-            _stepRow(theme, _Step.logout, AppStrings.stepLogout),
-          if (_stepMessage.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: isFailed
-                    ? theme.colorScheme.errorContainer
-                    : theme.colorScheme.surfaceContainerHighest
-                          .withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                _stepMessage,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  fontFamily: 'monospace',
-                  color: isFailed
-                      ? theme.colorScheme.onErrorContainer
-                      : theme.colorScheme.onSurface,
-                ),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _stepRow(ThemeData theme, _Step step, String label) {
-    final order = [_Step.fetchData, _Step.upload, _Step.logout, _Step.complete];
-    final current = _step == _Step.failed ? _Step.upload : _step;
-    final done = order.indexOf(current) > order.indexOf(step);
-    final active = _step == step;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Icon(
-            done
-                ? Icons.check_circle
-                : active
-                ? Icons.radio_button_checked
-                : Icons.radio_button_unchecked,
-            size: 18,
-            color: done
-                ? Colors.green
-                : active
-                ? theme.colorScheme.primary
-                : theme.colorScheme.onSurfaceVariant,
-          ),
-          const SizedBox(width: 10),
-          Expanded(child: Text(label, style: theme.textTheme.bodySmall)),
-        ],
       ),
     );
   }

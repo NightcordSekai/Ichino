@@ -22,6 +22,23 @@ class UserAllPayloadBuilder {
   static const int minCharacterLevel = 1;
   static const int maxCharacterLevel = 999999;
 
+  /// 高危操作不写真实成绩，playlog 统一沿用这一条占位记录
+  /// （eaquira `settings.musicData` 的默认曲 Amber Chronicle）。
+  static const int placeholderMusicId = 11538;
+
+  /// 占位 `musicData`。解锁歌曲时用待解锁曲目覆盖 [musicId]，其余字段照旧。
+  static Map<String, dynamic> placeholderMusicData({int? musicId}) => {
+        'musicId': musicId ?? placeholderMusicId,
+        'level': 0,
+        'playCount': 1,
+        'achievement': 0,
+        'comboStatus': 0,
+        'syncStatus': 0,
+        'deluxscoreMax': 0,
+        'scoreRank': 0,
+        'extNum1': 0,
+      };
+
   final TitleServerConfig config;
 
   const UserAllPayloadBuilder(this.config);

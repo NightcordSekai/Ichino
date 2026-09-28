@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
 
@@ -7,6 +6,10 @@ import '../config/strings.dart';
 import '../config/title_server_config.dart';
 import '../services/title_api_service.dart';
 import '../services/user_all_payload_builder.dart';
+import '../widgets/app_card.dart';
+import '../widgets/app_notice.dart';
+import '../widgets/cooldown_mixin.dart';
+import '../widgets/step_progress.dart';
 
 /// 一键跑图：把选中的区域标记为已完成。
 ///
@@ -39,12 +42,8 @@ class MapTraversePage extends StatefulWidget {
   State<MapTraversePage> createState() => _MapTraversePageState();
 }
 
-enum _Step { idle, fetchData, upload, logout, complete, failed }
-
-class _MapTraversePageState extends State<MapTraversePage> {
-  /// 与其它高危功能一致：不写真实成绩，playlog 用同一条占位记录。
-  static const int _placeholderMusicId = 11538;
-
+class _MapTraversePageState extends State<MapTraversePage>
+    with CooldownMixin<MapTraversePage> {
   final _mapIdController = TextEditingController();
   final List<int> _pending = [];
 
@@ -55,65 +54,19 @@ class _MapTraversePageState extends State<MapTraversePage> {
   bool _loading = false;
   bool _running = false;
   bool _autoLogout = true;
-  _Step _step = _Step.idle;
+  RiskStep _step = RiskStep.idle;
   String _stepMessage = '';
 
-  Timer? _cooldownTimer;
-  int _cooldownRemaining = 0;
-
-  bool get _loggedIn => widget.loginDateTime != null;
-
   @override
-  void initState() {
-    super.initState();
-    _syncCooldown();
-  }
-
-  @override
-  void didUpdateWidget(covariant MapTraversePage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.loginDateTime != widget.loginDateTime) {
-      _syncCooldown();
-    }
-  }
+  int? get cooldownLoginDateTime => widget.loginDateTime;
 
   @override
   void dispose() {
-    _cooldownTimer?.cancel();
     _mapIdController.dispose();
     super.dispose();
   }
 
-  void _syncCooldown() {
-    _cooldownTimer?.cancel();
-    final loginDateTime = widget.loginDateTime;
-    if (loginDateTime == null) {
-      setState(() => _cooldownRemaining = 0);
-      return;
-    }
-    setState(() => _cooldownRemaining = _computeRemaining(loginDateTime));
-    if (_cooldownRemaining <= 0) return;
-    _cooldownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (!mounted) return;
-      final remaining = _computeRemaining(loginDateTime);
-      setState(() => _cooldownRemaining = remaining);
-      if (remaining <= 0) {
-        _cooldownTimer?.cancel();
-        _cooldownTimer = null;
-      }
-    });
-  }
-
-  int _computeRemaining(int loginDateTime) {
-    final nowSec = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    final remaining =
-        AppStrings.ticketCooldownSeconds - (nowSec - loginDateTime);
-    return remaining < 0 ? 0 : remaining;
-  }
-
-  void _snack(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
-  }
+  void _snack(String message) => context.showSnack(message);
 
   void _addPending() {
     final id = int.tryParse(_mapIdController.text.trim()) ?? -1;
@@ -144,8 +97,7 @@ class _MapTraversePageState extends State<MapTraversePage> {
     setState(() => _loading = true);
 
     try {
-      final config = TitleServerConfigHolder().config!;
-      final service = TitleApiService(config, cookies: widget.cookies);
+      final service = TitleApiService.fromHolder(cookies: widget.cookies)!;
       final results = await Future.wait([
         service.fetchUserAllData(widget.userId),
         service.getUserMaps(widget.userId),
@@ -174,8 +126,8 @@ class _MapTraversePageState extends State<MapTraversePage> {
       _snack(AppStrings.mapNotLoggedIn);
       return;
     }
-    if (_cooldownRemaining > 0) {
-      _snack(AppStrings.mapCooldownNotice(_cooldownRemaining));
+    if (cooldownRemaining > 0) {
+      _snack(AppStrings.mapCooldownNotice(cooldownRemaining));
       return;
     }
     if (_pending.isEmpty) {
@@ -186,14 +138,13 @@ class _MapTraversePageState extends State<MapTraversePage> {
     setState(() => _running = true);
 
     try {
-      final config = TitleServerConfigHolder().config!;
-      final service = TitleApiService(config, cookies: widget.cookies);
-      final builder = UserAllPayloadBuilder(config);
+      final service = TitleApiService.fromHolder(cookies: widget.cookies)!;
+      final builder = UserAllPayloadBuilder(service.config);
 
       var data = _userAllData;
       var serverIds = _serverMapIds;
       if (data.isEmpty || serverIds == null) {
-        _updateStep(_Step.fetchData);
+        _updateStep(RiskStep.fetchData);
         final results = await Future.wait([
           service.fetchUserAllData(widget.userId),
           service.getUserMaps(widget.userId),
@@ -204,12 +155,12 @@ class _MapTraversePageState extends State<MapTraversePage> {
         serverIds = _serverMapIds!;
       }
 
-      _updateStep(_Step.upload);
+      _updateStep(RiskStep.upload);
       final packet = builder.build(
         userId: widget.userId,
         loginId: loginId,
         loginDateTime: loginDateTime,
-        musicData: _placeholderMusicData(),
+        musicData: UserAllPayloadBuilder.placeholderMusicData(),
         generalUserInfo: data,
       );
 
@@ -224,18 +175,18 @@ class _MapTraversePageState extends State<MapTraversePage> {
       builder.applyMapPatch(packet, maps: maps, newFlags: flags);
 
       await service.upsertUserAll(packet, widget.userId);
-      _updateStep(_Step.complete, await _verify(service));
+      _updateStep(RiskStep.complete, await _verify(service));
 
       if (_autoLogout && widget.onExitToTitle != null) {
         await Future.delayed(const Duration(seconds: 2));
         if (!mounted) return;
-        _updateStep(_Step.logout, AppStrings.exitingToTitle);
+        _updateStep(RiskStep.logout, AppStrings.exitingToTitle);
         await widget.onExitToTitle!();
       }
     } on TitleApiException catch (e) {
-      _updateStep(_Step.failed, e.message);
+      _updateStep(RiskStep.failed, e.message);
     } catch (e) {
-      _updateStep(_Step.failed, '$e');
+      _updateStep(RiskStep.failed, '$e');
     } finally {
       if (mounted) setState(() => _running = false);
     }
@@ -260,19 +211,7 @@ class _MapTraversePageState extends State<MapTraversePage> {
     return AppStrings.mapVerified(requested.length);
   }
 
-  Map<String, dynamic> _placeholderMusicData() => {
-    'musicId': _placeholderMusicId,
-    'level': 0,
-    'playCount': 1,
-    'achievement': 0,
-    'comboStatus': 0,
-    'syncStatus': 0,
-    'deluxscoreMax': 0,
-    'scoreRank': 0,
-    'extNum1': 0,
-  };
-
-  void _updateStep(_Step step, [String? message]) {
+  void _updateStep(RiskStep step, [String? message]) {
     if (!mounted) return;
     setState(() {
       _step = step;
@@ -293,19 +232,17 @@ class _MapTraversePageState extends State<MapTraversePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (!_loggedIn)
-                _notice(theme, AppStrings.mapNotLoggedIn, error: true),
-              if (_loggedIn && _cooldownRemaining > 0)
-                _notice(theme, AppStrings.mapCooldownNotice(_cooldownRemaining)),
-              _card(
-                theme,
+              if (!isLoggedIn)
+                const AppNotice(AppStrings.mapNotLoggedIn, error: true),
+              if (isLoggedIn && cooldownRemaining > 0)
+                AppNotice(AppStrings.mapCooldownNotice(cooldownRemaining)),
+              AppCard(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _titleRow(
-                      theme,
-                      Icons.map_outlined,
-                      AppStrings.mapFeatureTitle,
+                    const SectionTitle(
+                      icon: Icons.map_outlined,
+                      title: AppStrings.mapFeatureTitle,
                     ),
                     const SizedBox(height: 12),
                     Text(
@@ -331,12 +268,24 @@ class _MapTraversePageState extends State<MapTraversePage> {
               const SizedBox(height: 12),
               _fetchCard(theme),
               const SizedBox(height: 12),
-              _autoLogoutToggle(theme),
+              AutoLogoutToggle(
+                value: _autoLogout,
+                enabled: widget.onExitToTitle != null && !_running,
+                onChanged: (v) => setState(() => _autoLogout = v),
+              ),
               const SizedBox(height: 12),
               _runButton(theme),
-              if (_step != _Step.idle) ...[
+              if (_step != RiskStep.idle) ...[
                 const SizedBox(height: 16),
-                _progressCard(theme),
+                StepProgressCard(
+                  step: _step,
+                  message: _stepMessage,
+                  steps: [
+                    (RiskStep.fetchData, AppStrings.mapStepFetch),
+                    (RiskStep.upload, AppStrings.mapStepUpload),
+                    if (_autoLogout) (RiskStep.logout, AppStrings.stepLogout),
+                  ],
+                ),
               ],
             ],
           ),
@@ -345,63 +294,9 @@ class _MapTraversePageState extends State<MapTraversePage> {
     );
   }
 
-  Widget _notice(ThemeData theme, String text, {bool error = false}) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: error
-            ? theme.colorScheme.errorContainer
-            : theme.colorScheme.tertiaryContainer.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Text(
-        text,
-        style: theme.textTheme.bodySmall?.copyWith(
-          color: error
-              ? theme.colorScheme.onErrorContainer
-              : theme.colorScheme.onTertiaryContainer,
-        ),
-      ),
-    );
-  }
-
-  Widget _card(ThemeData theme, {required Widget child}) {
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(
-          color: theme.colorScheme.outline.withValues(alpha: 0.3),
-        ),
-      ),
-      child: Padding(padding: const EdgeInsets.all(20), child: child),
-    );
-  }
-
-  Widget _titleRow(ThemeData theme, IconData icon, String title) {
-    return Row(
-      children: [
-        Icon(icon, size: 18, color: theme.colorScheme.primary),
-        const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            title,
-            style: theme.textTheme.labelLarge?.copyWith(
-              color: theme.colorScheme.primary,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget _inputCard(ThemeData theme) {
     final enabled = !_running;
-    return _card(
-      theme,
+    return AppCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -449,8 +344,7 @@ class _MapTraversePageState extends State<MapTraversePage> {
 
   Widget _fetchCard(ThemeData theme) {
     final hasData = _serverMapIds != null;
-    return _card(
-      theme,
+    return AppCard(
       child: Row(
         children: [
           Icon(
@@ -501,38 +395,11 @@ class _MapTraversePageState extends State<MapTraversePage> {
     );
   }
 
-  Widget _autoLogoutToggle(ThemeData theme) {
-    final enabled = widget.onExitToTitle != null && !_running;
-    return _card(
-      theme,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(10),
-        onTap: enabled ? () => setState(() => _autoLogout = !_autoLogout) : null,
-        child: Row(
-          children: [
-            Checkbox(
-              value: _autoLogout,
-              onChanged: enabled
-                  ? (v) => setState(() => _autoLogout = v ?? false)
-                  : null,
-            ),
-            Expanded(
-              child: Text(
-                AppStrings.autoLogoutAndExit,
-                style: theme.textTheme.bodyMedium,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _runButton(ThemeData theme) {
     return SizedBox(
       width: double.infinity,
       child: FilledButton.icon(
-        onPressed: _running || !_loggedIn ? null : _run,
+        onPressed: _running || !isLoggedIn ? null : _run,
         icon: _running
             ? const SizedBox(
                 width: 20,
@@ -549,74 +416,6 @@ class _MapTraversePageState extends State<MapTraversePage> {
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _progressCard(ThemeData theme) {
-    final isFailed = _step == _Step.failed;
-    return _card(
-      theme,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _stepRow(theme, _Step.fetchData, AppStrings.mapStepFetch),
-          _stepRow(theme, _Step.upload, AppStrings.mapStepUpload),
-          if (_autoLogout) _stepRow(theme, _Step.logout, AppStrings.stepLogout),
-          if (_stepMessage.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: isFailed
-                    ? theme.colorScheme.errorContainer
-                    : theme.colorScheme.surfaceContainerHighest
-                          .withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Text(
-                _stepMessage,
-                style: theme.textTheme.bodySmall?.copyWith(
-                  fontFamily: 'monospace',
-                  color: isFailed
-                      ? theme.colorScheme.onErrorContainer
-                      : theme.colorScheme.onSurface,
-                ),
-              ),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _stepRow(ThemeData theme, _Step step, String label) {
-    final order = [_Step.fetchData, _Step.upload, _Step.logout, _Step.complete];
-    final current = _step == _Step.failed ? _Step.upload : _step;
-    final done = order.indexOf(current) > order.indexOf(step);
-    final active = _step == step;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        children: [
-          Icon(
-            done
-                ? Icons.check_circle
-                : active
-                ? Icons.radio_button_checked
-                : Icons.radio_button_unchecked,
-            size: 18,
-            color: done
-                ? Colors.green
-                : active
-                ? theme.colorScheme.primary
-                : theme.colorScheme.onSurfaceVariant,
-          ),
-          const SizedBox(width: 10),
-          Expanded(child: Text(label, style: theme.textTheme.bodySmall)),
-        ],
       ),
     );
   }

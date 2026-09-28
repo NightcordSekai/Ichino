@@ -1,10 +1,10 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 import '../config/responsive.dart';
 import '../config/strings.dart';
 import '../config/title_server_config.dart';
+import '../widgets/app_notice.dart';
+import '../widgets/cooldown_mixin.dart';
 import 'collectibles_page.dart';
 import 'kaleidx_scope_page.dart';
 import 'map_traverse_page.dart';
@@ -43,56 +43,10 @@ class HighRiskFeaturePage extends StatefulWidget {
   State<HighRiskFeaturePage> createState() => _HighRiskFeaturePageState();
 }
 
-class _HighRiskFeaturePageState extends State<HighRiskFeaturePage> {
-  Timer? _cooldownTimer;
-  int _cooldownRemaining = 0;
-
+class _HighRiskFeaturePageState extends State<HighRiskFeaturePage>
+    with CooldownMixin<HighRiskFeaturePage> {
   @override
-  void initState() {
-    super.initState();
-    _syncCooldown();
-  }
-
-  @override
-  void didUpdateWidget(covariant HighRiskFeaturePage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.loginDateTime != widget.loginDateTime) {
-      _syncCooldown();
-    }
-  }
-
-  @override
-  void dispose() {
-    _cooldownTimer?.cancel();
-    super.dispose();
-  }
-
-  void _syncCooldown() {
-    _cooldownTimer?.cancel();
-    final loginDateTime = widget.loginDateTime;
-    if (loginDateTime == null) {
-      _cooldownRemaining = 0;
-      return;
-    }
-    _cooldownRemaining = _computeRemaining(loginDateTime);
-    if (_cooldownRemaining <= 0) return;
-    _cooldownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (!mounted) return;
-      final remaining = _computeRemaining(loginDateTime);
-      setState(() => _cooldownRemaining = remaining);
-      if (remaining <= 0) {
-        _cooldownTimer?.cancel();
-        _cooldownTimer = null;
-      }
-    });
-  }
-
-  int _computeRemaining(int loginDateTime) {
-    final nowSec = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    final elapsed = nowSec - loginDateTime;
-    final remaining = AppStrings.ticketCooldownSeconds - elapsed;
-    return remaining < 0 ? 0 : remaining;
-  }
+  int? get cooldownLoginDateTime => widget.loginDateTime;
 
   void _openUnlockMusic() {
     Navigator.of(context).push(
@@ -209,9 +163,17 @@ class _HighRiskFeaturePageState extends State<HighRiskFeaturePage> {
         context,
         child: Column(
           children: [
-            if (widget.loginDateTime == null) _buildNotLoggedInBanner(theme),
-            if (widget.loginDateTime != null && _cooldownRemaining > 0)
-              _buildCooldownBanner(theme),
+            if (!isLoggedIn)
+              AppNotice(
+                AppStrings.musicRiskHubNotLoggedIn,
+                error: true,
+                icon: Icons.warning_amber_rounded,
+              ),
+            if (isLoggedIn && cooldownRemaining > 0)
+              AppNotice(
+                AppStrings.musicRiskHubCooldownNotice(cooldownRemaining),
+                icon: Icons.timer_outlined,
+              ),
             _buildDescCard(theme),
             const SizedBox(height: 12),
             _buildNavCard(
@@ -271,60 +233,6 @@ class _HighRiskFeaturePageState extends State<HighRiskFeaturePage> {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildNotLoggedInBanner(ThemeData theme) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.errorContainer,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.warning_amber_rounded,
-              size: 18, color: theme.colorScheme.onErrorContainer),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              AppStrings.musicRiskHubNotLoggedIn,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onErrorContainer,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCooldownBanner(ThemeData theme) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.tertiaryContainer.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.timer_outlined,
-              size: 18, color: theme.colorScheme.onTertiaryContainer),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              AppStrings.musicRiskHubCooldownNotice(_cooldownRemaining),
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onTertiaryContainer,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

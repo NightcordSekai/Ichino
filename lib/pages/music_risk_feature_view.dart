@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 import '../config/responsive.dart';
@@ -7,6 +5,10 @@ import '../config/strings.dart';
 import '../config/title_server_config.dart';
 import '../services/title_api_service.dart';
 import '../services/user_all_payload_builder.dart';
+import '../widgets/app_card.dart';
+import '../widgets/app_notice.dart';
+import '../widgets/cooldown_mixin.dart';
+import '../widgets/step_progress.dart';
 
 /// Dart port of `eaquira/action/UnlockMusic.py`:
 ///
@@ -15,8 +17,6 @@ import '../services/user_all_payload_builder.dart';
 /// - 附加道具 (userItemList / isNewItemList)
 /// - UpsertUserAllApi 上传
 /// - 可选自动 UserLogout
-enum MusicRiskStep { idle, fetchData, upload, logout, complete, failed }
-
 enum MusicRiskFeatureMode {
   /// 解锁歌曲与谱面 (itemKind 5/6/7)
   unlockMusic,
@@ -95,10 +95,8 @@ class MusicRiskFeatureView extends StatefulWidget {
   State<MusicRiskFeatureView> createState() => _MusicRiskFeatureViewState();
 }
 
-class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView> {
-  /// eaquira `settings.musicData` 默认歌曲 (Amber Chronicle)。
-  static const int _defaultMusicId = 11538;
-
+class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView>
+    with CooldownMixin<MusicRiskFeatureView> {
   // ── 解锁选项 (UnlockMusic) ──
   final _unlockMusicIdController = TextEditingController();
   bool _unlockMusic = false;
@@ -122,66 +120,23 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView> {
   String? _fetchError;
   bool _running = false;
   bool _autoLogout = true;
-  MusicRiskStep _step = MusicRiskStep.idle;
+  RiskStep _step = RiskStep.idle;
   String _stepMessage = '';
   String? _error;
-
-  // ── 冷却 ──
-  Timer? _cooldownTimer;
-  int _cooldownRemaining = 0;
 
   bool get _isUnlock => widget.mode == MusicRiskFeatureMode.unlockMusic;
 
   @override
-  void initState() {
-    super.initState();
-    _syncCooldown();
-  }
-
-  @override
-  void didUpdateWidget(covariant MusicRiskFeatureView oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.loginDateTime != widget.loginDateTime) {
-      _syncCooldown();
-    }
-  }
+  int? get cooldownLoginDateTime => widget.loginDateTime;
 
   @override
   void dispose() {
-    _cooldownTimer?.cancel();
     _unlockMusicIdController.dispose();
     _itemIdController.dispose();
     super.dispose();
   }
 
-  void _syncCooldown() {
-    _cooldownTimer?.cancel();
-    final loginDateTime = widget.loginDateTime;
-    if (loginDateTime == null) {
-      _cooldownRemaining = 0;
-      return;
-    }
-    _cooldownRemaining = _computeRemaining(loginDateTime);
-    if (_cooldownRemaining <= 0) return;
-    _cooldownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (!mounted) return;
-      final remaining = _computeRemaining(loginDateTime);
-      setState(() => _cooldownRemaining = remaining);
-      if (remaining <= 0) {
-        _cooldownTimer?.cancel();
-        _cooldownTimer = null;
-      }
-    });
-  }
-
-  int _computeRemaining(int loginDateTime) {
-    final nowSec = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    final elapsed = nowSec - loginDateTime;
-    final remaining = AppStrings.ticketCooldownSeconds - elapsed;
-    return remaining < 0 ? 0 : remaining;
-  }
-
-  void _updateStep(MusicRiskStep step, [String? message]) {
+  void _updateStep(RiskStep step, [String? message]) {
     if (!mounted) return;
     setState(() {
       _step = step;
@@ -194,11 +149,7 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView> {
 
   int _itemId() => int.tryParse(_itemIdController.text.trim()) ?? -1;
 
-  void _snack(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
-  }
+  void _snack(String message) => context.showSnack(message);
 
   /// 把当前输入框里的收藏品加入待提交列表。
   void _addItemToList() {
@@ -245,21 +196,10 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView> {
   /// 解锁状态本身由 userItemList 的 itemKind 5/6/7 行表达，这里只保留一条
   /// 记录以维持 payload 形状，取列表首条歌曲 ID。
   Map<String, dynamic> _buildMusicData() {
-    return {
-      'musicId': _isUnlock
-          ? (_pendingMusics.isNotEmpty
-                ? _pendingMusics.first.musicId
-                : _defaultMusicId)
-          : _defaultMusicId,
-      'level': 0,
-      'playCount': 1,
-      'achievement': 0,
-      'comboStatus': 0,
-      'syncStatus': 0,
-      'deluxscoreMax': 0,
-      'scoreRank': 0,
-      'extNum1': 0,
-    };
+    final musicId = _isUnlock && _pendingMusics.isNotEmpty
+        ? _pendingMusics.first.musicId
+        : UserAllPayloadBuilder.placeholderMusicId;
+    return UserAllPayloadBuilder.placeholderMusicData(musicId: musicId);
   }
 
   /// 汇总成 wire 上的 userItemList 行。
@@ -307,8 +247,7 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView> {
     });
 
     try {
-      final config = TitleServerConfigHolder().config!;
-      final service = TitleApiService(config, cookies: widget.cookies);
+      final service = TitleApiService.fromHolder(cookies: widget.cookies)!;
       final data = await service.fetchUserAllData(widget.userId);
       if (!mounted) return;
       setState(() {
@@ -327,34 +266,25 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView> {
   Future<void> _run() async {
     final validationError = _validateInputs();
     if (validationError != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(validationError)),
-      );
+      _snack(validationError);
       return;
     }
     if (!TitleServerConfigHolder().isConfigured) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text(AppStrings.ticketNotConfigured)),
-      );
+      _snack(AppStrings.ticketNotConfigured);
       return;
     }
     final loginDateTime = widget.loginDateTime;
     final loginId = widget.loginId;
     if (loginDateTime == null || loginId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_notLoggedInMessage)),
-      );
+      _snack(_notLoggedInMessage);
       return;
     }
-    if (_cooldownRemaining > 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_cooldownNotice(_cooldownRemaining))),
-      );
+    if (cooldownRemaining > 0) {
+      _snack(_cooldownNotice(cooldownRemaining));
       return;
     }
 
-    final config = TitleServerConfigHolder().config!;
-    final service = TitleApiService(config, cookies: widget.cookies);
+    final service = TitleApiService.fromHolder(cookies: widget.cookies)!;
 
     setState(() {
       _running = true;
@@ -364,14 +294,14 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView> {
     try {
       Map<String, Map<String, dynamic>> data = _userAllData ?? const {};
       if (data.isEmpty) {
-        _updateStep(MusicRiskStep.fetchData);
+        _updateStep(RiskStep.fetchData);
         data = await service.fetchUserAllData(widget.userId);
         if (mounted) setState(() => _userAllData = data);
       }
 
-      _updateStep(MusicRiskStep.upload);
+      _updateStep(RiskStep.upload);
       final musicData = _buildMusicData();
-      final builder = UserAllPayloadBuilder(config);
+      final builder = UserAllPayloadBuilder(service.config);
       final packet = builder.build(
         userId: widget.userId,
         loginId: loginId,
@@ -388,7 +318,7 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView> {
       await service.upsertUserAll(packet, widget.userId);
 
       _updateStep(
-        MusicRiskStep.complete,
+        RiskStep.complete,
         _isUnlock
             ? AppStrings.unlockMusicSuccess
             : AppStrings.collectiblesSuccess,
@@ -398,14 +328,14 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView> {
         // 让成功状态先显示一下，再交给 HomePage 结算、退登并 pop 回主标题。
         await Future.delayed(const Duration(seconds: 2));
         if (!mounted) return;
-        _updateStep(MusicRiskStep.logout, AppStrings.exitingToTitle);
+        _updateStep(RiskStep.logout, AppStrings.exitingToTitle);
         await widget.onExitToTitle!();
       }
     } on TitleApiException catch (e) {
-      _updateStep(MusicRiskStep.failed, e.message);
+      _updateStep(RiskStep.failed, e.message);
       setState(() => _error = e.message);
     } catch (e) {
-      _updateStep(MusicRiskStep.failed, e.toString());
+      _updateStep(RiskStep.failed, e.toString());
       setState(() => _error = e.toString());
     } finally {
       if (mounted) setState(() => _running = false);
@@ -448,9 +378,17 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView> {
         context,
         child: Column(
           children: [
-            if (widget.loginDateTime == null) _buildNotLoggedInBanner(theme),
-            if (widget.loginDateTime != null && _cooldownRemaining > 0)
-              _buildCooldownBanner(theme),
+            if (!isLoggedIn)
+              AppNotice(
+                _notLoggedInMessage,
+                error: true,
+                icon: Icons.warning_amber_rounded,
+              ),
+            if (isLoggedIn && cooldownRemaining > 0)
+              AppNotice(
+                _cooldownNotice(cooldownRemaining),
+                icon: Icons.timer_outlined,
+              ),
             _buildDescCard(theme),
             const SizedBox(height: 12),
             if (_isUnlock)
@@ -460,69 +398,33 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView> {
             const SizedBox(height: 12),
             _buildFetchCard(theme),
             const SizedBox(height: 12),
-            _buildAutoLogoutToggle(theme),
+            AutoLogoutToggle(
+              value: _autoLogout,
+              enabled: widget.onExitToTitle != null && !_running,
+              onChanged: (v) => setState(() => _autoLogout = v),
+            ),
             const SizedBox(height: 12),
             _buildRunButton(theme),
-            if (_step != MusicRiskStep.idle) ...[
+            if (_step != RiskStep.idle) ...[
               const SizedBox(height: 16),
-              _buildProgressCard(theme),
+              StepProgressCard(
+                step: _step,
+                message: _stepMessage,
+                error: _error,
+                steps: [
+                  (RiskStep.fetchData, AppStrings.unlockStepFetch),
+                  (
+                    RiskStep.upload,
+                    _isUnlock
+                        ? AppStrings.unlockStepUpload
+                        : AppStrings.collectiblesStepUpload,
+                  ),
+                  if (_autoLogout) (RiskStep.logout, AppStrings.stepLogout),
+                ],
+              ),
             ],
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildNotLoggedInBanner(ThemeData theme) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.errorContainer,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.warning_amber_rounded,
-              size: 18, color: theme.colorScheme.onErrorContainer),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              _notLoggedInMessage,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onErrorContainer,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCooldownBanner(ThemeData theme) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.tertiaryContainer.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.timer_outlined,
-              size: 18, color: theme.colorScheme.onTertiaryContainer),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              _cooldownNotice(_cooldownRemaining),
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onTertiaryContainer,
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -913,42 +815,8 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView> {
     );
   }
 
-  Widget _buildAutoLogoutToggle(ThemeData theme) {
-    final enabled = widget.onExitToTitle != null && !_running;
-    return InkWell(
-      borderRadius: BorderRadius.circular(10),
-      onTap: enabled
-          ? () => setState(() => _autoLogout = !_autoLogout)
-          : null,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-        child: Row(
-          children: [
-            Checkbox(
-              value: _autoLogout,
-              onChanged: enabled
-                  ? (v) => setState(() => _autoLogout = v ?? false)
-                  : null,
-            ),
-            Expanded(
-              child: Text(
-                AppStrings.autoLogoutAndExit,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: enabled
-                      ? null
-                      : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildRunButton(ThemeData theme) {
-    final onCooldown = _cooldownRemaining > 0;
+    final onCooldown = cooldownRemaining > 0;
     final canRun = widget.loginDateTime != null &&
         widget.loginId != null &&
         !_running &&
@@ -974,7 +842,7 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView> {
           _running
               ? AppStrings.unlockRunning
               : onCooldown
-                  ? AppStrings.ticketCooldownCountdown(_cooldownRemaining)
+                  ? AppStrings.ticketCooldownCountdown(cooldownRemaining)
                   : _isUnlock
                       ? AppStrings.unlockMusicRun
                       : AppStrings.collectiblesRun,
@@ -985,125 +853,6 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView> {
             borderRadius: BorderRadius.circular(12),
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildProgressCard(ThemeData theme) {
-    final isFailed = _step == MusicRiskStep.failed;
-    final isDone = _step == MusicRiskStep.complete;
-
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(
-          color: isFailed
-              ? theme.colorScheme.error.withValues(alpha: 0.5)
-              : isDone
-                  ? Colors.green.withValues(alpha: 0.5)
-                  : theme.colorScheme.outline.withValues(alpha: 0.3),
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _stepRow(MusicRiskStep.fetchData, AppStrings.unlockStepFetch, theme),
-            _stepRow(
-              MusicRiskStep.upload,
-              _isUnlock
-                  ? AppStrings.unlockStepUpload
-                  : AppStrings.collectiblesStepUpload,
-              theme,
-            ),
-            if (_autoLogout)
-              _stepRow(MusicRiskStep.logout, AppStrings.stepLogout, theme),
-            if (_stepMessage.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: isFailed
-                      ? theme.colorScheme.errorContainer
-                      : isDone
-                          ? Colors.green.withValues(alpha: 0.1)
-                          : theme.colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  _stepMessage,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    fontFamily: 'monospace',
-                    color: isFailed
-                        ? theme.colorScheme.onErrorContainer
-                        : theme.colorScheme.onSurface,
-                  ),
-                ),
-              ),
-            ],
-            if (_error != null) ...[
-              const SizedBox(height: 12),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.errorContainer,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  _error!,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onErrorContainer,
-                    fontFamily: 'monospace',
-                  ),
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _stepRow(MusicRiskStep step, String label, ThemeData theme) {
-    IconData icon;
-    Color? color;
-
-    if (_step == MusicRiskStep.failed && _step.index <= step.index) {
-      icon = _step == step ? Icons.error : Icons.circle_outlined;
-      color = _step == step
-          ? theme.colorScheme.error
-          : theme.colorScheme.onSurfaceVariant;
-    } else if (_step.index > step.index) {
-      icon = Icons.check_circle;
-      color = Colors.green;
-    } else if (_step == step) {
-      icon = Icons.sync;
-      color = theme.colorScheme.primary;
-    } else {
-      icon = Icons.circle_outlined;
-      color = theme.colorScheme.onSurfaceVariant;
-    }
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
-      child: Row(
-        children: [
-          Icon(icon, size: 16, color: color),
-          const SizedBox(width: 10),
-          Text(
-            label,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: _step.index >= step.index
-                  ? theme.colorScheme.onSurface
-                  : theme.colorScheme.onSurfaceVariant,
-              fontWeight: _step == step ? FontWeight.w600 : FontWeight.normal,
-            ),
-          ),
-        ],
       ),
     );
   }

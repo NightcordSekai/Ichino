@@ -1,19 +1,13 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 import '../config/responsive.dart';
 import '../config/strings.dart';
 import '../config/title_server_config.dart';
 import '../services/title_api_service.dart';
-
-enum TicketStep {
-  idle,
-  chargeTicket,
-  logout,
-  complete,
-  failed,
-}
+import '../widgets/app_card.dart';
+import '../widgets/app_notice.dart';
+import '../widgets/cooldown_mixin.dart';
+import '../widgets/step_progress.dart';
 
 class TicketPage extends StatefulWidget {
   final int userId;
@@ -40,14 +34,15 @@ class TicketPage extends StatefulWidget {
   State<TicketPage> createState() => _TicketPageState();
 }
 
-class _TicketPageState extends State<TicketPage> {
+class _TicketPageState extends State<TicketPage>
+    with CooldownMixin<TicketPage> {
   static const _ticketNameMap = {
     2: '2倍票',
     4: '4倍票',
     5: '5倍票'
   };
 
-  TicketStep _step = TicketStep.idle;
+  RiskStep _step = RiskStep.idle;
   String _stepMessage = '';
   String? _error;
   bool _running = false;
@@ -58,58 +53,13 @@ class _TicketPageState extends State<TicketPage> {
   String? _ticketsError;
   int? _selectedTicketId;
 
-  Timer? _cooldownTimer;
-  int _cooldownRemaining = 0;
-
   String _ticketName(int chargeId) =>
       _ticketNameMap[chargeId] ?? '票$chargeId';
 
   @override
-  void initState() {
-    super.initState();
-    _syncCooldown();
-  }
+  int? get cooldownLoginDateTime => widget.loginDateTime;
 
-  @override
-  void didUpdateWidget(covariant TicketPage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.loginDateTime != widget.loginDateTime) {
-      _syncCooldown();
-    }
-  }
-
-  @override
-  void dispose() {
-    _cooldownTimer?.cancel();
-    super.dispose();
-  }
-
-  void _syncCooldown() {
-    _cooldownTimer?.cancel();
-    final loginDateTime = widget.loginDateTime;
-    if (loginDateTime == null) {
-      _cooldownRemaining = 0;
-      return;
-    }
-    _cooldownRemaining = _computeRemaining(loginDateTime);
-    if (_cooldownRemaining <= 0) return;
-    _cooldownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
-      if (!mounted) return;
-      final remaining = _computeRemaining(loginDateTime);
-      setState(() => _cooldownRemaining = remaining);
-      if (remaining <= 0) {
-        _cooldownTimer?.cancel();
-        _cooldownTimer = null;
-      }
-    });
-  }
-
-  int _computeRemaining(int loginDateTime) {
-    final nowSec = DateTime.now().millisecondsSinceEpoch ~/ 1000;
-    final elapsed = nowSec - loginDateTime;
-    final remaining = AppStrings.ticketCooldownSeconds - elapsed;
-    return remaining < 0 ? 0 : remaining;
-  }
+  void _snack(String message) => context.showSnack(message);
 
   Map<String, dynamic>? _findTicket(int chargeId) {
     final tickets = _tickets;
@@ -120,7 +70,7 @@ class _TicketPageState extends State<TicketPage> {
     return null;
   }
 
-  void _updateStep(TicketStep step, [String? message]) {
+  void _updateStep(RiskStep step, [String? message]) {
     if (!mounted) return;
     setState(() {
       _step = step;
@@ -139,8 +89,7 @@ class _TicketPageState extends State<TicketPage> {
     });
 
     try {
-      final config = TitleServerConfigHolder().config!;
-      final service = TitleApiService(config, cookies: widget.cookies);
+      final service = TitleApiService.fromHolder(cookies: widget.cookies)!;
       final data = await service.getUserCharge(widget.userId);
       if (!mounted) return;
 
@@ -160,44 +109,31 @@ class _TicketPageState extends State<TicketPage> {
 
   Future<void> _runTicket() async {
     if (_selectedTicketId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text(AppStrings.ticketNotSelected)),
-      );
+      _snack(AppStrings.ticketNotSelected);
       return;
     }
     if (!TitleServerConfigHolder().isConfigured) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text(AppStrings.ticketNotConfigured)),
-      );
+      _snack(AppStrings.ticketNotConfigured);
       return;
     }
     final loginDateTime = widget.loginDateTime;
     if (loginDateTime == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text(AppStrings.ticketNotLoggedIn)),
-      );
+      _snack(AppStrings.ticketNotLoggedIn);
       return;
     }
-    if (_cooldownRemaining > 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppStrings.ticketCooldownNotice(_cooldownRemaining)),
-        ),
-      );
+    if (cooldownRemaining > 0) {
+      _snack(AppStrings.ticketCooldownNotice(cooldownRemaining));
       return;
     }
 
     final selectedTicket = _findTicket(_selectedTicketId!);
     if (selectedTicket != null &&
         (selectedTicket['stock'] as num?)?.toInt() != 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text(AppStrings.ticketStockNotEmpty)),
-      );
+      _snack(AppStrings.ticketStockNotEmpty);
       return;
     }
 
-    final config = TitleServerConfigHolder().config!;
-    final service = TitleApiService(config, cookies: widget.cookies);
+    final service = TitleApiService.fromHolder(cookies: widget.cookies)!;
     final ticketId = _selectedTicketId!;
 
     setState(() {
@@ -206,7 +142,7 @@ class _TicketPageState extends State<TicketPage> {
     });
 
     try {
-      _updateStep(TicketStep.chargeTicket);
+      _updateStep(RiskStep.upload);
       await service.upsertUserChargeLog(
         userId: widget.userId,
         ticketId: ticketId,
@@ -215,20 +151,20 @@ class _TicketPageState extends State<TicketPage> {
       );
 
       if (_autoLogout && widget.onLogoutRequested != null) {
-        _updateStep(TicketStep.logout);
+        _updateStep(RiskStep.logout);
         await Future.delayed(const Duration(seconds: 5));
         await widget.onLogoutRequested!();
       }
 
       _updateStep(
-        TicketStep.complete,
+        RiskStep.complete,
         '${AppStrings.ticketUsed}: ${_ticketName(ticketId)}',
       );
     } on TitleApiException catch (e) {
-      _updateStep(TicketStep.failed, e.message);
+      _updateStep(RiskStep.failed, e.message);
       setState(() => _error = e.message);
     } catch (e) {
-      _updateStep(TicketStep.failed, e.toString());
+      _updateStep(RiskStep.failed, e.toString());
       setState(() => _error = e.toString());
     } finally {
       if (mounted) setState(() => _running = false);
@@ -261,106 +197,39 @@ class _TicketPageState extends State<TicketPage> {
         context,
         child: Column(
           children: [
-            if (widget.loginDateTime == null) _buildNotLoggedInBanner(theme),
-            if (widget.loginDateTime != null && _cooldownRemaining > 0)
-              _buildCooldownBanner(theme),
+            if (!isLoggedIn)
+              const AppNotice(
+                AppStrings.ticketNotLoggedIn,
+                error: true,
+                icon: Icons.warning_amber_rounded,
+              ),
+            if (isLoggedIn && cooldownRemaining > 0)
+              AppNotice(
+                AppStrings.ticketCooldownNotice(cooldownRemaining),
+                icon: Icons.timer_outlined,
+              ),
             _buildTicketListCard(theme),
             const SizedBox(height: 16),
-            _buildAutoLogoutToggle(theme),
+            AutoLogoutToggle(
+              value: _autoLogout,
+              enabled: widget.onLogoutRequested != null && !_running,
+              onChanged: (v) => setState(() => _autoLogout = v),
+              label: AppStrings.ticketAutoLogout,
+            ),
             const SizedBox(height: 12),
             _buildRunButton(theme),
-            if (_step != TicketStep.idle) ...[
+            if (_step != RiskStep.idle) ...[
               const SizedBox(height: 16),
-              _buildProgressCard(theme),
+              StepProgressCard(
+                step: _step,
+                message: _stepMessage,
+                error: _error,
+                steps: [
+                  (RiskStep.upload, AppStrings.stepChargeTicket),
+                  if (_autoLogout) (RiskStep.logout, AppStrings.stepLogout),
+                ],
+              ),
             ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCooldownBanner(ThemeData theme) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.tertiaryContainer.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.timer_outlined,
-              size: 18, color: theme.colorScheme.onTertiaryContainer),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              AppStrings.ticketCooldownNotice(_cooldownRemaining),
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onTertiaryContainer,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNotLoggedInBanner(ThemeData theme) {
-    return Container(
-      width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.errorContainer,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Row(
-        children: [
-          Icon(Icons.warning_amber_rounded,
-              size: 18, color: theme.colorScheme.onErrorContainer),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              AppStrings.ticketNotLoggedIn,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onErrorContainer,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildAutoLogoutToggle(ThemeData theme) {
-    final enabled = widget.onLogoutRequested != null && !_running;
-    return InkWell(
-      borderRadius: BorderRadius.circular(10),
-      onTap: enabled
-          ? () => setState(() => _autoLogout = !_autoLogout)
-          : null,
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-        child: Row(
-          children: [
-            Checkbox(
-              value: _autoLogout,
-              onChanged: enabled
-                  ? (v) => setState(() => _autoLogout = v ?? false)
-                  : null,
-            ),
-            Expanded(
-              child: Text(
-                AppStrings.ticketAutoLogout,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: enabled
-                      ? null
-                      : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-                ),
-              ),
-            ),
           ],
         ),
       ),
@@ -545,7 +414,7 @@ class _TicketPageState extends State<TicketPage> {
     final selectedName = _selectedTicketId != null
         ? _ticketName(_selectedTicketId!)
         : null;
-    final onCooldown = _cooldownRemaining > 0;
+    final onCooldown = cooldownRemaining > 0;
     final canRun = widget.loginDateTime != null && !_running && !onCooldown;
 
     return Column(
@@ -583,7 +452,7 @@ class _TicketPageState extends State<TicketPage> {
               _running
                   ? AppStrings.runningTicket
                   : onCooldown
-                      ? AppStrings.ticketCooldownCountdown(_cooldownRemaining)
+                      ? AppStrings.ticketCooldownCountdown(cooldownRemaining)
                       : AppStrings.runTicket,
             ),
             style: FilledButton.styleFrom(
@@ -598,113 +467,4 @@ class _TicketPageState extends State<TicketPage> {
     );
   }
 
-  Widget _buildProgressCard(ThemeData theme) {
-    final isFailed = _step == TicketStep.failed;
-    final isDone = _step == TicketStep.complete;
-
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(
-          color: isFailed
-              ? theme.colorScheme.error.withValues(alpha: 0.5)
-              : isDone
-                  ? Colors.green.withValues(alpha: 0.5)
-                  : theme.colorScheme.outline.withValues(alpha: 0.3),
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _stepRow(TicketStep.chargeTicket, AppStrings.stepChargeTicket, theme),
-            if (_autoLogout)
-              _stepRow(TicketStep.logout, AppStrings.stepLogout, theme),
-            if (_stepMessage.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: isFailed
-                      ? theme.colorScheme.errorContainer
-                      : isDone
-                          ? Colors.green.withValues(alpha: 0.1)
-                          : theme.colorScheme.surfaceContainerHighest,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  _stepMessage,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    fontFamily: 'monospace',
-                    color: isFailed
-                        ? theme.colorScheme.onErrorContainer
-                        : theme.colorScheme.onSurface,
-                  ),
-                ),
-              ),
-            ],
-            if (_error != null) ...[
-              const SizedBox(height: 12),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(10),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.errorContainer,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Text(
-                  _error!,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onErrorContainer,
-                    fontFamily: 'monospace',
-                  ),
-                ),
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _stepRow(TicketStep step, String label, ThemeData theme) {
-    IconData icon;
-    Color? color;
-
-    if (_step == TicketStep.failed && _step.index <= step.index) {
-      icon = _step == step ? Icons.error : Icons.circle_outlined;
-      color = _step == step ? theme.colorScheme.error : theme.colorScheme.onSurfaceVariant;
-    } else if (_step.index > step.index) {
-      icon = Icons.check_circle;
-      color = Colors.green;
-    } else if (_step == step) {
-      icon = Icons.sync;
-      color = theme.colorScheme.primary;
-    } else {
-      icon = Icons.circle_outlined;
-      color = theme.colorScheme.onSurfaceVariant;
-    }
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
-      child: Row(
-        children: [
-          Icon(icon, size: 16, color: color),
-          const SizedBox(width: 10),
-          Text(
-            label,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: _step.index >= step.index
-                  ? theme.colorScheme.onSurface
-                  : theme.colorScheme.onSurfaceVariant,
-              fontWeight: _step == step ? FontWeight.w600 : FontWeight.normal,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
