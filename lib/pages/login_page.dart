@@ -23,6 +23,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _qrController = TextEditingController();
   String _qrCode = '';
+  String _rawInput = '';
   SessionShare? _share;
   bool _loading = false;
   bool _forcePreviewApi = false;
@@ -36,6 +37,7 @@ class _LoginPageState extends State<LoginPage> {
   void _onQRContentChanged(String value) {
     final text = value.trim();
     setState(() {
+      _rawInput = text;
       _qrCode = SessionModel.extractQRCode(text);
       _share = SessionShare.tryDecode(text);
     });
@@ -51,6 +53,7 @@ class _LoginPageState extends State<LoginPage> {
       if (result != null && result.isNotEmpty) {
         _qrController.text = result;
         setState(() {
+          _rawInput = result.trim();
           _qrCode = SessionModel.extractQRCode(result);
           _share = SessionShare.tryDecode(result);
         });
@@ -78,43 +81,47 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> _onLogin() async {
     if (_qrCode.isEmpty) return;
 
-    if (_qrCode.startsWith("SGWCMAID")) {
-      setState(() => _loading = true);
+    // 令牌是粘贴内容的后 64 位，前缀可能在截取之后就没了，所以要拿原文判断；
+    // 认不出来时必须给提示，否则点了按钮一声不响，像是坏了。
+    if (!_rawInput.contains('SGWCMAID')) {
+      context.showSnack(AppStrings.qrTokenUnrecognized);
+      return;
+    }
+    setState(() => _loading = true);
 
-      try {
-        final result = await SessionModel.instance.loginWithQr(_qrCode);
+    try {
+      final result = await SessionModel.instance.loginWithQr(_qrCode);
 
-        if (!mounted) return;
+      if (!mounted) return;
 
-        if (result.success) {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => HomePage(
-                userId: result.userId,
-                token: result.token,
-                forcePreviewApi: _forcePreviewApi,
-              ),
+      if (result.success) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => HomePage(
+              userId: result.userId,
+              token: result.token,
+              forcePreviewApi: _forcePreviewApi,
             ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                '${AppStrings.loginFailed} (errorID: ${result.errorId})',
-              ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '${AppStrings.loginFailed} (errorID: ${result.errorId})',
             ),
-          );
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('${AppStrings.requestFailed}: $e')),
-          );
-        }
-      } finally {
-        if (mounted) {
-          setState(() => _loading = false);
-        }
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${AppStrings.requestFailed}: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _loading = false);
       }
     }
   }

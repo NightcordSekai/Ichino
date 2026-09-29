@@ -21,6 +21,7 @@ class AppStrings {
   static const qrScanError = '解析失败';
   static const forcePreviewApi = '强制使用 Preview API';
   static const loginFailed = '登录失败';
+  static const qrTokenUnrecognized = '没认出 QR 令牌（内容里应当含 SGWCMAID），也可以粘贴「连接信息」。';
   static const requestFailed = '请求失败';
   static const settingsTooltip = '设置';
 
