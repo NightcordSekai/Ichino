@@ -12,6 +12,7 @@ void main() {
       const share = SessionShare(
         userId: 1234567,
         token: 'SGWCMAIDABCDEF',
+        loginId: 4242,
         cookie: 'JSESSIONID=abc123DEF',
       );
 
@@ -20,7 +21,16 @@ void main() {
       expect(decoded, isNotNull);
       expect(decoded!.userId, 1234567);
       expect(decoded.token, 'SGWCMAIDABCDEF');
+      expect(decoded.loginId, 4242);
       expect(decoded.jsessionid, 'JSESSIONID=abc123DEF');
+    });
+
+    test('旧串里没有 loginId 时按 0 处理', () {
+      const share = SessionShare(userId: 9, token: 't', cookie: 'JSESSIONID=x');
+      expect(share.loginId, 0);
+
+      final decoded = SessionShare.tryDecode(share.encode())!;
+      expect(decoded.loginId, 0);
     });
 
     test('只保留 JSESSIONID，忽略其它 Cookie', () {

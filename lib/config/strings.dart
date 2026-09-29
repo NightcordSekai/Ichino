@@ -39,11 +39,14 @@ class AppStrings {
   static const restoringSession = '恢复中...';
   static const sessionShareDetected = '已识别为连接信息（实验性功能），点击「恢复会话」直接续上这次登录。';
   static const sessionRestoreFailed = '会话恢复失败';
-  static const sessionRestoreCookie = '已复用连接信息里的 JSESSIONID，没有重新登录';
+  static const sessionRestoreCookie =
+      '已复用连接信息里的 JSESSIONID，这次会话仍在登录中：60 秒冷却后票据与风险功能可直接使用';
+  static const sessionRestoreReadOnly =
+      '已复用连接信息里的 JSESSIONID，但服务器显示这次会话没在登录中，只能读取数据';
   static const sessionRestoreToken = 'Cookie 不可用，已用令牌重新登录';
   static const sessionRestoredNotice =
-      '这是用连接信息恢复的会话：JSESSIONID 只用于读取数据，'
-      '票据与风险页的写入操作需要先重新登录。';
+      '这是用连接信息恢复的会话，服务器显示它当前不在登录中：JSESSIONID 只用于读取数据，'
+      '票据与风险页的写入需要重新登录。';
 
   // Home
   static const logoutTooltip = '退出登录';

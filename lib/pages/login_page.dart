@@ -126,6 +126,13 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  String _restoreMessage(SessionRestoreResult result) {
+    if (!result.reusedCookie) return AppStrings.sessionRestoreToken;
+    return result.loggedIn
+        ? AppStrings.sessionRestoreCookie
+        : AppStrings.sessionRestoreReadOnly;
+  }
+
   /// 实验性：用主页导出的连接信息恢复会话。带可用 JSESSIONID 就直接续上那次登录，
   /// 否则退回用令牌重新登录。
   Future<void> _onRestoreSession() async {
@@ -136,18 +143,13 @@ class _LoginPageState extends State<LoginPage> {
     try {
       final result = await SessionModel.instance.restoreFromShare(share);
       if (!mounted) return;
-      context.showSnack(
-        result.reusedCookie
-            ? AppStrings.sessionRestoreCookie
-            : AppStrings.sessionRestoreToken,
-      );
+      context.showSnack(_restoreMessage(result));
       Navigator.of(context).push(
         MaterialPageRoute(
           builder: (_) => HomePage(
             userId: share.userId,
             token: share.token,
-            sessionRestored: true,
-            initialUserData: result.userData,
+            restored: result,
           ),
         ),
       );

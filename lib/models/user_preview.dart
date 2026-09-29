@@ -2,6 +2,10 @@ class UserPreviewDataBean {
   final int userId;
   final String userName;
   final bool isLogin;
+
+  /// 机台侧这次登录的 `loginId`（组装 UpsertUserAll 时当 playlogId 用）。
+  /// 服务器没带这个字段时是 0。
+  final int loginId;
   final String lastGameId;
   final String lastRomVersion;
   final String lastDataVersion;
@@ -24,6 +28,7 @@ class UserPreviewDataBean {
     required this.userId,
     required this.userName,
     required this.isLogin,
+    this.loginId = 0,
     required this.lastGameId,
     required this.lastRomVersion,
     required this.lastDataVersion,
@@ -66,6 +71,7 @@ class UserPreviewDataBean {
       userId: toInt(json['userId']),
       userName: toStr(json['userName']),
       isLogin: toBool(json['isLogin']),
+      loginId: toInt(json['loginId']),
       lastGameId: toStr(json['lastGameId']),
       lastRomVersion: toStr(json['lastRomVersion']),
       lastDataVersion: toStr(json['lastDataVersion']),

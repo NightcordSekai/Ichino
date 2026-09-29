@@ -25,18 +25,17 @@ class HomePage extends StatefulWidget {
 
   /// 会话由登录页粘贴「连接信息」恢复而来：登录态（或 Cookie）已经是现成的，
   /// 主页不要再发一次 UserLoginApi 去顶掉它。
-  final bool sessionRestored;
-
-  /// 恢复会话时验证 Cookie 顺手拉到的用户数据，直接展示、省一次请求。
-  final UserDataBean? initialUserData;
+  ///
+  /// 其中 `loggedIn` 为 true 时（服务器说这次会话还挂在机上，或刚用令牌登录成功），
+  /// 票据与风险页照常开放，只按登录后 60 秒冷却计时。
+  final SessionRestoreResult? restored;
 
   const HomePage({
     super.key,
     required this.userId,
     required this.token,
     this.forcePreviewApi = false,
-    this.sessionRestored = false,
-    this.initialUserData,
+    this.restored,
   });
 
   @override
@@ -84,18 +83,20 @@ class _HomePageState extends State<HomePage> {
       _userData = null;
     });
 
-    final seed = widget.initialUserData;
-    if (seed != null) {
-      // 恢复来的 JSESSIONID 已在 SessionModel._probeCookieSession 里验证过并
-      // 带回全量数据，这里直接展示，不再发 GetUserPreviewApi / UserLoginApi。
+    final restored = widget.restored;
+    final seed = restored?.userData;
+    if (restored != null && seed != null) {
+      // 恢复来的 JSESSIONID 已在 SessionModel._resumeCookieSession 里验证过，并
+      // 顺带拉回数据与概要，这里直接展示，不再发 GetUserPreviewApi / UserLoginApi。
       setState(() {
+        _preview = restored.preview;
         _userData = seed;
         _loading = false;
       });
       return;
     }
 
-    if (!widget.sessionRestored) _session.setGameLogin(null);
+    if (restored == null) _session.setGameLogin(null);
 
     final service = TitleApiService.fromHolder(cookies: _session.cookies)!;
 
@@ -514,7 +515,7 @@ class _HomePageState extends State<HomePage> {
         context,
         child: Column(
           children: [
-            if (widget.sessionRestored && _session.gameLogin == null)
+            if (widget.restored != null && _session.gameLogin == null)
               AppNotice(
                 AppStrings.sessionRestoredNotice,
                 icon: Icons.science_outlined,

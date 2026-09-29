@@ -11,10 +11,19 @@ class SessionShare {
   final int userId;
   final String token;
 
+  /// 导出端这次登录的 `loginId`。GetUserPreviewApi 不回这个字段，而恢复端写
+  /// UpsertUserAll 时要拿它当 playlogId，所以只能由导出端一起带上；没有就是 0。
+  final int loginId;
+
   /// 原始 Cookie 串，可能是 `JSESSIONID=...`，也可能带别的字段。
   final String? cookie;
 
-  const SessionShare({required this.userId, required this.token, this.cookie});
+  const SessionShare({
+    required this.userId,
+    required this.token,
+    this.loginId = 0,
+    this.cookie,
+  });
 
   /// 只取 `JSESSIONID`：传输层后续请求就靠它维持会话
   /// （见 `TitleApiService._captureCookiesFromResponse`）。
@@ -41,6 +50,7 @@ class SessionShare {
       'version': _version,
       'userId': userId,
       'token': token,
+      'loginId': loginId,
       'cookie': jsessionid,
     };
     return base64Encode(utf8.encode(jsonEncode(map)));
@@ -62,6 +72,7 @@ class SessionShare {
       final share = SessionShare(
         userId: (decoded['userId'] as num?)?.toInt() ?? 0,
         token: decoded['token'] as String? ?? '',
+        loginId: (decoded['loginId'] as num?)?.toInt() ?? 0,
         cookie: decoded['cookie'] as String?,
       );
       // 两头都空的话这串信息什么都恢复不了。

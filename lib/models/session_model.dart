@@ -5,6 +5,7 @@ import '../services/api_service.dart';
 import '../services/title_api_service.dart';
 import 'session_share.dart';
 import 'user_data.dart';
+import 'user_preview.dart';
 
 /// [SessionModel.restoreFromShare] 的结果。
 class SessionRestoreResult {
@@ -12,10 +13,20 @@ class SessionRestoreResult {
   /// 拿到了一份新 Cookie。
   final bool reusedCookie;
 
-  /// 沿用旧会话时顺带拉到的用户数据（HomePage 直接展示，省一次请求）。
+  /// 沿用旧会话时顺带拉到的用户数据与概要（HomePage 直接展示，省一次请求）。
   final UserDataBean? userData;
+  final UserPreviewDataBean? preview;
 
-  const SessionRestoreResult({required this.reusedCookie, this.userData});
+  /// 服务器认为这次会话仍在登录中（`preview.isLogin`），或刚用令牌登录成功。
+  /// 只有为 `true` 时票据与风险页才开放写入，并且照常吃 60 秒登录后冷却。
+  final bool loggedIn;
+
+  const SessionRestoreResult({
+    required this.reusedCookie,
+    this.userData,
+    this.preview,
+    this.loggedIn = false,
+  });
 }
 
 class SessionModel extends ChangeNotifier {
@@ -90,7 +101,12 @@ class SessionModel extends ChangeNotifier {
   SessionShare exportConnectionInfo({
     required int userId,
     required String token,
-  }) => SessionShare(userId: userId, token: token, cookie: _cookies);
+  }) => SessionShare(
+    userId: userId,
+    token: token,
+    loginId: _gameLogin?.loginId ?? 0,
+    cookie: _cookies,
+  );
 
   /// 实验性：用连接信息恢复会话。
   ///
@@ -99,12 +115,10 @@ class SessionModel extends ChangeNotifier {
   Future<SessionRestoreResult> restoreFromShare(SessionShare share) async {
     final cookie = share.jsessionid;
     if (cookie != null) {
-      final userData = await _probeCookieSession(share.userId, cookie);
-      if (userData != null) {
-        // _gameLogin 保持 null：这次没有 UserLoginApi，拿不到 loginId /
-        // loginDateTime，写入类功能页照旧提示「尚未登录游戏服务器」。
+      final resumed = await _resumeCookieSession(share, cookie);
+      if (resumed != null) {
         notifyListeners();
-        return SessionRestoreResult(reusedCookie: true, userData: userData);
+        return resumed;
       }
     }
 
@@ -112,20 +126,59 @@ class SessionModel extends ChangeNotifier {
       throw const TitleApiException('连接信息里的 Cookie 已失效，且没有可用于重新登录的令牌');
     }
     await loginGame(userId: share.userId, token: share.token);
-    return const SessionRestoreResult(reusedCookie: false);
+    // UserLoginApi 成功了，登录态直接可用，照常吃登录后 60 秒冷却。
+    return const SessionRestoreResult(reusedCookie: false, loggedIn: true);
   }
 
-  /// 用导入的 Cookie 试拉一次 GetUserDataApi，会话不可用时返回 `null`。
-  Future<UserDataBean?> _probeCookieSession(int userId, String cookie) async {
+  /// 沿用连接信息里的 JSESSIONID 继续这次会话；服务器已经不认这份 Cookie 时
+  /// 返回 `null`，由调用方退回去用令牌重新登录。
+  Future<SessionRestoreResult?> _resumeCookieSession(
+    SessionShare share,
+    String cookie,
+  ) async {
     final service = TitleApiService.fromHolder(cookies: cookie);
     if (service == null) return null;
+
     try {
-      final json = await service.getUserData(userId);
+      final json = await service.getUserData(share.userId);
       // 会话失效时服务器仍可能回一个不含 userData 的包，不能当成登录成功。
       if (json['userData'] is! Map) return null;
       final userData = UserDataBean.fromJson(json);
+
+      UserPreviewDataBean? preview;
+      if (share.hasToken) {
+        // isLogin 是服务器对「这次会话还挂在机上」的判定，风险页要用的 loginId
+        // 也在这里。令牌过期拉不到 preview 就只放开读取，按未登录处理。
+        try {
+          preview = await service.getUserPreview(
+            userId: share.userId,
+            token: share.token,
+          );
+        } on TitleApiException {
+          preview = null;
+        }
+      }
       updateCookies(service.cookies);
-      return userData;
+
+      // 服务器说这次会话还挂在机上，就按已登录处理：loginDateTime 取当下，
+      // 风险页与票据照常吃「登录后 60 秒冷却」，不用重新 UserLoginApi。
+      if (preview != null && preview.isLogin) {
+        _gameLogin = UserLoginResult(
+          token: share.token,
+          // 优先用导出端带过来的 loginId（那是服务器给这次登录的真实 id），
+          // 导出端没有才退回 preview 里的字段。
+          loginId: share.loginId != 0 ? share.loginId : preview.loginId,
+          lastLoginDate: preview.lastLoginDate,
+          loginDateTime: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+        );
+      }
+
+      return SessionRestoreResult(
+        reusedCookie: true,
+        userData: userData,
+        preview: preview,
+        loggedIn: _gameLogin != null,
+      );
     } on TitleApiException {
       return null;
     }
