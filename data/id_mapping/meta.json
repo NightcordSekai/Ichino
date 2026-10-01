@@ -1,0 +1,23 @@
+{
+  "generatedFrom": "G:/Package",
+  "dataDirs": [
+    "A000",
+    "A005",
+    "A011",
+    "A015"
+  ],
+  "counts": {
+    "music": 1367,
+    "map": 168,
+    "gate": 6,
+    "course": 6,
+    "key": 6,
+    "itemKind1": 398,
+    "itemKind2": 3000,
+    "itemKind3": 1046,
+    "itemKind9": 983,
+    "itemKind10": 25,
+    "itemKind11": 345,
+    "itemKind12": 11
+  }
+}

@@ -48,6 +48,8 @@ lib/
 ├── pages/               # 登录页与各功能页面
 ├── services/            # 传输层、payload 组装、乐曲元数据、导出、RA 计算、调试日志
 └── widgets/             # 可复用视觉组件（B50 海报、卡片/提示、冷却 mixin、阶段进度卡）
+tools/                   # 离线开发工具（不参与构建产物）
+data/id_mapping/         # 由 tools/gen_id_mapping.dart 从机台数据包抽出的 ID 映射表
 ```
 
 ### 共享抽象
@@ -158,6 +160,45 @@ lib/
   **该区域的收藏品发不了**：`区域 → 宝藏 → 物品` 的对应关系在机台的 `Map.xml` /
   `MapTreasure.xml` 里（`DataManager.LoadMaps` / `LoadMapTresures` 从本地数据目录读，
   不经 title server），App 没有这份表，页面里也明写了这个限制。
+
+## ID 映射表
+
+风险页要填的全是裸 ID，而「填了机台表里没有的 ID」是这一类功能最常见的失败方式：
+服务器照样回 `returnCode: 1`，客户端却在建曲池/建角色池时静默跳过，看起来就是
+「上传成功但没生效」。为此把机台数据包里的表抽成可查的映射：
+
+```bash
+dart run tools/gen_id_mapping.dart --package G:/Package
+```
+
+产物落在 `data/id_mapping/`：
+
+| 文件 | 内容 |
+| --- | --- |
+| `music.json` | musicId → 曲名 / 艺术家 / 流派 / `AddVersion` / `disable` / `lockType` / `subLockType` / `eventName` |
+| `items.json` | 按 `ItemKind` 分组（1 姓名框 2 称号 3 头像 9 角色 10 搭档 11 背景板 12 功能票）的 id → 名称 |
+| `maps.json` | mapId → 区域名 / `IslandId` / `OpenEventId` / `ColorId` / `BonusMusicId` / `IsInfinity` / `IsCollabo` |
+| `gates.json` | 万花筒三张表：`gateList`（gateId → 门名 / `gateType` / `eventName`）、`courseList`（courseId ↔ gateId ↔ keyId）、`keyList` |
+
+要点：
+
+- 真正的 ID 在 XML 的 `<name><id>` 里，**目录名只是 `dataName`，两者不相等**
+  （`icon/icon550201/Icon.xml` 的 `name.id` 实际是 1）。
+- 数据包按 `Sinmai_Data/StreamingAssets/A0xx/` 分基础包与增补包，抽取时按目录名
+  升序合并、同 ID 后者覆盖前者，与客户端 `DataManager.LoadData` 的语义一致。
+- 放在 `data/` 而不是 `assets/`：目前还没有代码在运行时读它，进 `assets/` 会被
+  原样打进每个安装包（约 1.2MB）。真要接进 App 时再连同 `pubspec.yaml` 一起挪。
+
+顺手用这份表核出来的几个事实，都能解释此前的「不显示」：
+
+- **musicId 11820 在曲表里根本不存在**（11819、11821 也不在；11814 之后直接跳到
+  11822）。它不是万花筒锁——`lockType = 4 (KaleidScope)` 的歌整张表只有 6 首
+  （11740 / 11745 / 11749 / 11753 / 11809 / 11814）。11820 属于「机台没有这首歌」，
+  任何 `UpsertUserAll` 都变不出来。
+- **角色（旅行伙伴）1001 不存在**，合法 ID 从 101 起，整表 983 条、上界到 605905。
+  以前页面里「例如 1001」的提示正是这个坑。
+- **万花筒只有 gate 1~6**（蓝/白/紫/黑/黄/红，course 与 key 同为 1~6 一一对应）。
+  客户端 `ForceAddMasterKey` 写死的 `gateId = 7`（万能钥匙门）在这份数据里没有对应行。
 
 ## 构建环境注意事项
 

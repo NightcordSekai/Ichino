@@ -1,0 +1,140 @@
+{
+  "gateList": [
+    {
+      "id": 1,
+      "name": "蓝色之门",
+      "eventName": 25122432,
+      "eventNameName": "251224_03_2：青のカレイドスコープ解禁",
+      "gateType": "Normal",
+      "positionId": 1
+    },
+    {
+      "id": 2,
+      "name": "白色之门",
+      "eventName": 26021032,
+      "eventNameName": "260210_03_2：白のカレイドスコープ解禁",
+      "gateType": "Normal",
+      "positionId": 2
+    },
+    {
+      "id": 3,
+      "name": "紫色之门",
+      "eventName": 26032532,
+      "eventNameName": "260325_03_2：紫のカレイドスコープ解禁",
+      "gateType": "Normal",
+      "positionId": 3
+    },
+    {
+      "id": 4,
+      "name": "黑色之门",
+      "eventName": 26042832,
+      "eventNameName": "260428_03_2：黒のカレイドスコープ解禁",
+      "gateType": "Normal",
+      "positionId": 5
+    },
+    {
+      "id": 5,
+      "name": "黃色之门",
+      "eventName": 26061032,
+      "eventNameName": "260610_03_2：黄のカレイドスコープ解禁",
+      "gateType": "Normal",
+      "positionId": 6
+    },
+    {
+      "id": 6,
+      "name": "红色之门",
+      "eventName": 26080532,
+      "eventNameName": "260805_03_2：赤のカレイドスコープ解禁",
+      "gateType": "Normal",
+      "positionId": 4
+    }
+  ],
+  "courseList": [
+    {
+      "id": 1,
+      "name": "青のカレイドスコープ",
+      "gateName": 1,
+      "gateNameName": "蓝色之门",
+      "keyName": 1,
+      "keyNameName": "蓝色钥匙"
+    },
+    {
+      "id": 2,
+      "name": "白のカレイドスコープ",
+      "gateName": 2,
+      "gateNameName": "白色之门",
+      "keyName": 2,
+      "keyNameName": "白色钥匙"
+    },
+    {
+      "id": 3,
+      "name": "紫のカレイドスコープ",
+      "gateName": 3,
+      "gateNameName": "紫色之门",
+      "keyName": 3,
+      "keyNameName": "紫色钥匙"
+    },
+    {
+      "id": 4,
+      "name": "黒のカレイドスコープ",
+      "gateName": 4,
+      "gateNameName": "黑色之门",
+      "keyName": 4,
+      "keyNameName": "黑色钥匙"
+    },
+    {
+      "id": 5,
+      "name": "黄のカレイドスコープ",
+      "gateName": 5,
+      "gateNameName": "黃色之门",
+      "keyName": 5,
+      "keyNameName": "黃色钥匙"
+    },
+    {
+      "id": 6,
+      "name": "赤のカレイドスコープ",
+      "gateName": 6,
+      "gateNameName": "红色之门",
+      "keyName": 6,
+      "keyNameName": "红色钥匙"
+    }
+  ],
+  "keyList": [
+    {
+      "id": 1,
+      "name": "蓝色钥匙",
+      "gateName": 1,
+      "gateNameName": "蓝色之门"
+    },
+    {
+      "id": 2,
+      "name": "白色钥匙",
+      "gateName": 2,
+      "gateNameName": "白色之门"
+    },
+    {
+      "id": 3,
+      "name": "紫色钥匙",
+      "gateName": 3,
+      "gateNameName": "紫色之门"
+    },
+    {
+      "id": 4,
+      "name": "黑色钥匙",
+      "gateName": 4,
+      "gateNameName": "黑色之门"
+    },
+    {
+      "id": 5,
+      "name": "黃色钥匙",
+      "gateName": 5,
+      "gateNameName": "黃色之门"
+    },
+    {
+      "id": 6,
+      "name": "红色钥匙",
+      "gateName": 6,
+      "gateNameName": "红色之门"
+    }
+  ]
+}
