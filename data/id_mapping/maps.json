@@ -2350,5 +2350,19 @@
     "BonusMusicIdName": "Paradigm: Rebootちほーボーナス曲",
     "IsCollabo": true,
     "IsInfinity": false
+  },
+  {
+    "id": 650056,
+    "name": "ヒメヒナちほー2",
+    "IslandId": 60,
+    "IslandIdName": "maimaiDX CiRCLE",
+    "OpenEventId": 261002041,
+    "OpenEventIdName": "261002_04_1：ヒメヒナちほー2 解禁",
+    "ColorId": 650056,
+    "ColorIdName": "ヒメヒナ2",
+    "BonusMusicId": 650056,
+    "BonusMusicIdName": "ヒメヒナちほー2ボーナス曲",
+    "IsCollabo": true,
+    "IsInfinity": false
   }
 ]

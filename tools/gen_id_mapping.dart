@@ -4,16 +4,20 @@
 // 产物放在 data/ 而不是 assets/：目前没有代码在运行时读它，放 assets/ 会被
 // 原样打进每个安装包（约 1.2MB）。要接进 App 时再一起挪进 pubspec 的 assets。
 //
-// 用法：
+// 用法（两种根可以混用，后面的覆盖前面的同 ID 行）：
 //   dart run tools/gen_id_mapping.dart --package G:/Package
+//   dart run tools/gen_id_mapping.dart --package G:/Package --data-root D:/A031OptDump/Root
 //
-// 数据布局：`<pkg>/Sinmai_Data/StreamingAssets/A0xx/<表名>/<前缀><dataName>/<表名>.xml`，
-// 一个实体一个目录。真正的 ID 在 XML 的 `<name><id>` 里，目录名只是 dataName，
-// 二者不相等（例如 `icon/icon550201/Icon.xml` 的 name.id 其实是 1）。
+// `--package` 会自动去找 `<pkg>/Sinmai_Data/StreamingAssets/A0xx/`；
+// `--data-root` 直接把给定目录当一个数据根（像 A031OptDump/Root 那种单独导出的包）。
 //
-// 多个 A0xx 目录要按名字升序合并、后者覆盖同 ID 的行——客户端 DataManager.LoadData
+// 数据布局：`<root>/<表名>/<前缀><dataName>/<表名>.xml`，一个实体一个目录。
+// 真正的 ID 在 XML 的 `<name><id>` 里，目录名只是 dataName（`icon/icon550201/Icon.xml`
+// 的 name.id 其实是 1；`music/music111537` 的 name.id 是 111537，属宴曲段）。
+//
+// 多根合并按名字升序、后者覆盖同 ID 的行——客户端 DataManager.LoadData
 // 就是这个语义（按 dirs 顺序遍历，`sortedDictionary[key] =` 直接覆写）。
-// 只认形如 `A???` 的目录，其余（Table/、RomConfig.xml 等）跳过。
+// `--package` 下只认形如 `A???` 的目录，其余（Table/、RomConfig.xml 等）跳过。
 
 import 'dart:convert';
 import 'dart:io';
@@ -90,33 +94,59 @@ const _keySpec = _TableSpec(
   stringIds: ['name', 'gateName'],
 );
 
+/// 本地事件表只有名字与 `alwaysOpen`；**开关的日期窗口不在这里**，
+/// 是服务器 `GetGameEventApi` 下发的 `GameEvent{startDate,endDate}`。
+/// 所以这张表能用来看某个 eventName.id 属于什么活动，但判断「现在开没开」
+/// 得去问服务器。
+const _eventSpec = _TableSpec(
+  dirName: 'event',
+  xmlFileName: 'Event.xml',
+  scalars: ['infoType', 'alwaysOpen', 'disableArea'],
+  stringIds: ['name'],
+);
+
 void main(List<String> args) {
-  final packageRoot = _argValue(args, '--package') ?? 'G:/Package';
   final outDir = Directory(
     _argValue(args, '--out') ?? 'data/id_mapping',
   );
 
-  final assetsRoot = Directory(
-    '$packageRoot/Sinmai_Data/StreamingAssets',
-  );
-  if (!assetsRoot.existsSync()) {
-    stderr.writeln('找不到 $assetsRoot');
-    exitCode = 1;
-    return;
-  }
+  final dataDirs = <String>[];
 
-  // 升序，让高编号的增补包覆盖基础包，和客户端一致。
-  final dataDirs =
+  // 整合包：先按 A??? 升序铺进来，让高编号的增补包覆盖基础包。
+  final packageRoot = _argValue(args, '--package');
+  if (packageRoot != null) {
+    final assetsRoot = Directory(
+      '${_norm(packageRoot)}/Sinmai_Data/StreamingAssets',
+    );
+    if (!assetsRoot.existsSync()) {
+      stderr.writeln('找不到 ${assetsRoot.path}');
+      exitCode = 1;
+      return;
+    }
+    dataDirs.addAll(
       assetsRoot
           .listSync()
           .whereType<Directory>()
-          .where((d) => RegExp(r'^A\d{3}$').hasMatch(_baseName(d.path)))
-          .map((d) => d.path)
+          .map((d) => _norm(d.path))
+          .where((p) => RegExp(r'^A\d{3}$').hasMatch(_baseName(p)))
           .toList()
-        ..sort();
+        ..sort(),
+    );
+  }
+
+  // 单独导出的数据根（如 D:/A031OptDump/Root），按传参顺序追加，后面的赢。
+  for (final extra in _argValues(args, '--data-root')) {
+    final dir = Directory(_norm(extra));
+    if (!dir.existsSync()) {
+      stderr.writeln('找不到数据根 ${dir.path}');
+      exitCode = 1;
+      return;
+    }
+    dataDirs.add(_norm(extra));
+  }
 
   if (dataDirs.isEmpty) {
-    stderr.writeln('$assetsRoot 下没有 A??? 数据目录');
+    stderr.writeln('没有可用数据根，给 --package 或 --data-root');
     exitCode = 1;
     return;
   }
@@ -128,6 +158,7 @@ void main(List<String> args) {
   final gates = _mergeById(dataDirs, _gateSpec);
   final courses = _mergeById(dataDirs, _courseSpec);
   final keys = _mergeById(dataDirs, _keySpec);
+  final events = _mergeById(dataDirs, _eventSpec);
 
   final items = <String, List<Map<String, dynamic>>>{};
   for (final (kind, spec) in _itemTables) {
@@ -143,15 +174,16 @@ void main(List<String> args) {
       'keyList': keys,
     },
     'items.json': items,
+    'events.json': events,
     'meta.json': {
-      'generatedFrom': packageRoot,
-      'dataDirs': dataDirs.map(_baseName).toList(),
+      'dataDirs': dataDirs.map((p) => _baseName(p)).toList(),
       'counts': {
         'music': music.length,
         'map': maps.length,
         'gate': gates.length,
         'course': courses.length,
         'key': keys.length,
+        'event': events.length,
         for (final (kind, _) in _itemTables)
           'itemKind$kind': items['$kind']!.length,
       },
@@ -310,4 +342,16 @@ String? _argValue(List<String> args, String name) {
   return args[i + 1];
 }
 
-String _baseName(String path) => path.replaceAll(r'\', '/').split('/').last;
+/// 可重复参数（`--data-root A --data-root B`）。
+List<String> _argValues(List<String> args, String name) {
+  final out = <String>[];
+  for (var i = 0; i < args.length - 1; i++) {
+    if (args[i] == name) out.add(args[i + 1]);
+  }
+  return out;
+}
+
+/// Windows 传参常见反斜杠，统一成 slash 再拼路径。
+String _norm(String path) => path.replaceAll(r'\', '/');
+
+String _baseName(String path) => _norm(path).split('/').last;

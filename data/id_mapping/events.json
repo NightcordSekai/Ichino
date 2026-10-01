@@ -1,0 +1,5770 @@
+[
+  {
+    "id": 0,
+    "name": "解放なし",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 1,
+    "name": "無期限常時解放",
+    "infoType": 0,
+    "alwaysOpen": true,
+    "disableArea": "---"
+  },
+  {
+    "id": 210301,
+    "name": "210304_01_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 210302,
+    "name": "210304_01_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 210303,
+    "name": "210304_01_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 210304,
+    "name": "210304_01_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 210305,
+    "name": "210304_01_5",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 210501,
+    "name": "210506_01_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 210502,
+    "name": "210506_01_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 210503,
+    "name": "210506_01_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 210504,
+    "name": "210506_01_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 210601,
+    "name": "210630_01_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 210701,
+    "name": "210708_01_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 210702,
+    "name": "210708_01_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 210703,
+    "name": "210708_01_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 210704,
+    "name": "210708_01_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 210705,
+    "name": "210708_01_5",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 210901,
+    "name": "210916_01_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 210902,
+    "name": "210916_01_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 210903,
+    "name": "210916_01_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 211201,
+    "name": "211221_01_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 211202,
+    "name": "211221_01_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 211203,
+    "name": "211221_01_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 211204,
+    "name": "211221_01_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 211205,
+    "name": "211221_01_5",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 211206,
+    "name": "211221_01_6",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 220301,
+    "name": "220303_01_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 220302,
+    "name": "220303_01_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 220303,
+    "name": "220303_01_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 220304,
+    "name": "220303_01_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 220305,
+    "name": "220303_01_5",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 220501,
+    "name": "220505_01_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 220502,
+    "name": "220505_01_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 220503,
+    "name": "220505_01_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 220504,
+    "name": "220505_01_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 220505,
+    "name": "220505_01_5",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 220506,
+    "name": "220505_01_6",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 220601,
+    "name": "220609_01_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 220602,
+    "name": "220609_01_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 220603,
+    "name": "220609_01_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 220604,
+    "name": "220609_01_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 220605,
+    "name": "220609_01_5",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 220801,
+    "name": "220805_01_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 220802,
+    "name": "220805_01_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 220803,
+    "name": "220805_01_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 220804,
+    "name": "220805_01_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 220901,
+    "name": "220922_01_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 220902,
+    "name": "220922_01_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 220903,
+    "name": "220922_01_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 220904,
+    "name": "220922_01_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 220905,
+    "name": "220922_01_5",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 221101,
+    "name": "221104_01_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 221102,
+    "name": "221104_01_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 221103,
+    "name": "221104_01_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 221104,
+    "name": "221104_01_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 221201,
+    "name": "221216_01_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 221202,
+    "name": "221216_01_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 221203,
+    "name": "221216_01_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 221204,
+    "name": "221216_01_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 221205,
+    "name": "221216_01_5",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 221206,
+    "name": "221216_01_6",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 221207,
+    "name": "221216_01_7",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 230101,
+    "name": "230127_01_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 230102,
+    "name": "230127_01_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 230103,
+    "name": "230127_01_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 230104,
+    "name": "230127_01_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 230105,
+    "name": "230127_01_5",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 230106,
+    "name": "230127_01_6",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 230107,
+    "name": "230127_01_7",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 230301,
+    "name": "230317_01_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 230302,
+    "name": "230317_01_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 230303,
+    "name": "230317_01_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 230304,
+    "name": "230317_01_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 230401,
+    "name": "230428_01_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 230402,
+    "name": "230428_01_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 230403,
+    "name": "230428_01_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 230404,
+    "name": "230428_01_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21030421,
+    "name": "210304_02_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21030422,
+    "name": "210304_02_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21030423,
+    "name": "210304_02_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21030424,
+    "name": "210304_02_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21030425,
+    "name": "210304_02_5",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21030426,
+    "name": "210304_02_6",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21030431,
+    "name": "210304_03_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21030432,
+    "name": "210304_03_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21030441,
+    "name": "210304_04_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21030442,
+    "name": "210304_04_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21050621,
+    "name": "210506_02_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21050622,
+    "name": "210506_02_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21050623,
+    "name": "210506_02_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21050631,
+    "name": "210506_03_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21050641,
+    "name": "210506_04_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21070820,
+    "name": "210708_02_0",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21070821,
+    "name": "210708_02_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21070822,
+    "name": "210708_02_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21070823,
+    "name": "210708_02_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21070824,
+    "name": "210708_02_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21070825,
+    "name": "210708_02_5",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21070826,
+    "name": "210708_02_6",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21070831,
+    "name": "210708_03_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21070841,
+    "name": "210708_04_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21070842,
+    "name": "210708_04_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21091621,
+    "name": "210916_02_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21091622,
+    "name": "210916_02_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21091631,
+    "name": "210916_03_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21122120,
+    "name": "211221_02_0",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21122121,
+    "name": "211221_02_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21122122,
+    "name": "211221_02_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21122123,
+    "name": "211221_02_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21122124,
+    "name": "211221_02_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21122125,
+    "name": "211221_02_5",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21122131,
+    "name": "211221_03_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21122141,
+    "name": "211221_04_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21122142,
+    "name": "211221_04_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 21122143,
+    "name": "211221_04_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22030321,
+    "name": "220303_02_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22030322,
+    "name": "220303_02_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22030323,
+    "name": "220303_02_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22030324,
+    "name": "220303_02_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22030325,
+    "name": "220303_02_5",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22030331,
+    "name": "220303_03_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22030332,
+    "name": "220303_03_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22030341,
+    "name": "220303_04_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22030342,
+    "name": "220303_04_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22050520,
+    "name": "220505_02_0",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22050521,
+    "name": "220505_02_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22050522,
+    "name": "220505_02_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22050523,
+    "name": "220505_02_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22050524,
+    "name": "220505_02_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22050525,
+    "name": "220505_02_5",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22050531,
+    "name": "220505_03_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22050541,
+    "name": "220505_04_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22050542,
+    "name": "220505_04_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22050543,
+    "name": "220505_04_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22060921,
+    "name": "220609_02_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22060922,
+    "name": "220609_02_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22060923,
+    "name": "220609_02_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22060924,
+    "name": "220609_02_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22060931,
+    "name": "220609_03_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22060941,
+    "name": "220609_04_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22080520,
+    "name": "220805_02_0",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22080521,
+    "name": "220805_02_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22080522,
+    "name": "220805_02_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22080523,
+    "name": "220805_02_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22080524,
+    "name": "220805_02_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22080531,
+    "name": "220805_03_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22080532,
+    "name": "220805_03_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22080541,
+    "name": "220805_04_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22092221,
+    "name": "220922_02_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22092222,
+    "name": "220922_02_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22092223,
+    "name": "220922_02_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22092224,
+    "name": "220922_02_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22092225,
+    "name": "220922_02_5",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22092231,
+    "name": "220922_03_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22092241,
+    "name": "220922_04_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22092242,
+    "name": "220922_04_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22110420,
+    "name": "221104_02_0",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22110421,
+    "name": "221104_02_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22110422,
+    "name": "221104_02_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22110423,
+    "name": "221104_02_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22110424,
+    "name": "221104_02_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22110431,
+    "name": "221104_03_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22110441,
+    "name": "221104_04_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22110442,
+    "name": "221104_04_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22121620,
+    "name": "221216_02_0",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22121621,
+    "name": "221216_02_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22121622,
+    "name": "221216_02_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22121623,
+    "name": "221216_02_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22121624,
+    "name": "221216_02_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22121625,
+    "name": "221216_02_5",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22121626,
+    "name": "221216_02_6",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22121631,
+    "name": "221216_03_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22121632,
+    "name": "221216_03_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22121641,
+    "name": "221216_04_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22121642,
+    "name": "221216_04_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 22121643,
+    "name": "221216_04_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23012720,
+    "name": "230127_02_0",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23012721,
+    "name": "230127_02_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23012722,
+    "name": "230127_02_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23012723,
+    "name": "230127_02_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23012724,
+    "name": "230127_02_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23012725,
+    "name": "230127_02_5",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23012731,
+    "name": "230127_03_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23012741,
+    "name": "230127_04_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23012742,
+    "name": "230127_04_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23012743,
+    "name": "230127_04_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23031720,
+    "name": "230317_02_0",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23031721,
+    "name": "230317_02_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23031722,
+    "name": "230317_02_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23031723,
+    "name": "230317_02_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23031731,
+    "name": "230317_03_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23031741,
+    "name": "230317_04_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23042821,
+    "name": "230428_02_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23042822,
+    "name": "230428_02_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23042823,
+    "name": "230428_02_3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23042824,
+    "name": "230428_02_4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23042831,
+    "name": "230428_03_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23042841,
+    "name": "230428_04_1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23042842,
+    "name": "230428_04_2",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23060811,
+    "name": "230608_01_1：ロンチ楽曲紹介(24曲)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23060812,
+    "name": "230608_01_2：ロンチ楽曲紹介 チュウニズム＆オンゲキ1曲（8-EM）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23060813,
+    "name": "230608_01_3：宇宙すてーしょんちほー2紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23060814,
+    "name": "230608_01_4：10周年記念ちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23060815,
+    "name": "230608_01_5：ツユちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23060816,
+    "name": "230608_01_6：すたんぷカード報酬追加1（【DX譜面】セツナトリップ、Grip & Break down !!）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23060821,
+    "name": "230608_02_1：通常9曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23060822,
+    "name": "230608_02_2：連動1曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23060823,
+    "name": "230608_02_3：伝導1曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23060824,
+    "name": "230608_02_4：宇宙すてーしょんちほー2 4曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23060825,
+    "name": "230608_02_5：10周年記念ちほー 2曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23060826,
+    "name": "230608_02_6：ツユちほー 3曲DXnew2曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23060827,
+    "name": "230608_02_7：すたんぷカード報酬（DX譜面】セツナトリップ、Grip & Break down !!）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23060831,
+    "name": "230608_03_1：宇宙すてーしょんちほー2解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23060832,
+    "name": "230608_03_2：10周年記念ちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23060841,
+    "name": "230608_04_1：ツユちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23060851,
+    "name": "230608_05_1：宇宙すてーしょんちほー2 パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23060852,
+    "name": "230608_05_2：10周年記念ちほー パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23060861,
+    "name": "230608_06_1：[対象のイベント名]5倍イベントチケット配布1（補填用）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23060862,
+    "name": "230608_06_2：[対象のイベント名]5倍イベントチケット配布2（補填用）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23060863,
+    "name": "230608_06_3：[対象のイベント名]5倍イベントチケット配布3（補填用）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23060871,
+    "name": "230608_07_1：すたんぷカード解禁（楽曲2）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23060872,
+    "name": "230608_07_2：すたんぷカード解禁（コレクション）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23070711,
+    "name": "230707_01_1：バラエティ1曲、maimai1曲、チュウニズム＆オンゲキ1曲、POPS＆アニメ1曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23070712,
+    "name": "230707_01_2：連動楽曲紹介 チュウニズム＆オンゲキ1曲（Good bye, Merry-Go-Round.）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23070713,
+    "name": "230707_01_3：スタンダードRe:MASTER紹介(6曲)、でらっくすRe:MASTER紹介(4曲)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23070714,
+    "name": "230707_01_4：D4DJ Groovy Mixちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23070715,
+    "name": "230707_01_5：Diverse Systemちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23070716,
+    "name": "230707_01_6：すたんぷカード報酬追加2（【ST譜面】Halcyon）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23070717,
+    "name": "230707_01_7：Muse Dashちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23070721,
+    "name": "230707_02_1：バラエティ1曲、maimai1曲、チュウニズム＆オンゲキ1曲、POPS＆アニメ1曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23070722,
+    "name": "230707_02_2：D4DJ Groovy Mixちほー 2曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23070723,
+    "name": "230707_02_3：Diverse Systemちほー 2曲＋4曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23070724,
+    "name": "230707_02_4：スタンダード6曲+でらっくす4曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23070725,
+    "name": "230707_02_5：連動1曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23070726,
+    "name": "230707_02_6：すたんぷカード報酬（【ST譜面】Halcyon）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23070727,
+    "name": "230707_02_7：Muse Dashちほー2曲＋4曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23070728,
+    "name": "230707_02_8：シンセ研・オンゲキ一般解禁3曲（LiftOff, Falsum Atlantis., Limits）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23070741,
+    "name": "230707_04_1：D4DJ Groovy Mixちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23070742,
+    "name": "230707_04_2：Diverse Systemちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23070743,
+    "name": "230707_04_3：Muse Dashちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23070751,
+    "name": "230707_05_1：Diverse Systemちほー パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23070771,
+    "name": "230707_07_1：すたんぷカード解禁（楽曲1）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23081811,
+    "name": "230818_01_1：バラエティ2曲、POPS＆アニメ3曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23081812,
+    "name": "230818_01_2：メトロポリスちほー5紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23081813,
+    "name": "230818_01_3：BLACK ROSEちほー6紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23081814,
+    "name": "230818_01_4：Rain Dropsちほー1紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23081815,
+    "name": "230818_01_5：Rain Dropsちほー2紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23081816,
+    "name": "230818_01_6：すたんぷカード報酬追加3（【DX譜面】サンバランド）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23081821,
+    "name": "230818_02_1：バラエティ2曲、POPS＆アニメ3曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23081822,
+    "name": "230818_02_2：メトロポリスちほー5 4曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23081823,
+    "name": "230818_02_3：BLACK ROSEちほー6 2曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23081824,
+    "name": "230818_02_4：Rain Dropsちほー1 1曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23081825,
+    "name": "230818_02_5：Rain Dropsちほー2 1曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23081826,
+    "name": "230818_02_6：すたんぷカード報酬（【DX譜面】サンバランド）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23081831,
+    "name": "230818_03_1：メトロポリスちほー5解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23081832,
+    "name": "230818_03_2：BLACK ROSEちほー6解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23081841,
+    "name": "230818_04_1：Rain Dropsちほー1解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23081842,
+    "name": "230818_04_2：Rain Dropsちほー2解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23081851,
+    "name": "230818_05_1：メトロポリスちほー5 パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23081871,
+    "name": "230818_07_1：すたんぷカード解禁（楽曲1）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23092211,
+    "name": "230922_01_1：niconico2曲+バラエティ1曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23092212,
+    "name": "230922_01_2：連動楽曲紹介 チュウニズム＆オンゲキ1曲（ツクヨミステップ）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23092213,
+    "name": "230922_01_3：天界ちほー5紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23092214,
+    "name": "230922_01_4：すりぃちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23092215,
+    "name": "230922_01_5：ゲームセンターCXちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23092216,
+    "name": "230922_01_6：CHUNITHMちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23092217,
+    "name": "230922_01_7：すたんぷカード報酬追加4（【DX譜面】Starlight Disco）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23092218,
+    "name": "230922_01_8：すたんぷカード報酬追加5（コレクション）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23092221,
+    "name": "230922_02_1：niconico2曲+バラエティ1曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23092222,
+    "name": "230922_02_2：天界ちほー5 4曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23092223,
+    "name": "230922_02_3：すりぃちほー 2曲＋1曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23092224,
+    "name": "230922_02_4：ゲームセンターCXちほー 1曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23092225,
+    "name": "230922_02_5：CHUNITHMちほー 1曲+1曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23092226,
+    "name": "230922_02_6：連動1曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23092227,
+    "name": "230922_02_7：すたんぷカード報酬（【DX譜面】Starlight Disco）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23092228,
+    "name": "230922_02_8：Diverse Systemちほー一般解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23092229,
+    "name": "230922_02_9：Muse Dashちほー一般解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23092231,
+    "name": "230922_03_1：天界ちほー5解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23092241,
+    "name": "230922_04_1：すりぃちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23092242,
+    "name": "230922_04_2：ゲームセンターCXちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23092243,
+    "name": "230922_04_3：CHUNITHMちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23092251,
+    "name": "230922_05_1：天界ちほー5 パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23092271,
+    "name": "230922_07_1：すたんぷカード解禁（楽曲1、コレクション）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23110211,
+    "name": "231102_01_1：東方Project4曲紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23110212,
+    "name": "231102_01_2：連動楽曲紹介 バラエティ1曲（BLUE ZONE）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23110213,
+    "name": "231102_01_3：7sRefちほー2紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23110214,
+    "name": "231102_01_4：オンゲキちほー5紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23110215,
+    "name": "231102_01_5：すたんぷカード報酬追加5（【DX譜面】響縁）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23110221,
+    "name": "231102_02_1：東方Project4曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23110222,
+    "name": "231102_02_2：7sRefちほー2 4曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23110223,
+    "name": "231102_02_3：オンゲキちほー5 2曲+2曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23110224,
+    "name": "231102_02_4：連動1曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23110225,
+    "name": "231102_02_5：すたんぷカード報酬（【DX譜面】響縁）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23110231,
+    "name": "231102_03_1：7sRefちほー2解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23110241,
+    "name": "231102_04_1：オンゲキちほー5解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23110251,
+    "name": "231102_05_1：7sRefちほー2 パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23110271,
+    "name": "231102_07_1：すたんぷカード解禁（楽曲1）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23121511,
+    "name": "231215_01_1：POPS＆アニメ2曲、niconico3曲、東方Project1曲、バラエティ1曲、maimai2曲、スタンダードRe:MASTER紹介(1曲)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23121512,
+    "name": "231215_01_2：連動楽曲紹介 チュウニズム＆オンゲキ1曲（蜘蛛の糸）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23121513,
+    "name": "231215_01_3：BLACK ROSEちほー7紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23121514,
+    "name": "231215_01_4：ハピフェスちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23121515,
+    "name": "231215_01_5：DECO*27ちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23121516,
+    "name": "231215_01_6：すたんぷカード報酬追加6（【DX譜面】M.S.S.Planet）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23121521,
+    "name": "231215_02_1：POPS＆アニメ2曲、niconico3曲、東方Project1曲、バラエティ1曲、maimai2曲、Re:MASTER1曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23121522,
+    "name": "231215_02_2：連動1曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23121523,
+    "name": "231215_02_3：BLACK ROSEちほー7 1曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23121524,
+    "name": "231215_02_4：ハピフェスちほー 4曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23121525,
+    "name": "231215_02_5：DECO*27ちほー 2曲+1曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23121526,
+    "name": "231215_02_6：すたんぷカード報酬（【DX譜面】M.S.S.Planet）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23121527,
+    "name": "231215_02_7：すりぃちほー一般解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23121528,
+    "name": "231215_02_8：CHUNITHMちほー一般解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23121529,
+    "name": "231215_02_9：連動楽曲前半一般解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23121531,
+    "name": "231215_03_1：BLACK ROSEちほー7解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23121532,
+    "name": "231215_03_2：ハピフェスちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23121541,
+    "name": "231215_04_1：DECO*27ちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23121551,
+    "name": "231215_05_1：ハピフェスちほーパーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 23121571,
+    "name": "231215_07_1：すたんぷカード解禁（楽曲1）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24011211,
+    "name": "240112_01_1：バラエティ2曲、maimai2曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24011212,
+    "name": "240112_01_2：連動楽曲紹介 チュウニズム＆オンゲキ1曲（Don't Fight The Music）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24011213,
+    "name": "240112_01_3：メトロポリスちほー6紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24011214,
+    "name": "240112_01_4：さなちゃんねるちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24011215,
+    "name": "240112_01_5：東方Project×オンゲキちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24011216,
+    "name": "240112_01_6：すたんぷカード報酬追加7（【DX譜面】火炎地獄）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24011217,
+    "name": "240112_01_7：すたんぷカード報酬追加7（コレクション）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24011221,
+    "name": "240112_02_1：バラエティ2曲、maimai2曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24011222,
+    "name": "240112_02_2：POPS＆アニメ1曲（アマカミサマ）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24011223,
+    "name": "240112_02_3：連動1曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24011224,
+    "name": "240112_02_4：メトロポリスちほー6 4曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24011225,
+    "name": "240112_02_5：さなちゃんねるちほー 1曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24011226,
+    "name": "240112_02_6：東方Project×オンゲキちほー 3曲+2曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24011227,
+    "name": "240112_02_7：すたんぷカード報酬（【DX譜面】火炎地獄）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24011228,
+    "name": "240112_02_8：オンゲキちほー5一般解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24011231,
+    "name": "240112_03_1：メトロポリスちほー6解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24011241,
+    "name": "240112_04_1：さなちゃんねるちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24011242,
+    "name": "240112_04_2：東方Project×オンゲキちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24011251,
+    "name": "240112_05_1：メトロポリスちほー6 パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24011271,
+    "name": "240112_07_1：すたんぷカード解禁（楽曲1、コレクション）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24030111,
+    "name": "240301_01_1：niconico2曲、バラエティ5曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24030112,
+    "name": "240301_01_2：連動楽曲紹介 チュウニズム＆オンゲキ1曲（ピュグマリオンの咒文）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24030113,
+    "name": "240301_01_3：スカイストリートちほー3紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24030114,
+    "name": "240301_01_4：樋口 楓ちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24030115,
+    "name": "240301_01_5：CHUNITHMちほー2紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24030116,
+    "name": "240301_01_6：すたんぷカード報酬追加8（【DX譜面】VIIIbit Explorer）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24030121,
+    "name": "240301_02_1：niconico2曲、バラエティ5曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24030122,
+    "name": "240301_02_2：連動1曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24030123,
+    "name": "240301_02_3：スカイストリートちほー3 4曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24030124,
+    "name": "240301_02_4：樋口 楓ちほー 1曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24030125,
+    "name": "240301_02_5：CHUNITHMちほー2 1曲+2曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24030126,
+    "name": "240301_02_6：すたんぷカード報酬（【DX譜面】VIIIbit Explorer）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24030127,
+    "name": "240301_02_7：DECO*27ちほー一般解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24030131,
+    "name": "240301_03_1：スカイストリートちほー3解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24030141,
+    "name": "240301_04_1：樋口 楓ちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24030142,
+    "name": "240301_04_2：CHUNITHMちほー2解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24030151,
+    "name": "240301_05_1：スカイストリートちほー3 パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24030171,
+    "name": "240301_07_1：すたんぷカード解禁（楽曲1）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24041211,
+    "name": "240412_01_1：niconico6曲、でらっくす譜面1曲紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24041212,
+    "name": "240412_01_2：天界ちほー6紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24041213,
+    "name": "240412_01_3：Arcaeaちほー2紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24041214,
+    "name": "240412_01_4：電音部ちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24041215,
+    "name": "240412_01_5：syudouちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24041216,
+    "name": "240412_01_6：すたんぷカード報酬追加9（【DX譜面】ケロ⑨destiny、maxi）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24041221,
+    "name": "240412_02_1：niconico6曲、でらっくす譜面1曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24041222,
+    "name": "240412_02_2：天界ちほー6 4曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24041223,
+    "name": "240412_02_3：電音部ちほー 2曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24041224,
+    "name": "240412_02_4：Arcaeaちほー2 2曲+2曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24041225,
+    "name": "240412_02_5：syudouちほー 2曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24041226,
+    "name": "240412_02_6：すたんぷカード報酬追加9（【DX譜面】ケロ⑨destiny、Maxi）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24041227,
+    "name": "240412_02_7：東方Project×オンゲキちほー一般解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24041231,
+    "name": "240412_03_1：天界ちほー6解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24041241,
+    "name": "240412_04_1：電音部ちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24041242,
+    "name": "240412_04_2：Arcaeaちほー2解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24041243,
+    "name": "240412_04_3：syudouちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24041251,
+    "name": "240412_05_1：天界ちほー6 パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24041271,
+    "name": "240412_07_1：すたんぷカード解禁（楽曲2）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060611,
+    "name": "240606_01_1：ロンチ楽曲紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060612,
+    "name": "240606_01_2：連動楽曲《Trrricksters!!》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060613,
+    "name": "240606_01_3：ハピフェスちほー2紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060614,
+    "name": "240606_01_4：ピノキオピーちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060615,
+    "name": "240606_01_5：ヒメヒナちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060616,
+    "name": "240606_01_6：すたんぷカード報酬《【DX譜面】深海少女+コレクション》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060617,
+    "name": "240606_01_7：ヒメヒナちほー紹介（修正対応）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060621,
+    "name": "240606_02_1：通常楽曲7曲《阿修羅ちゃん、おとせサンダー、ロウワー、キャットラビング、リスペク風神、Magenta Potion、Vallista》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060622,
+    "name": "240606_02_2：連動楽曲 1曲(Lock) 《Trrricksters!!》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060623,
+    "name": "240606_02_3：伝導楽曲 1曲(Lock) 《VeRForTe αRtE:VEiN》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060624,
+    "name": "240606_02_4：宴譜面解禁　8曲《Love You、ポップミュージックは僕のもの、恋愛裁判、ぽっぴっぽー、アカツキアライヴァル、ラグトレイン、疾走あんさんぶる、Hand in Hand》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060625,
+    "name": "240606_02_5：ハピフェスちほー2 4曲(Lock)《トノサマビーム、enchanted wanderer、Comet Panto Men!、ツムギボシ》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060626,
+    "name": "240606_02_6：ピノキオピーちほー 2曲《神っぽいな、魔法少女とチョコレゐト》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060627,
+    "name": "240606_02_7：ヒメヒナちほー 2曲+1曲（Lock）《ヒバリ、Hello, Hologram、不機嫌なスリーカード》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060628,
+    "name": "240606_02_8：すたんぷカード報酬追加1《【DX譜面】深海少女》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060631,
+    "name": "240606_03_1：ハピフェス2ちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060641,
+    "name": "240606_04_1：ピノキオピーちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060642,
+    "name": "240606_04_2：ヒメヒナちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060643,
+    "name": "240606_04_3：東方Projectリバイバルちほー解禁（恒常）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060644,
+    "name": "240606_04_4：Arcaeaちほー解禁（恒常）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060645,
+    "name": "240606_04_5：CHUNITHMちほー解禁（恒常）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060646,
+    "name": "240606_04_6：オンゲキちほー5解禁（恒常）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060647,
+    "name": "240606_04_7：からめるちほー復刻（恒常）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060651,
+    "name": "240606_05_1：ハピフェスちほー2 パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060661,
+    "name": "240606_06_1：イベント5倍チケット配布_1（1.40予備）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060662,
+    "name": "240606_06_2：イベント5倍チケット配布_2（1.40予備）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060663,
+    "name": "240606_06_3：イベント5倍チケット配布_3（1.40予備）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060664,
+    "name": "240606_06_4：連動SPECIAL Ticket解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24060671,
+    "name": "240606_07_1：すたんぷカード解禁《【DX譜面】深海少女+コレクション》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24072411,
+    "name": "240724_01_1：POPS＆アニメ1曲、バラエティ1曲、東方Project1曲紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24072412,
+    "name": "240724_01_2：連動楽曲《FLUFFY FLASH》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24072413,
+    "name": "240724_01_3：スカイストリートちほー4紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24072414,
+    "name": "240724_01_4：音楽同位体　可不ちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24072415,
+    "name": "240724_01_5：MEGAREXちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24072416,
+    "name": "240724_01_6：すたんぷカード告知《BULK UP (GAME EXCLUSIVE EDIT)、【DX譜面】ナイト・オブ・ナイツ》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24072421,
+    "name": "240724_02_1：通常楽曲3曲《魂のルフラン、Shooting Shower～DANCE TIME(シンディ)～、インターネットサバイバー》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24072422,
+    "name": "240724_02_2：連動楽曲《FLUFFY FLASH》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24072423,
+    "name": "240724_02_3：スカイストリート4ちほー4曲（Lock）《アンバークロニクル、リフヴェイン、宵の鳥、Kairos》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24072424,
+    "name": "240724_02_4：音楽同位体　可不ちほー2曲《花となれ、私のドッペルゲンガー》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24072425,
+    "name": "240724_02_5：MEGAREXちほー2曲+4曲（Lock）《コンティニュー！ feat. 藍月なくる、Sunday Night feat Kanata.N、PERSONA feat. PANXI、Halfway(>∀<)、Complex Mind、DROPS feat. Such》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24072426,
+    "name": "240724_02_6：すたんぷカード解禁《BULK UP (GAME EXCLUSIVE EDIT)、【DX譜面】ナイト・オブ・ナイツ》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24072427,
+    "name": "240724_02_7：Arcaea2ちほー一般開放《Aegleseeker、最強STRONGER》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24072431,
+    "name": "240724_03_1：スカイストリート4ちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24072441,
+    "name": "240724_04_1：音楽同位体　可不ちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24072442,
+    "name": "240724_04_2：MEGAREXちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24072451,
+    "name": "240724_05_1：スカイストリート4ちほーパーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24072471,
+    "name": "240724_07_1：すたんぷカード解禁《楽曲1、【DX譜面】楽曲1》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24090411,
+    "name": "240904_01_1：POPS＆アニメ1曲、niconico3曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24090412,
+    "name": "240904_01_2：連動楽曲《Snow Colored Score》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24090413,
+    "name": "240904_01_3：宴譜面3曲紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24090414,
+    "name": "240904_01_4：BLACK ROSEちほー8",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24090415,
+    "name": "240904_01_5：10周年記念2ちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24090416,
+    "name": "240904_01_6：東方イロドリちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24090417,
+    "name": "240904_01_7：すたんぷカード告知《【DX譜面】Monochrome Rainbow、【DX譜面】初音ミクの消失》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24090418,
+    "name": "240904_01_8：伝導楽曲の条件緩和（1回目）紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24090419,
+    "name": "240904_01_9：にじさんじちほー復刻紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24090421,
+    "name": "240904_02_1：通常楽曲4曲《はんぶんこ、テオ、ド屑、絶対敵対メチャキライヤー》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24090422,
+    "name": "240904_02_2：東方イロドリちほー2曲＋1曲（Lock）《つるぺったん、『ウソテイ』 ～一回戦せりなvsしろなvsなずな～、Bad Apple!! feat.nomico ～五十嵐 撫子 Ver.～》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24090423,
+    "name": "240904_02_3：BLACK ROSEちほー8 2曲《エデン、にゃーにゃー冒険譚》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24090424,
+    "name": "240904_02_4：10周年記念ちほー2 2曲《ここからはじまるプロローグ。 (Kanon Remix)、モ°ルモ°ル (MZK Skippin' Remix)、VERTeX (rintaro soma deconstructed remix)》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24090425,
+    "name": "240904_02_5：宴譜面3曲《[宴]Oshama Scramble!、[光]BREaK! BREaK! BREaK!、[蔵]Aegleseeker》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24090426,
+    "name": "240904_02_6：連動楽曲《Snow Colored Score》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24090427,
+    "name": "240904_02_7：一般開放1曲《不機嫌なスリーカード》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24090428,
+    "name": "240904_02_8：すたんぷカード楽曲《【DX譜面】Monochrome Rainbow、【DX譜面】初音ミクの消失》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24090431,
+    "name": "240904_03_1：BLACK ROSEちほー8解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24090432,
+    "name": "240904_03_2：10周年記念ちほー2解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24090441,
+    "name": "240904_04_1：東方イロドリちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24090442,
+    "name": "240904_04_2：にじさんじちほー復刻",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24090451,
+    "name": "240904_05_1：10周年記念ちほー2 パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24090471,
+    "name": "240904_07_1：すたんぷカード解禁《【DX譜面】Monochrome Rainbow、【DX譜面】初音ミクの消失》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24090491,
+    "name": "240904_09_1：伝導楽曲の条件緩和（1回目）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24092511,
+    "name": "240925_01_1：連動楽曲《Snow Colored Score》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24092512,
+    "name": "240925_01_2：東方イロドリちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24092521,
+    "name": "240925_02_1：東方イロドリちほー2曲＋1曲（Lock）《つるぺったん、『ウソテイ』 ～一回戦せりなvsしろなvsなずな～、Bad Apple!! feat.nomico ～五十嵐 撫子 Ver.～》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24092522,
+    "name": "240925_02_2：連動楽曲《Snow Colored Score》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24092541,
+    "name": "240925_04_1：東方イロドリちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24101611,
+    "name": "241016_01_1：niconico2曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24101612,
+    "name": "241016_01_2：連動楽曲《Last Kingdom》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24101613,
+    "name": "241016_01_3：ドラゴンちほー2紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24101614,
+    "name": "241016_01_4：からめるちほー2紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24101615,
+    "name": "241016_01_5：オンゲキちほー6紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24101616,
+    "name": "241016_01_6：すたんぷカード告知《【DX譜面】Selector》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24101621,
+    "name": "241016_02_1：通常楽曲2曲《まにまに、感情ディシーブ》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24101622,
+    "name": "241016_02_2：連動楽曲《Last Kingdom》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24101623,
+    "name": "241016_02_3：ドラゴンちほー2 4曲（Lock）《隠密あんみつDX、地球、Churros Parlor、超熊猫的周遊記（ワンダーパンダートラベラー）》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24101624,
+    "name": "241016_02_4：からめるちほー2 2曲《あつすぎの歌、ULTRA SYNERGY MATRIX》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24101625,
+    "name": "241016_02_5：オンゲキちほー6 2曲+1曲（Lock）《STARRED HEART、Y.Y.Y.計画!!!!、LAMIA》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24101626,
+    "name": "241016_02_6：すたんぷカード楽曲解禁 1曲《【DX譜面】Selector》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24101627,
+    "name": "241016_02_7：MEGAREXちほー 4曲一般開放《PERSONA feat. PANXI、Halfway(>∀<)、Complex Mind、DROPS feat. Such》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24101631,
+    "name": "241016_03_1：ドラゴンちほー2解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24101641,
+    "name": "241016_04_1：からめるちほー2解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24101642,
+    "name": "241016_04_2：オンゲキちほー6解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24101651,
+    "name": "241016_05_1：ドラゴンちほー2パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24101671,
+    "name": "241016_07_1：すたんぷカード解禁《【DX譜面】Selector》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24120411,
+    "name": "241204_01_1：POPS&アニメ2曲+niconico3曲+東方Project1曲+バラエティ1曲+maimai1曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24120412,
+    "name": "241204_01_2：連動楽曲《GEOMETRIC DANCE》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24120413,
+    "name": "241204_01_3：パーリィちほー",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24120414,
+    "name": "241204_01_4：いよわちほー",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24120415,
+    "name": "241204_01_5：グルーブコースターちほー",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24120416,
+    "name": "241204_01_6：すたんぷカード紹介《Latent Kingdom+コレクション》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24120417,
+    "name": "241204_01_7：宴譜面紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24120418,
+    "name": "241204_01_8：伝導楽曲の条件緩和（2回目）紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24120421,
+    "name": "241204_02_1：通常楽曲《アンダーキッズ、さくゆいたいそう、バグ、解けないように、PUPA、系ぎて》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24120422,
+    "name": "241204_02_2：連動楽曲《GEOMETRIC DANCE》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24120423,
+    "name": "241204_02_3：パーリィちほー 4曲（Lock）《NOIZY BOUNCE、サンバディ！、Horoscope Express、Party☆People☆Princess》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24120424,
+    "name": "241204_02_4：いよわちほー楽曲 3曲《熱異常、1000年生きてる、IMAWANOKIWA》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24120425,
+    "name": "241204_02_5：グルーブコースターちほー 2曲+1曲（Lock）《Play merrily NEO、アルカンシエル、OMAKENO Stroke》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24120426,
+    "name": "241204_02_6：すたんぷカード報酬《Latent Kingdom》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24120427,
+    "name": "241204_02_7：宴譜面10曲《[星]しゅわスパ大作戦☆、[宴]CYCLES、[覚]東京リアルワールド、[蛸]チルノのパーフェクトさんすう教室、[蔵]Glorious Crown、[宴]Garakuta Doll Play、[宴]DETARAME ROCK&ROLL THEORY、[狂]タカハせ！名人マン、[宴]セガサターン起動音[H.][Remix]",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24120428,
+    "name": "241204_02_8：東方イロドリちほー 一般開放楽曲《Bad Apple!! feat.nomico ～五十嵐 撫子 Ver.～》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24120429,
+    "name": "241204_02_9：連動一般開放楽曲《Trrricksters!!、FLUFFY FLASH、Snow Colored Score、Last Kingdom》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24120431,
+    "name": "241204_03_1：パーリィちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24120432,
+    "name": "241204_03_2：1.15ちほー復刻",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24120441,
+    "name": "241204_04_1：いよわちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24120442,
+    "name": "241204_04_2：グルーブコースターちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24120451,
+    "name": "241204_05_1：パーリィちほーパーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24120471,
+    "name": "241204_07_1：すたんぷカード解禁《Latent Kingdom+コレクション》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 24120491,
+    "name": "241204_09_1：伝導楽曲の条件緩和（2回目）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25011511,
+    "name": "250115_01_1：niconico2曲、オリジナル1曲、POPS&アニメ2曲、バラエティ1曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25011512,
+    "name": "250115_01_2：連動楽曲《SQUAD-Phvntom-》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25011513,
+    "name": "250115_01_3：BLACK ROSEちほー9",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25011514,
+    "name": "250115_01_4：メトロポリスちほー7",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25011515,
+    "name": "250115_01_5：WACCAちほー",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25011516,
+    "name": "250115_01_6：すたんぷカード紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25011521,
+    "name": "250115_02_1：通常楽曲解禁《ノンブレス・オブリージュ、異界ちゃんと可不ちゃんのおつかい合騒曲、KHYMΞXΛ、HUMANBORG、ULTRA POWER、I’m Here (feat. Merry Kirk-Holmes)》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25011522,
+    "name": "250115_02_2：連動楽曲解禁《SQUAD-Phvntom-》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25011523,
+    "name": "250115_02_3：BLACK ROSEちほー9 2曲《Mystic Parade、Cry Cry Cry》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25011524,
+    "name": "250115_02_4：メトロポリスちほー7 4曲（Lock）《ぽわわん劇場、my flow、POWER OF UNITY、Energizing Flame》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25011525,
+    "name": "250115_02_5：WACCAちほー 2曲+2曲（Lock）《with U、Love Kills U、DANGEROOOOUS JUNGLE、天使光輪》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25011526,
+    "name": "250115_02_6：すたんぷカード楽曲解禁《【DX譜面】oboro、【DX譜面】ナミダと流星》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25011531,
+    "name": "250115_03_1：BLACK ROSEちほー9解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25011532,
+    "name": "250115_03_2：メトロポリスちほー7解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25011541,
+    "name": "250115_04_1：WACCAちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25011551,
+    "name": "250115_05_1：メトロポリスちほー7パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25011571,
+    "name": "250115_07_1：すたんぷカード解禁《【DX譜面】oboro、【DX譜面】ナミダと流星》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030511,
+    "name": "250305_01_1：niconico2曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030512,
+    "name": "250305_01_2：スカイストリートちほー5紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030513,
+    "name": "250305_01_3：ヘブンバーンズレッドちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030514,
+    "name": "250305_01_4：sasakure.UKちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030515,
+    "name": "250305_01_5：TJ.hangneilちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030516,
+    "name": "250305_01_6：すたんぷカード紹介《【DX譜面】渦状銀河のシンフォニエッタ》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030517,
+    "name": "250305_01_7：Re:Master譜面追加紹介《【Re:MASTER】STEREOSCAPE、【Re:MASTER】一か罰、【Re:MASTER】Never Give Up!、【Re:MASTER】Link、【Re:MASTER】レーイレーイ、【Re:MASTER】STARLINER》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030521,
+    "name": "250305_02_1：通常楽曲追加《ジェヘナ、ツギハギスタッカート》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030522,
+    "name": "250305_02_2：スカイストリートちほー5 4曲（Lock）《フェイクフェイス・フェイルセイフ、シックスプラン、フタタビ、ふらふらふら、》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030523,
+    "name": "250305_02_3：ヘブンバーンズレッドちほー 1曲《Burn My Soul》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030524,
+    "name": "250305_02_4：sasakure.UKちほー 2曲+でらっくす譜面追加1曲、TJ.hangneilちほー 2曲（Lock）、月面ちほー 1曲（Lock）、裏　月面ちほー 2曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030525,
+    "name": "250305_02_5：すたんぷカード楽曲解禁《【DX譜面】渦状銀河のシンフォニエッタ》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030526,
+    "name": "250305_02_6：Re:MASTER追加《【Re:MASTER】STEREOSCAPE、【Re:MASTER】一か罰、【Re:MASTER】Never Give Up!、【Re:MASTER】Link、【Re:MASTER】レーイレーイ、【Re:MASTER】STARLINER》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030527,
+    "name": "250305_02_7：一般開放《LAMIA》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030528,
+    "name": "250305_02_8：一般開放《OMAKENO Stroke》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030531,
+    "name": "250305_03_1：スカイストリートちほー5解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030541,
+    "name": "250305_04_1：ヘブンバーンズレッドちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030542,
+    "name": "250305_04_2：sasakure.UKちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030543,
+    "name": "250305_04_3：TJ.hangneilちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030544,
+    "name": "250305_04_4：月面ちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030545,
+    "name": "250305_04_5：裏　月面ちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030551,
+    "name": "250305_05_1：スカイストリートちほー4 パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030552,
+    "name": "250305_05_2：TJ.hangneilちほーパーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030553,
+    "name": "250305_05_3：裏　月面ちほー《Apollo》パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030554,
+    "name": "250305_05_4：裏　月面ちほー《raputa》パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25030571,
+    "name": "250305_07_1：すたんぷカード解禁《【DX譜面】渦状銀河のシンフォニエッタ》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25041611,
+    "name": "250416_01_1：niconico2曲、東方Project1曲、バラエティ1曲",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25041612,
+    "name": "250416_01_2：7sRefちほー3紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25041613,
+    "name": "250416_01_3：東北ずん子ちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25041614,
+    "name": "250416_01_4：CHUNITHM3ちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25041615,
+    "name": "250416_01_5：連動楽曲紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25041616,
+    "name": "250416_01_6：すたんぷカード紹介《【DX譜面】色は匂へど散りぬるを》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25041617,
+    "name": "250416_01_7：宴譜面紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25041618,
+    "name": "250416_01_8：Re:MASTER譜面追加紹介《【Re:MASTER】言ノ葉カルマ》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25041619,
+    "name": "250416_01_9：すたんぷカード報酬紹介《【パートナー】ずんだもん）》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25041621,
+    "name": "250416_02_1：通常楽曲追加《QUEEN、天使の翼。、さよならプリンセス、HANIPAGANDA、Rush-Hour",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25041622,
+    "name": "250416_02_2：連動楽曲解禁《インパアフェクシオン・ホワイトガアル》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25041623,
+    "name": "250416_02_3：7sRefちほー3 4曲（Lock）《Redemption、Ether Second、The Great Banquet、Straight into the lights》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25041624,
+    "name": "250416_02_4：東北ずん子ちほー 2曲《ずんだもんの朝食　〜目覚ましずんラップ〜、あなたは世界の終わりにずんだを食べるのだ》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25041625,
+    "name": "250416_02_5：CHUNITHM3ちほー 1曲+1曲（Lock）《Ring、WE'RE BACK!!》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25041626,
+    "name": "250416_02_6：すたんぷカード楽曲解禁《【DX譜面】色は匂へど散りぬるを》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25041627,
+    "name": "250416_02_7：Re:MASTER譜面追加《【Re:MASTER】言ノ葉カルマ》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25041628,
+    "name": "250416_02_8：宴譜面4曲追加《[回]回る空うさぎ、[右]The wheel to the right、[逆]KING is BACK!!、[耐]Space Harrier Main Theme [Reborn]》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25041631,
+    "name": "250416_03_1：7sRefちほー3解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25041641,
+    "name": "250416_04_1：東北ずん子ちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25041642,
+    "name": "250416_04_2：CHUNITHMちほー3解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25041651,
+    "name": "250416_05_1：7sRefちほー3 パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25041671,
+    "name": "250416_07_1：すたんぷカード解禁《【DX譜面】色は匂へど散りぬるを》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25041672,
+    "name": "250416_07_2：すたんぷカード追加《【パートナー】ずんだもん）》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061111,
+    "name": "250611_01_1：ロンチ楽曲紹介（8曲）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061112,
+    "name": "250611_01_2：パーリィちほー2紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061113,
+    "name": "250611_01_3：NEEDY GIRL OVERDOSEちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061114,
+    "name": "250611_01_4：花譜ちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061115,
+    "name": "250611_01_5：ゆこぴちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061116,
+    "name": "250611_01_6：連動楽曲紹介（1曲）《MarbleBlue.》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061117,
+    "name": "250611_01_7：すたんぷカード報酬紹介（2曲）《【ST&DX】ハッピーシンセサイザ、【DX譜面】御旗のもとに　+コレクション》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061118,
+    "name": "250611_01_8：宴譜面紹介（9曲）《[協]エイリアンエイリアン、[奏]テレキャスタービーボーイ、[奏]チュルリラ・チュルリラ・ダッダッダ！、[疑]ロキ、[息]ノンブレス・オブリージュ、[J]Garakuta Doll Play、[r]Garakuta Doll Play、\r\n[玉]Garakuta Doll Play、[某]Garakuta Doll Play》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061119,
+    "name": "250611_01_9：伝導楽曲紹介（1曲）《IF:U》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061121,
+    "name": "250611_02_1：ロンチ楽曲8曲《アイドル、壱雫空、ラビットホール、酔いどれ知らず、匿名M、Freak Out Hr.、さよならヒストリー、New York Back Raise》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061122,
+    "name": "250611_02_2：連動楽曲（1曲）（Lock）《MarbleBlue.》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061123,
+    "name": "250611_02_3：パーリィちほー2（4曲）（Lock）《エスオーエス、のじゃロリック、Edelweiss、QuiQ》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061124,
+    "name": "250611_02_4：NEEDY GIRL OVERDOSEちほー（1曲）《INTERNET YAMERO》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061125,
+    "name": "250611_02_5：花譜ちほー（1曲）《過去を喰らう》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061126,
+    "name": "250611_02_6：ゆこぴちほー（2曲）《強風オールバック、寝起きヤシの木》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061127,
+    "name": "250611_02_7：すたんぷカード報酬追加1《【ST&DX】ハッピーシンセサイザ、【DX譜面】御旗のもとに》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061128,
+    "name": "250611_02_8：宴譜面（9曲）《[協]エイリアンエイリアン、[奏]テレキャスタービーボーイ、[奏]チュルリラ・チュルリラ・ダッダッダ！、[疑]ロキ、[息]ノンブレス・オブリージュ、[J]Garakuta Doll Play、[r]Garakuta Doll Play、\r\n[玉]Garakuta Doll Play、[某]Garakuta Doll Play》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061129,
+    "name": "250611_02_9：伝導楽曲追加（1曲）《IF:U》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061131,
+    "name": "250611_03_1：パーリィちほー2解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061141,
+    "name": "250611_04_1：ゆこぴちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061142,
+    "name": "250611_04_2：花譜ちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061143,
+    "name": "250611_04_3：NEEDY GIRL OVERDOSEちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061151,
+    "name": "250611_05_1：パーリィちほー2　パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061161,
+    "name": "250611_06_1：イベント5倍チケット配布_1（1.50予備）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061162,
+    "name": "250611_06_2：イベント5倍チケット配布_2（1.50予備）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061163,
+    "name": "250611_06_3：イベント5倍チケット配布_3（1.50予備）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061171,
+    "name": "250611_07_1：すたんぷカード解禁《【ST&DX】ハッピーシンセサイザ、【DX譜面】御旗のもとに　+コレクション》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25061172,
+    "name": "250611_07_2：すたんぷカード解禁_修正版《【ST&DX】ハッピーシンセサイザ、【DX譜面】御旗のもとに　+コレクション》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25071611,
+    "name": "250716_01_1：メトロポリスちほー8紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25071612,
+    "name": "250716_01_2：にじさんじのB級バラエティちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25071613,
+    "name": "250716_01_3：niconico（2曲）+バラエティ（2曲）《サイバーサンダーサイダー、おくすり飲んで寝よう、QUATTUORUX、DUAL ROZES》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25071614,
+    "name": "250716_01_4：すたんぷカード報酬紹介（1曲）《炎歌 -ほむらうた-》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25071615,
+    "name": "250716_01_5：宴譜面紹介（2曲）《[奏]さくゆいたいそう、[宴]Oshama Scramble! (Cranky Remix)》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25071621,
+    "name": "250716_02_1：通常楽曲（2曲）《サイバーサンダーサイダー、おくすり飲んで寝よう》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25071622,
+    "name": "250716_02_2：メトロポリスちほー8（4曲）（Lock）《Cider P@rty、勦滅、Lunatic Vibes、Bloody Trail》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25071623,
+    "name": "250716_02_3：B級バラエティちほー（1曲）《バラバラ～仮初レインボーローズ～》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25071624,
+    "name": "250716_02_4：すたんぷカード報酬追加2《【DX譜面】炎歌 -ほむらうた-》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25071625,
+    "name": "250716_02_5：宴譜面（2曲）《[奏]さくゆいたいそう、[宴]Oshama Scramble! (Cranky Remix)》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25071631,
+    "name": "250716_03_1：メトロポリスちほー8解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25071641,
+    "name": "250716_04_1：にじさんじのB級バラエティちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25071651,
+    "name": "250716_05_1：メトロポリスちほー8　パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25071671,
+    "name": "250716_07_1：すたんぷカード解禁《【DX譜面】炎歌 -ほむらうた-》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25072111,
+    "name": "250721_01_1：WEC地区予選宣伝",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25082011,
+    "name": "250820_01_1：グルーヴコースターちほー2紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25082012,
+    "name": "250820_01_2：#コンパスちほー2紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25082013,
+    "name": "250820_01_3：バラエティ（2曲）《QUATTUORUX、DUAL ROZES》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25082014,
+    "name": "250820_01_4：連動楽曲紹介（1曲）《MUSIC PЯAYER》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25082021,
+    "name": "250820_02_1：通常楽曲（2曲）《QUATTUORUX、DUAL ROZES》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25082022,
+    "name": "250820_02_2：連動楽曲（1曲）（Lock）《MUSIC PЯAYER》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25082023,
+    "name": "250820_02_3：グルーヴコースターちほー2（2曲）+（1曲（Lock））《VOLT、tiny tales continue、ouroboros -twin stroke of the end-》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25082024,
+    "name": "250820_02_4：#コンパスちほー2（3曲）《ラヴィ、スティールユー、オシオキGIMMICK!!》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25082041,
+    "name": "250820_04_1：グルーヴコースターちほー2解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25082042,
+    "name": "250820_04_2：#コンパスちほー2解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25090111,
+    "name": "250901_01_1：WEC総決勝宣伝宣伝",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25092411,
+    "name": "250924_01_1：ドラゴンちほー3紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25092412,
+    "name": "250924_01_2：東方ダンマクカグラ ファンタジア・ロスト紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25092413,
+    "name": "250924_01_3：周防パトラちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25092414,
+    "name": "250924_01_4：niconico（4曲）+バラエティ（1曲）《新人類、ザムザ、バカ通信、ライアーダンサー、INFiNiTE ENERZY -Overdoze-》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25092415,
+    "name": "250924_01_5：連動楽曲紹介（1曲）《Λzure Vixen》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25092416,
+    "name": "250924_01_6：すたんぷカード報酬紹介（1曲）《【ST譜面】華の集落、秋のお届け》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25092417,
+    "name": "250924_01_7：宴譜面紹介（2曲）《[奏]ヒトガタ、[両]はんぶんこ》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25092418,
+    "name": "250924_01_8：伝導楽曲の条件緩和（1回目）紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25092421,
+    "name": "250924_02_1：通常楽曲（5曲）《新人類、ザムザ、バカ通信、ライアーダンサー、INFiNiTE ENERZY -Overdoze-》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25092422,
+    "name": "250924_02_2：連動楽曲解禁（1曲）《Λzure Vixen》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25092423,
+    "name": "250924_02_3：ドラゴンちほー3（4曲）（Lock）《RE:INCARNATED DRAGNER、Beginning together!、Shining Ray ～僕らの絆～、DEVOTION》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25092424,
+    "name": "250924_02_4：東方ダンマクカグラ ファンタジア・ロストちほー（2曲）+（1曲（Lock））《LOSTPHANTASIA、Bad Apple!! feat.nomico (Tetsuya Komuro Remix)、Re:Unknown X》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25092425,
+    "name": "250924_02_5：周防パトラちほー（2曲）《偉大なる悪魔は実は大天使パトラちゃん様なのだ！、シュガーホリック》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25092426,
+    "name": "250924_02_6：すたんぷカード報酬追加3《【ST譜面】華の集落、秋のお届け》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25092427,
+    "name": "250924_02_7：宴譜面（2曲）《[奏]ヒトガタ、[両]はんぶんこ》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25092431,
+    "name": "250924_03_1：ドラゴンちほー3解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25092441,
+    "name": "250924_04_1：東方ダンマクカグラ ファンタジア・ロストちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25092442,
+    "name": "250924_04_2：周防パトラちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25092451,
+    "name": "250924_05_1：ドラゴンちほー3　パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25092471,
+    "name": "250924_07_1：すたんぷカード解禁《【ST譜面】華の集落、秋のお届け》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25092491,
+    "name": "250924_09_1：伝導楽曲の条件緩和（1回目）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25110511,
+    "name": "251105_01_1：天界ちほー7紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25110512,
+    "name": "251105_01_2：TANO*C2ちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25110513,
+    "name": "251105_01_3：オンゲキちほー7紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25110514,
+    "name": "251105_01_4：maimai（1曲）《Divide et impera!》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25110515,
+    "name": "251105_01_5：連動楽曲紹介（1曲）《Baqeela》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25110516,
+    "name": "251105_01_6：すたんぷカード報酬紹介（1曲）《【DX譜面】sweet little sister》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25110517,
+    "name": "251105_01_7：宴譜面紹介（2曲）《[覚]スカーレット警察のゲットーパトロール24時、[協]三妖精SAY YA!!!》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25110521,
+    "name": "251105_02_1：通常楽曲（1曲）《Divide et impera!》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25110522,
+    "name": "251105_02_2：連動楽曲解禁（1曲）《Baqeela》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25110523,
+    "name": "251105_02_3：天界ちほー7（4曲）（Lock）《Geranium、The Cursed Doll、RondeauX of RagnaroQ、ℝ∈Χ LUNATiCA》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25110524,
+    "name": "251105_02_4：TANO*C2ちほー（2曲）+（3曲（Lock））《Make Up Your World feat. キョンシーのCiちゃん & らっぷびと、BOOM! BOOM!! BOOM!!!、Everybody Say HARDCORE TANO*C、ミラクルポップ☆アドベンチャー!!!!、Trust》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25110525,
+    "name": "251105_02_5：オンゲキちほー7（2曲）+（1曲（Lock））《まっすぐ→→→ストリーム！、最っ高のエンタメだ!!、Ai C》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25110526,
+    "name": "251105_02_6：すたんぷカード報酬解禁4《【DX譜面】sweet little sister》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25110527,
+    "name": "251105_02_7：宴譜面（2曲）《[覚]スカーレット警察のゲットーパトロール24時、[協]三妖精SAY YA!!!》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25110528,
+    "name": "251105_02_8：グルーヴコースターちほー2（1曲）一般開放《ouroboros -twin stroke of the end-》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25110531,
+    "name": "251105_03_1：天界ちほー7解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25110541,
+    "name": "251105_04_1：TANO*C2ちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25110542,
+    "name": "251105_04_2：オンゲキちほー7解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25110551,
+    "name": "251105_05_1：天界ちほー7　パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25110571,
+    "name": "251105_07_1：すたんぷカード解禁《【DX譜面】sweet little sister》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25120411,
+    "name": "251204_01_1：プロジェクトセカイちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25120412,
+    "name": "251204_01_2：プロジェクトセカイちほー2紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25120413,
+    "name": "251204_01_3：プロジェクトセカイちほー3紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25120414,
+    "name": "251204_01_4：プロジェクトセカイちほー4紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25120421,
+    "name": "251204_02_1：プロジェクトセカイちほー（2曲）《劣等上等、自傷無色》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25120422,
+    "name": "251204_02_2：プロジェクトセカイちほー2（3曲）《セカイはまだ始まってすらいない、アイドル新鋭隊、アイドル新鋭隊》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25120423,
+    "name": "251204_02_3：プロジェクトセカイちほー3（3曲）《群青讃歌、セカイ、ワーワーワールド》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25120424,
+    "name": "251204_02_4：プロジェクトセカイちほー4（3曲）《RAD DOGS、アイディスマイル、にっこり^^調査隊のテーマ》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25120441,
+    "name": "251204_04_1：プロジェクトセカイちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25120442,
+    "name": "251204_04_2：プロジェクトセカイちほー2解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25120443,
+    "name": "251204_04_3：プロジェクトセカイちほー3解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25120444,
+    "name": "251204_04_4：プロジェクトセカイちほー4解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25122411,
+    "name": "251224_01_1：通常楽曲紹介（12曲）《唱、愛包ダンスホール、マツケンサンバⅡ、デビルじゃないもん、リアライズ、ずんだパーリナイ、Ultimate taste、Chronomia、はげしこの夜 -Psylent Crazy Night-、プリズム△▽リズム、美夜月鏡、Cryptarithm》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25122412,
+    "name": "251224_01_2：スカイストリートちほー6紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25122413,
+    "name": "251224_01_3：かいりきベアちほー2紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25122414,
+    "name": "251224_01_4：ワールドダイスター 夢のステラリウムちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25122415,
+    "name": "251224_01_5：連動楽曲紹介（1曲）《Elemental Ethnic》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25122416,
+    "name": "251224_01_6：すたんぷカード報酬紹介（2曲）+コレクション《【DX譜面】One Step Ahead、【DX譜面】LANCE》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25122417,
+    "name": "251224_01_7：宴譜面紹介（5曲）《[回]ダブルラリアット、[奏]洗脳、[奏]アンビバレンス、[練]ウミユリ海底譚、[協]太陽系デスコ》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25122418,
+    "name": "251224_01_8：伝導楽曲の条件緩和（2回目）紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25122419,
+    "name": "251224_01_9：通常楽曲紹介（6曲）《東方、バラエティ、オリジナル》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25122421,
+    "name": "251224_02_1：通常楽曲（12曲）《唱、愛包ダンスホール、マツケンサンバⅡ、デビルじゃないもん、リアライズ、ずんだパーリナイ、Ultimate taste、Chronomia、はげしこの夜 -Psylent Crazy Night-、プリズム△▽リズム、美夜月鏡、Cryptarithm》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25122422,
+    "name": "251224_02_2：連動楽曲解禁（1曲）《Elemental Ethnic》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25122423,
+    "name": "251224_02_3：スカイストリートちほー6（4曲）（Lock）《パラドクスイヴ、YKWTD、184億回のマルチトニック、果ての空、僕らが見た光。》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25122424,
+    "name": "251224_02_4：かいりきベアちほー2（2曲）《病み垢ステロイド、ダーリンダンス》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25122425,
+    "name": "251224_02_5：ワールドダイスター 夢のステラリウムちほー（2曲）《シリウスの輝きのように、プラネタリウム・レヴュー》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25122426,
+    "name": "251224_02_6：すたんぷカード報酬解禁5（2曲）《【DX譜面】One Step Ahead、【DX譜面】LANCE》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25122427,
+    "name": "251224_02_7：宴譜面（5曲）《[回]ダブルラリアット、[奏]洗脳、[奏]アンビバレンス、[練]ウミユリ海底譚、[協]太陽系デスコ》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25122428,
+    "name": "251224_02_8：連動楽曲（4曲）一般開放《MarbleBlue.、MUSIC PЯAYER、Λzure Vixen、Baqeela》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25122431,
+    "name": "251224_03_1：スカイストリートちほー6解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25122432,
+    "name": "251224_03_2：青のカレイドスコープ解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25122433,
+    "name": "251224_03_3：プリズムちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25122441,
+    "name": "251224_04_1：かいりきベアちほー2解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25122442,
+    "name": "251224_04_2：ワールドダイスター 夢のステラリウムちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25122451,
+    "name": "251224_05_1：スカイストリートちほー6 パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25122471,
+    "name": "251224_07_1：すたんぷカード解禁5（2曲）+コレクション《【DX譜面】One Step Ahead、【DX譜面】LANCE》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 25122491,
+    "name": "251224_09_1：伝導楽曲の条件緩和（2回目）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26011611,
+    "name": "260116_01_1：太鼓の達人楽曲追加",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26011612,
+    "name": "260116_01_2：Paradigm Rebootちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26011621,
+    "name": "260116_02_1：太鼓の達人楽曲（2曲）《エンジェル ドリーム、Hurtling Boys》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26011622,
+    "name": "260116_02_2：Paradigm Rebootちほー（3曲）《Restricted Access、胡蝶乃舞、零號車輛》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26011641,
+    "name": "260116_04_1：Paradigm Rebootちほー追加",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26021011,
+    "name": "260210_01_1：天界ちほー8紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26021012,
+    "name": "260210_01_2：MonsterZ MATEちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26021013,
+    "name": "260210_01_3：夢限大みゅーたいぷちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26021014,
+    "name": "260210_01_4：通常楽曲紹介（6曲）《人マニア、イガク、演劇、ゆけむり魂温泉 II、人間が大好きなこわれた妖怪の唄、無間嫉妬劇場『666』》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26021015,
+    "name": "260210_01_5：Re:MASTER譜面追加紹介（2曲）《【DX譜面】幻想に咲いた花、【DX譜面】マツヨイナイトバグ》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26021016,
+    "name": "260210_01_6：宴譜面紹介（2曲）《[宴]人マニア、[嘘]ライアーダンサー》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26021021,
+    "name": "260210_02_1：通常楽曲（6曲）《人マニア、イガク、演劇、ゆけむり魂温泉 II、人間が大好きなこわれた妖怪の唄、無間嫉妬劇場『666』》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26021022,
+    "name": "260210_02_2：天界ちほー8（4曲）（Lock）《Ourania、天蓋、Deicide、氷滅の135小節》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26021023,
+    "name": "260210_02_3：MonsterZ MATEちほー（1曲）《メイトなやつら（FEAT. 天開司, 佐藤ホームズ, あっくん大魔王 & 歌衣メイカ）》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26021024,
+    "name": "260210_02_4：夢限大みゅーたいぷちほー（1曲）《夢現妄想世界》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26021025,
+    "name": "260210_02_5：Re:MASTER楽曲解禁（2曲）《【DX譜面】幻想に咲いた花、【DX譜面】マツヨイナイトバグ》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26021026,
+    "name": "260210_02_6：宴譜面（2曲）《[宴]人マニア、[嘘]ライアーダンサー》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26021027,
+    "name": "260210_02_7：東方ダンマクカグラ ファンタジア・ロストちほー（1曲）一般開放《Re:Unknown X》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26021031,
+    "name": "260210_03_1：天界ちほー8解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26021032,
+    "name": "260210_03_2：白のカレイドスコープ解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26021041,
+    "name": "260210_04_1：MonsterZ MATEちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26021042,
+    "name": "260210_04_2：夢限大みゅーたいぷちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26021051,
+    "name": "260210_05_1：天界ちほー8 パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26032511,
+    "name": "260325_01_1：BLACK ROSEちほー10紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26032512,
+    "name": "260325_01_2：重音テトちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26032513,
+    "name": "260325_01_3：Arcaeaちほー3紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26032514,
+    "name": "260325_01_4：通常楽曲紹介（3曲）《転生林檎、snooze、てらてら》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26032515,
+    "name": "260325_01_5：連動楽曲紹介（1曲）《迷える音色は恋の唄》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26032516,
+    "name": "260325_01_6：すたんぷカード報酬紹介（2曲）《【DX譜面】天狗の落とし文 feat. ｙｔｒ、HYP3RTRIBE》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26032517,
+    "name": "260325_01_7：宴譜面紹介（3曲）《[蛸]不機嫌なスリーカード、[奏]マイオドレ！舞舞タイム、[爆]Love's Theme of BADASS ～バッド・アス 愛のテーマ～》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26032518,
+    "name": "260325_01_8：通常楽曲紹介（1曲）《On your mark (104期 Ver.)》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26032521,
+    "name": "260325_02_1：通常楽曲（3曲）《転生林檎、snooze、てらてら》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26032522,
+    "name": "260325_02_2：連動楽曲解禁（1曲）《迷える音色は恋の唄》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26032523,
+    "name": "260325_02_3：BLACK ROSEちほー10（3曲）《地獄、シスターシスター、有明/Ariake》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26032524,
+    "name": "260325_02_4：重音テトちほー（5曲）《エイプリルスター、オーバーライド、右に曲ガール、ウルトラトレーラー、バベル》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26032525,
+    "name": "260325_02_5：Arcaeaちほー3（1曲）+（2曲（Lock））《Empire of Winter、Löschen、Abstruse Dilemma》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26032526,
+    "name": "260325_02_6：すたんぷカード報酬解禁（2曲）《【DX譜面】天狗の落とし文 feat. ｙｔｒ、HYP3RTRIBE》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26032527,
+    "name": "260325_02_7：宴譜面（3曲）《[蛸]不機嫌なスリーカード、[奏]マイオドレ！舞舞タイム、[爆]Love's Theme of BADASS ～バッド・アス 愛のテーマ～》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26032528,
+    "name": "260325_02_8：TANO*C2ちほー（3曲）一般開放《Everybody Say HARDCORE TANO*C、ミラクルポップ☆アドベンチャー!!!!、Trust》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26032529,
+    "name": "260325_02_9：通常楽曲解禁（1曲）《On your mark (104期 Ver.)》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26032531,
+    "name": "260325_03_1：BLACK ROSEちほー10解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26032532,
+    "name": "260325_03_2：紫のカレイドスコープ解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26032541,
+    "name": "260325_04_1：重音テトちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26032542,
+    "name": "260325_04_2：Arcaeaちほー3解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26032571,
+    "name": "260325_07_1：すたんぷカード解禁7（2曲）《【DX譜面】天狗の落とし文 feat. ｙｔｒ、HYP3RTRIBE》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26032591,
+    "name": "260325_09_1：太鼓の達人楽曲追加",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26042811,
+    "name": "260428_01_1：メトロポリスちほー9紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26042812,
+    "name": "260428_01_2：おめがシスターズちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26042813,
+    "name": "260428_01_3：ななひらちほー紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26042814,
+    "name": "260428_01_4：オンゲキちほー8紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26042815,
+    "name": "260428_01_5：通常楽曲紹介（3曲）《ワールドワイドワンダー、MORNINGLOOM、How To Make 音ゲ～曲！》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26042816,
+    "name": "260428_01_6：連動楽曲紹介（1曲）《Resolution》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26042817,
+    "name": "260428_01_7：すたんぷカード報酬紹介（1曲）《【DX譜面】Imitation:Loud Lounge》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26042818,
+    "name": "260428_01_8：宴譜面紹介（2曲）《[星]ほしぞらスペクタクル、[方]神々が恋した幻想郷、》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26042821,
+    "name": "260428_02_1：通常楽曲（3曲）《ワールドワイドワンダー、MORNINGLOOM、How To Make 音ゲ～曲！》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26042822,
+    "name": "260428_02_2：連動楽曲解禁（1曲）《Resolution》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26042823,
+    "name": "260428_02_3：メトロポリスちほー9（4曲）《Flashback、Colorfull:Encounter、雨露霜雪、宙天》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26042824,
+    "name": "260428_02_4：おめがシスターズちほー（1曲）《モンスターカミング》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26042825,
+    "name": "260428_02_5：ななひらちほー（2曲）+（1曲（Lock））《お願い！コンコンお稲荷さま、いっぱい食べる君が好きだよ、ピポピポ -People People- feat. ななひら》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26042826,
+    "name": "260428_02_6：オンゲキちほー8（1曲）+（2曲（Lock））《いちげき！のテーマ、Radiance、R'N'R Monsta》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26042827,
+    "name": "260428_02_7：すたんぷカード報酬解禁（1曲）《【DX譜面】Imitation:Loud Lounge》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26042828,
+    "name": "260428_02_8：宴譜面解禁（2曲）《[星]ほしぞらスペクタクル、[方]神々が恋した幻想郷、》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26042829,
+    "name": "260428_02_9：オンゲキちほー7（1曲）一般開放《Ai C》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26042831,
+    "name": "260428_03_1：メトロポリスちほー9解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26042832,
+    "name": "260428_03_2：黒のカレイドスコープ解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26042841,
+    "name": "260428_04_1：おめがシスターズちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26042842,
+    "name": "260428_04_2：ななひらちほー解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26042843,
+    "name": "260428_04_3：オンゲキちほー8解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26042851,
+    "name": "260428_05_1：メトロポリスちほー9 パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26042871,
+    "name": "260428_07_1：すたんぷカード解禁（1曲）《【DX譜面】Imitation:Loud Lounge》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061011,
+    "name": "260610_01_1：ロンチ楽曲紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061012,
+    "name": "260610_01_2：なないろちほー 紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061013,
+    "name": "260610_01_3：NEEDY GIRL OVERDOSEちほー2 紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061014,
+    "name": "260610_01_4：神椿市協奏中。ちほー 紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061015,
+    "name": "260610_01_5：連動楽曲紹介（1曲）《Supersonic Generation》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061016,
+    "name": "260610_01_6：すたんぷカード報酬紹介（2曲）《【DX譜面】ゴーゴー幽霊船、【DX譜面】ネコ日和。+コレクション》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061017,
+    "name": "260610_01_7：すたんぷカード報酬紹介2《【パートナー】超てんちゃん》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061018,
+    "name": "260610_01_8：宴譜面紹介（5曲）《[匿]匿名M、[助]メズマライザー、[即]チューリングの跡、[甘]スイートマジック、[回]ハム太郎とっとこうた》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061019,
+    "name": "260610_01_9：伝導楽曲紹介（1曲）《ATLAS RUSH》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061021,
+    "name": "260610_02_1：ロンチ楽曲11曲《はいよろこんで、もういいよ、モエチャッカファイア、ビビデバ、シカ色デイズ、メズマライザー、ももいろの鍵、のだ、Idoratrize World、Zitronectar、Synthesis.》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061022,
+    "name": "260610_02_2：なないろちほー 4曲(Lock)追加",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061023,
+    "name": "260610_02_3：NEEDY GIRL OVERDOSEちほー2 1曲+1曲(Lock)追加《きゅびずむ、きゅびびびびずむ》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061024,
+    "name": "260610_02_4：神椿市協奏中。ちほー 2曲追加《ゆりかご、月光》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061025,
+    "name": "260610_02_5：連動楽曲 1曲(Lock)追加《Supersonic Generation》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061026,
+    "name": "260610_02_6：すたんぷカード報酬 DXnew2曲(Lock)追加《【DX譜面】ゴーゴー幽霊船、【DX譜面】ネコ日和。》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061027,
+    "name": "260610_02_7：宴譜面追加1 《[匿]匿名M、[助]メズマライザー、[即]チューリングの跡、[甘]スイートマジック、[回]ハム太郎とっとこうた》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061028,
+    "name": "260610_02_8：伝導楽曲追加（1曲）《ATLAS RUSH》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061031,
+    "name": "260610_03_1：なないろちほー 解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061032,
+    "name": "260610_03_2：黄のカレイドスコープ解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061041,
+    "name": "260610_04_1：NEEDY GIRL OVERDOSEちほー2 解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061042,
+    "name": "260610_04_2：神椿市協奏中。ちほー 解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061051,
+    "name": "260610_05_1：なないろちほー パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061061,
+    "name": "260610_06_1：イベント5倍チケット配布_1（1.55予備）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061062,
+    "name": "260610_06_2：イベント5倍チケット配布_2（1.55予備）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061063,
+    "name": "260610_06_3：イベント5倍チケット配布_3（1.55予備）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061071,
+    "name": "260610_07_1：すたんぷカード報酬 DXnew2曲(Lock)追加《【DX譜面】ゴーゴー幽霊船、【DX譜面】ネコ日和。》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26061072,
+    "name": "260610_07_2：すたんぷカード報酬追加2《【パートナー】超てんちゃん》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26080511,
+    "name": "260805_01_1：ドラゴンちほー4 紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26080512,
+    "name": "260805_01_2：那須どうぶつ王国ちほー 紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26080513,
+    "name": "260805_01_3：niconico4曲紹介《クーネル・エンゲイザー、ゼロトーキング、抜錨、好きな惣菜発表ドラゴン》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26080514,
+    "name": "260805_01_4：連動楽曲紹介《なんかノイズにきこえる》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26080515,
+    "name": "260805_01_5：伝導楽曲の条件緩和（1回目）紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26080516,
+    "name": "260805_01_6：宴譜面紹介3《[好]好きな惣菜発表ドラゴン、[譜]好きな惣菜発表ドラゴン、[面]好きな惣菜発表ドラゴン、[発]好きな惣菜発表ドラゴン、[表]好きな惣菜発表ドラゴン、[龍]好きな惣菜発表ドラゴン》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26080521,
+    "name": "260805_02_1：ドラゴンちほー4 4曲(Lock)追加",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26080522,
+    "name": "260805_02_2：那須どうぶつ王国ちほー 2曲追加《マヌルネコのうた、スナネコのうた》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26080523,
+    "name": "260805_02_3：niconico4曲追加《クーネル・エンゲイザー、ゼロトーキング、抜錨、好きな惣菜発表ドラゴン》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26080524,
+    "name": "260805_02_4：連動楽曲追加《なんかノイズにきこえる》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26080525,
+    "name": "260805_02_5：宴譜面追加3《[好]好きな惣菜発表ドラゴン、[譜]好きな惣菜発表ドラゴン、[面]好きな惣菜発表ドラゴン、[発]好きな惣菜発表ドラゴン、[表]好きな惣菜発表ドラゴン、[龍]好きな惣菜発表ドラゴン》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26080531,
+    "name": "260805_03_1：ドラゴンちほー4 解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26080532,
+    "name": "260805_03_2：赤のカレイドスコープ解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26080541,
+    "name": "260805_04_1：那須どうぶつ王国ちほー 解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26080551,
+    "name": "260805_05_1：ドラゴンちほー4 パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26080591,
+    "name": "260805_09_1：伝導楽曲の条件緩和（1回目）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26090191,
+    "name": "260901_09_1：WEC2026予選称号獲得",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 240904110,
+    "name": "240904_01_10：WEC2024告知",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 250611111,
+    "name": "250611_11_1：ウィークリーミッション追加",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 260610111,
+    "name": "260610_11_1：ウィークリーミッション追加",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 261002011,
+    "name": "261002_01_1：ヒメヒナちほー2 紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 261002012,
+    "name": "261002_01_2：ヒメヒナちほー 紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 261002013,
+    "name": "261002_01_3：宴譜面紹介4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 261002014,
+    "name": "261002_01_4：伝導楽曲紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 261002021,
+    "name": "261002_02_1：ヒメヒナちほー2 3曲追加《キスキツネ、WWW、うたかたよいかないで》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 261002022,
+    "name": "261002_02_2：宴譜面追加4",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 261002023,
+    "name": "261002_02_3：オンゲキちほー9一般開放《ICEBURN、Daredevil Glaive》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 261002024,
+    "name": "261002_02_4：伝導楽曲 1曲(Lock)",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 261002041,
+    "name": "261002_04_1：ヒメヒナちほー2 解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 261002042,
+    "name": "261002_04_2：ヒメヒナちほー 復刻",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 261016011,
+    "name": "261016_01_1：niconico2曲、バラエティ1曲紹介《Intergalactic Bound、LEMON MELON COOKIE、3rd Avenue》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 261016012,
+    "name": "261016_01_2：バラエティ1曲紹介《Cryogenic》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 261016013,
+    "name": "261016_01_3：《Cryogenic》アドバタイズムービー1",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 261016014,
+    "name": "261016_01_4：宴譜面紹介3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 261016021,
+    "name": "261016_02_1：niconico2曲、バラエティ1曲追加《Intergalactic Bound、LEMON MELON COOKIE、3rd Avenue》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 261016022,
+    "name": "261016_02_2：バラエティ1曲追加《Cryogenic》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 261016023,
+    "name": "261016_02_3：宴譜面追加3",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  }
+]
