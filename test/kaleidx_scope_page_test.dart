@@ -40,7 +40,7 @@ Finder _runFinder(WidgetTester tester) => find.ancestor(
 );
 
 void main() {
-  testWidgets('渲染门 ID 输入与两个动作勾选，且无溢出', (tester) async {
+  testWidgets('渲染门 ID 输入、两个勾选与通关下拉，且无溢出', (tester) async {
     await _pumpPage(tester, loggedIn: true);
 
     expect(tester.takeException(), isNull);
@@ -71,7 +71,7 @@ void main() {
     expect(find.text(AppStrings.kaleidxPendingEmpty), findsNothing);
   });
 
-  testWidgets('两个动作都不勾时被拦下', (tester) async {
+  testWidgets('三个动作都不选时被拦下', (tester) async {
     await _pumpPage(tester, loggedIn: true);
 
     await tester.enterText(find.byType(TextField), '3');
@@ -84,6 +84,37 @@ void main() {
     await tester.pump();
 
     expect(find.text(AppStrings.kaleidxNeedAction), findsOneWidget);
+  });
+
+  testWidgets('通关状态下拉默认「不改动」，选已通关才提示需要钥匙', (tester) async {
+    await _pumpPage(tester, loggedIn: true);
+
+    expect(find.text(AppStrings.kaleidxClearKeep), findsOneWidget);
+    expect(find.text(AppStrings.kaleidxClearNeedsKey), findsNothing);
+
+    await tester.tap(find.text(AppStrings.kaleidxClearKeep));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(AppStrings.kaleidxClearCleared).last);
+    await tester.pumpAndSettle();
+
+    expect(find.text(AppStrings.kaleidxClearCleared), findsOneWidget);
+    expect(find.text(AppStrings.kaleidxClearNeedsKey), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('勾了钥匙时优先解释「钥匙离不开门」', (tester) async {
+    await _pumpPage(tester, loggedIn: true);
+
+    await tester.tap(find.text(AppStrings.kaleidxActionKey));
+    await tester.pump();
+    await tester.tap(find.text(AppStrings.kaleidxClearKeep));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(AppStrings.kaleidxClearCleared).last);
+    await tester.pumpAndSettle();
+
+    expect(find.text(AppStrings.kaleidxKeyNeedsGate), findsOneWidget);
+    // 两条提示不叠着刷屏。
+    expect(find.text(AppStrings.kaleidxClearNeedsKey), findsNothing);
   });
 
   testWidgets('列表为空时执行被拦下', (tester) async {

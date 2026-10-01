@@ -361,7 +361,14 @@ class AppStrings {
   static const kaleidxGateIdLabel = '门 ID (gateId)';
   static const kaleidxGateIdHint = '例如 3';
   static const kaleidxNeedGateId = '请填写门 ID。';
-  static const kaleidxNeedAction = '请至少勾选一项：发现门或获取钥匙。';
+  static const kaleidxNeedAction = '请至少选一项：发现门、获取钥匙或通关状态。';
+  static const kaleidxClearLabel = '通关状态';
+  static const kaleidxClearKeep = '不改动';
+  static const kaleidxClearCleared = '标记为已通关';
+  static const kaleidxClearUncleared = '标记为未通关';
+  static const kaleidxClearNeedsKey =
+      '通关态只在「已发现 + 有钥匙」的门上才显示得出来；缺钥匙时它仍算未解锁。'
+      '要一并补钥匙就勾上「获取钥匙」。标记未通关会连首次通关日期一起清空。';
   static const kaleidxPendingEmpty = '列表为空，可在上方填写门 ID 后添加。';
   static const kaleidxActionDiscover = '发现门 (isGateFound)';
   static const kaleidxActionKey = '获取钥匙 (isKeyFound)';

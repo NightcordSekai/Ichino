@@ -72,6 +72,7 @@ class UserKaleidxScopeBean {
     bool? isGateFound,
     bool? isKeyFound,
     bool? isClear,
+    String? clearDate,
   }) => UserKaleidxScopeBean(
     gateId: gateId,
     isGateFound: isGateFound ?? this.isGateFound,
@@ -85,29 +86,48 @@ class UserKaleidxScopeBean {
     bestAchievementDate: bestAchievementDate,
     bestDeluxscoreDate: bestDeluxscoreDate,
     playCount: playCount,
-    clearDate: clearDate,
+    clearDate: clearDate ?? this.clearDate,
     lastPlayDate: lastPlayDate,
     isInfoWatched: isInfoWatched,
   );
 
   /// 服务器上还没有这扇门时的新行。`isGateFound` 恒为 true——不存在「只给钥匙
   /// 不给门」这种可用状态（见类注释的状态机），新行其余字段取 struct 默认值。
-  static UserKaleidxScopeBean discovered(int gateId, {required bool giveKey}) =>
-      UserKaleidxScopeBean(
-        gateId: gateId,
-        isGateFound: true,
-        isKeyFound: giveKey,
-      );
+  static UserKaleidxScopeBean discovered(
+    int gateId, {
+    required bool giveKey,
+    bool? clear,
+    String timestamp = '',
+  }) => UserKaleidxScopeBean(
+    gateId: gateId,
+    isGateFound: true,
+    isKeyFound: giveKey,
+    isClear: clear ?? false,
+    clearDate: (clear ?? false) ? timestamp : '',
+  );
 
   /// 在服务器原行上叠加本次动作。**必须**走这里而不是新建一行：整行替换会把
   /// best 成绩、playCount、clearDate 这些字段清零。
+  ///
+  /// [clear] 传 null 表示不改动通关状态。给钥匙必须连带发现门，否则这行在
+  /// 客户端是隐形的。
   UserKaleidxScopeBean withActions({
     required bool discover,
     required bool giveKey,
+    bool? clear,
+    String timestamp = '',
   }) => copyWith(
-    // 给钥匙连带发现门，否则这行在客户端是隐形的。
     isGateFound: isGateFound || discover || giveKey,
     isKeyFound: isKeyFound || giveKey,
+    isClear: clear,
+    // 首次通关日期只在刚转成通关时落一个时间戳（客户端就是这么写的：
+    // `clearDate = TimeManager.GetNowDateString()`）；撤销通关时一起清空，
+    // 留着一个日期比缺日期更容易让人误读。
+    clearDate: clear == null
+        ? null
+        : (clear
+              ? (clearDate.isNotEmpty ? clearDate : timestamp)
+              : ''),
   );
 
   static int _toInt(dynamic v) {

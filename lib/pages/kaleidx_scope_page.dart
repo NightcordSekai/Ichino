@@ -12,10 +12,10 @@ import '../widgets/app_notice.dart';
 import '../widgets/cooldown_mixin.dart';
 import '../widgets/step_progress.dart';
 
-/// 万花筒专区：发现新的宿命之门 + 获取门的钥匙。
+/// 万花筒专区：发现新的宿命之门、获取门的钥匙、设置门的通关状态。
 ///
-/// 两个动作落在 `upsertUserAll.userKaleidxScopeList` 同一行的两个布尔位上
-/// （`isGateFound` / `isKeyFound`）。钥匙不走 `userItemList`：
+/// 三个动作都落在 `upsertUserAll.userKaleidxScopeList` 同一行的三个布尔位上
+/// （`isGateFound` / `isKeyFound` / `isClear`）。钥匙不走 `userItemList`：
 /// `ExportUserItems` 从不输出 itemKind 15，下行也没有读它的路径。
 class KaleidxScopePage extends StatefulWidget {
   final int userId;
@@ -37,6 +37,9 @@ class KaleidxScopePage extends StatefulWidget {
   State<KaleidxScopePage> createState() => _KaleidxScopePageState();
 }
 
+/// 通关态可以往两个方向改，所以用三态而不是又一个勾选框。
+enum _ClearChoice { keep, cleared, uncleared }
+
 class _KaleidxScopePageState extends State<KaleidxScopePage>
     with CooldownMixin<KaleidxScopePage> {
   final _gateIdController = TextEditingController();
@@ -44,6 +47,7 @@ class _KaleidxScopePageState extends State<KaleidxScopePage>
 
   bool _discover = true;
   bool _giveKey = false;
+  _ClearChoice _clearChoice = _ClearChoice.keep;
 
   Map<String, Map<String, dynamic>> _userAllData = const {};
   List<UserKaleidxScopeBean> _serverScopes = const [];
@@ -88,12 +92,30 @@ class _KaleidxScopePageState extends State<KaleidxScopePage>
     return null;
   }
 
-  /// 整行替换，所以已存在的门必须拿服务器原行做底，只改那两个布尔位。
+  bool? get _targetClear => switch (_clearChoice) {
+    _ClearChoice.keep => null,
+    _ClearChoice.cleared => true,
+    _ClearChoice.uncleared => false,
+  };
+
+  /// 整行替换，所以已存在的门必须拿服务器原行做底，只改要改的位。
   List<UserKaleidxScopeBean> _buildRows() {
+    final clear = _targetClear;
+    final timestamp = UserAllPayloadBuilder.nowTimestamp();
     return [
       for (final id in _pending)
-        _serverRow(id)?.withActions(discover: _discover, giveKey: _giveKey) ??
-            UserKaleidxScopeBean.discovered(id, giveKey: _giveKey),
+        _serverRow(id)?.withActions(
+              discover: _discover,
+              giveKey: _giveKey,
+              clear: clear,
+              timestamp: timestamp,
+            ) ??
+            UserKaleidxScopeBean.discovered(
+              id,
+              giveKey: _giveKey,
+              clear: clear,
+              timestamp: timestamp,
+            ),
     ];
   }
 
@@ -139,7 +161,7 @@ class _KaleidxScopePageState extends State<KaleidxScopePage>
       _snack(AppStrings.kaleidxNeedGateId);
       return;
     }
-    if (!_discover && !_giveKey) {
+    if (!_discover && !_giveKey && _clearChoice == _ClearChoice.keep) {
       _snack(AppStrings.kaleidxNeedAction);
       return;
     }
@@ -366,10 +388,42 @@ class _KaleidxScopePageState extends State<KaleidxScopePage>
             enabled: enabled,
             onChanged: (v) => setState(() => _giveKey = v),
           ),
-          if (_giveKey) ...[
-            const SizedBox(height: 4),
+          const SizedBox(height: 10),
+          DropdownButtonFormField<_ClearChoice>(
+            initialValue: _clearChoice,
+            decoration: InputDecoration(
+              labelText: AppStrings.kaleidxClearLabel,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              contentPadding: const EdgeInsets.all(14),
+            ),
+            items: const [
+              DropdownMenuItem(
+                value: _ClearChoice.keep,
+                child: Text(AppStrings.kaleidxClearKeep),
+              ),
+              DropdownMenuItem(
+                value: _ClearChoice.cleared,
+                child: Text(AppStrings.kaleidxClearCleared),
+              ),
+              DropdownMenuItem(
+                value: _ClearChoice.uncleared,
+                child: Text(AppStrings.kaleidxClearUncleared),
+              ),
+            ],
+            onChanged: enabled
+                ? (v) => setState(
+                    () => _clearChoice = v ?? _ClearChoice.keep,
+                  )
+                : null,
+          ),
+          if (_giveKey || _clearChoice == _ClearChoice.cleared) ...[
+            const SizedBox(height: 6),
             Text(
-              AppStrings.kaleidxKeyNeedsGate,
+              _giveKey
+                  ? AppStrings.kaleidxKeyNeedsGate
+                  : AppStrings.kaleidxClearNeedsKey,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
                 height: 1.5,

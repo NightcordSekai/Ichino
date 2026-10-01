@@ -55,6 +55,11 @@ class UserAllPayloadBuilder {
       '${dt.year}-${_two(dt.month)}-${_two(dt.day)} '
       '${_two(dt.hour)}:${_two(dt.minute)}:${_two(dt.second)}.0';
 
+  /// 客户端 `TimeManager.GetDateString` 的格式是
+  /// `ToString("yyyy-MM-dd HH:mm:ss.f")`，也就是带一位小数的秒。
+  /// 万花筒的 `clearDate` 之类字段要按这个形状给。
+  static String nowTimestamp() => _formatPlayDateTime(_shanghaiNow());
+
   static int _toInt(dynamic v) {
     if (v is int) return v;
     if (v is num) return v.toInt();

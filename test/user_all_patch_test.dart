@@ -506,5 +506,97 @@ void main() {
         contains('隐形'),
       );
     });
+
+    test('标记通关时落一个首次通关日期，已有日期不被覆盖', () {
+      const noDate = UserKaleidxScopeBean(gateId: 5);
+      final marked = noDate.withActions(
+        discover: true,
+        giveKey: true,
+        clear: true,
+        timestamp: '2026-10-01 12:00:00.0',
+      );
+      expect(marked.isClear, isTrue);
+      expect(marked.clearDate, '2026-10-01 12:00:00.0');
+
+      const already = UserKaleidxScopeBean(
+        gateId: 5,
+        isGateFound: true,
+        isKeyFound: true,
+        isClear: true,
+        clearDate: '2026-01-01 00:00:00.0',
+      );
+      final reMarked = already.withActions(
+        discover: false,
+        giveKey: false,
+        clear: true,
+        timestamp: '2026-10-01 12:00:00.0',
+      );
+      // clearDate 是「首次」通关日期，不能被后来的一次操作改掉。
+      expect(reMarked.clearDate, '2026-01-01 00:00:00.0');
+    });
+
+    test('撤销通关把 clearDate 一起清掉', () {
+      const cleared = UserKaleidxScopeBean(
+        gateId: 6,
+        isGateFound: true,
+        isKeyFound: true,
+        isClear: true,
+        clearDate: '2026-01-01 00:00:00.0',
+        playCount: 3,
+      );
+
+      final undone = cleared.withActions(
+        discover: false,
+        giveKey: false,
+        clear: false,
+      );
+
+      expect(undone.isClear, isFalse);
+      expect(undone.clearDate, '');
+      // 只动通关态，成绩与次数要原样留着。
+      expect(undone.playCount, 3);
+      expect(undone.isKeyFound, isTrue);
+    });
+
+    test('通关状态选「不改动」时 null 不覆写原值', () {
+      const cleared = UserKaleidxScopeBean(
+        gateId: 8,
+        isGateFound: true,
+        isKeyFound: true,
+        isClear: true,
+        clearDate: '2026-01-01 00:00:00.0',
+      );
+
+      final kept = cleared.withActions(discover: true, giveKey: false);
+
+      expect(kept.isClear, isTrue);
+      expect(kept.clearDate, '2026-01-01 00:00:00.0');
+    });
+
+    test('新行也能直接建成已通关', () {
+      final row = UserKaleidxScopeBean.discovered(
+        11,
+        giveKey: true,
+        clear: true,
+        timestamp: '2026-10-01 12:00:00.0',
+      ).toWireJson();
+
+      expect(row['isGateFound'], isTrue);
+      expect(row['isKeyFound'], isTrue);
+      expect(row['isClear'], isTrue);
+      expect(row['clearDate'], '2026-10-01 12:00:00.0');
+    });
+
+    test('新行不选通关时 clearDate 留空', () {
+      final row = UserKaleidxScopeBean.discovered(
+        11,
+        giveKey: false,
+        clear: false,
+        timestamp: '2026-10-01 12:00:00.0',
+      ).toWireJson();
+
+      expect(row['isClear'], isFalse);
+      expect(row['clearDate'], '');
+    });
   });
 }

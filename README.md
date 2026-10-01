@@ -98,16 +98,21 @@ lib/
   `0 ~ 99999`。`ratingList` / `newRatingList` 里每首歌各自的 Rating 原样带回，
   不重排也不改值。占位 playlog 的 `before/afterRating`（及 `DeluxRating`）一起对齐成
   新写的值，否则存档里那条记录与 `playerRating` 自相矛盾。
-- **万花筒的门和钥匙在同一行**：`upsertUserAll.userKaleidxScopeList`，
+- **万花筒的门、钥匙、通关在同一行**：`upsertUserAll.userKaleidxScopeList`，
   `UserKaleidxScope` 共 15 个字段、主键 `gateId`，「发现门」是 `isGateFound`、
-  「获取钥匙」是 `isKeyFound`。钥匙**不走** `userItemList`——`ExportUserItems`
-  从不输出 itemKind 15，下行也没有读它的路径；`15000000 + keyId` 只是 present
-  ID 的编码段位。
+  「获取钥匙」是 `isKeyFound`、「已通关」是 `isClear`。钥匙**不走**
+  `userItemList`——`ExportUserItems` 从不输出 itemKind 15，下行也没有读它的路径；
+  `15000000 + keyId` 只是 present ID 的编码段位。
   客户端状态机（`KaleidxScopeGateListController.cs:144-159`）里
   `!isGateFound && isKeyFound` 判的是 **AnimState.None（隐形）**，不是「锁着的门」，
-  所以给钥匙必须连带把门标为已发现；`found && !key` 才是可见未解锁。
+  所以给钥匙必须连带把门标为已发现；`found && !key` 才是可见未解锁；
+  通关态只在 `found && key` 的前提下才显示得出来。
+  标记通关时 `clearDate` 落当前时间戳（客户端就是这么写的：
+  `clearDate = TimeManager.GetNowDateString()`，格式
+  `yyyy-MM-dd HH:mm:ss.f`），已有首次通关日期的不覆盖；撤销通关则连 `clearDate`
+  一起清空。
   又因为上行是**整行替换**，页面上会先 `GetUserKaleidxScopeApi` 读回原行、
-  只叠加那两个布尔位再发出去，否则 best 成绩 / `playCount` / 日期会被清零。
+  只叠加要改的位再发出去，否则 best 成绩 / `playCount` / 日期会被清零。
   合法 `gateId` 只存在于机台的 `KaleidxScopeGate.xml`，代码里除了
   `ForceAddMasterKey` 写死的 `gateId = 7`（万能钥匙门）以外没有任何清单，
   而且还要该门绑定的活动处于开启状态才会显示。
