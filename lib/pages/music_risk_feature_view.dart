@@ -320,21 +320,30 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView>
       // isNewItemList 得按 (itemKind, itemId) 主键比对服务器快照来给 0/1，
       // 不能一律发 '1'：重复解锁一首已经存在的歌时，服务器会把插入冲突的
       // 行整行丢掉，表现就是「上传成功但没生效」。
-      final existingKeys = await service.getUserItemKeys(
-        widget.userId,
-        items.map((e) => e['itemKind'] as int),
-      );
+      // 但这次回读不能让整件事失败——私服要是不实现 GetUserItemApi，
+      // 退化成一律 '1'（就是加这段之前的行为）总比解锁整个不能用强。
+      Set<String>? existingKeys;
+      try {
+        existingKeys = await service.getUserItemKeys(
+          widget.userId,
+          items.map((e) => e['itemKind'] as int),
+        );
+      } catch (_) {
+        existingKeys = null;
+      }
       builder.applyItemListPatch(
         packet,
         items: items,
-        newFlags: [
-          for (final item in items)
-            existingKeys.contains(
-              '${item['itemKind']}:${item['itemId']}',
-            )
-                ? '0'
-                : '1',
-        ].join(),
+        newFlags: existingKeys == null
+            ? null
+            : [
+                for (final item in items)
+                  existingKeys.contains(
+                    '${item['itemKind']}:${item['itemId']}',
+                  )
+                      ? '0'
+                      : '1',
+              ].join(),
       );
       if (_isUnlock) {
         builder.applyMusicDetailPatch(packet, musicData: musicData);

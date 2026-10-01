@@ -2282,6 +2282,20 @@
     "IsInfinity": false
   },
   {
+    "id": 550003,
+    "name": "7sRef区域4",
+    "IslandId": 50,
+    "IslandIdName": "maimaiDX PRiSM",
+    "OpenEventId": 26100131,
+    "OpenEventIdName": "261001_03_1：7sRefちほー4 解禁",
+    "ColorId": 550003,
+    "ColorIdName": "7sRef4",
+    "BonusMusicId": 550003,
+    "BonusMusicIdName": "7sRefちほー4ボーナス曲",
+    "IsCollabo": false,
+    "IsInfinity": false
+  },
+  {
     "id": 550004,
     "name": "棱镜区域2",
     "IslandId": 50,
@@ -2348,20 +2362,6 @@
     "ColorIdName": "Paradigm",
     "BonusMusicId": 600059,
     "BonusMusicIdName": "Paradigm: Rebootちほーボーナス曲",
-    "IsCollabo": true,
-    "IsInfinity": false
-  },
-  {
-    "id": 650056,
-    "name": "ヒメヒナちほー2",
-    "IslandId": 60,
-    "IslandIdName": "maimaiDX CiRCLE",
-    "OpenEventId": 261002041,
-    "OpenEventIdName": "261002_04_1：ヒメヒナちほー2 解禁",
-    "ColorId": 650056,
-    "ColorIdName": "ヒメヒナ2",
-    "BonusMusicId": 650056,
-    "BonusMusicIdName": "ヒメヒナちほー2ボーナス曲",
     "IsCollabo": true,
     "IsInfinity": false
   }

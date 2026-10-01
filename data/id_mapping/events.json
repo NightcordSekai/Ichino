@@ -5628,6 +5628,125 @@
     "disableArea": "---"
   },
   {
+    "id": 26100111,
+    "name": "261001_01_1：7sRefちほー4 紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26100112,
+    "name": "261001_01_2：連動楽曲紹介《サウンドプレイヤー》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26100113,
+    "name": "261001_01_3：伝導楽曲の条件緩和（2回目）紹介",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26100121,
+    "name": "261001_02_1：7sRefちほー4 4曲(Lock)追加",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26100122,
+    "name": "261001_02_2：楽曲解禁（イベント1）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26100123,
+    "name": "261001_02_3：楽曲解禁（希望）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26100124,
+    "name": "261001_02_4：楽曲解禁（イベント2）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26100125,
+    "name": "261001_02_5：楽曲解禁（エクストラ）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26100126,
+    "name": "261001_02_6：チュウニズム＆オンゲキ1曲紹介《サウンドプレイヤー》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26100127,
+    "name": "261001_02_7：NEEDY GIRL OVERDOSEちほー2（1曲）一般開放《きゅびびびびずむ》",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26100131,
+    "name": "261001_03_1：7sRefちほー4 解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26100132,
+    "name": "261001_03_2：虹のカレイドスコープ解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26100133,
+    "name": "261001_03_3：カレイドスコープ解禁（イベント1）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26100134,
+    "name": "261001_03_4：希望の扉解禁",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26100135,
+    "name": "261001_03_5：カレイドスコープ解禁（イベント2）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26100151,
+    "name": "261001_05_1：7sRefちほー4 パーフェクトチャレンジ",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
+    "id": 26100191,
+    "name": "261001_09_1：伝導楽曲の条件緩和（2回目）",
+    "infoType": 0,
+    "alwaysOpen": false,
+    "disableArea": "---"
+  },
+  {
     "id": 240904110,
     "name": "240904_01_10：WEC2024告知",
     "infoType": 0,
@@ -5644,125 +5763,6 @@
   {
     "id": 260610111,
     "name": "260610_11_1：ウィークリーミッション追加",
-    "infoType": 0,
-    "alwaysOpen": false,
-    "disableArea": "---"
-  },
-  {
-    "id": 261002011,
-    "name": "261002_01_1：ヒメヒナちほー2 紹介",
-    "infoType": 0,
-    "alwaysOpen": false,
-    "disableArea": "---"
-  },
-  {
-    "id": 261002012,
-    "name": "261002_01_2：ヒメヒナちほー 紹介",
-    "infoType": 0,
-    "alwaysOpen": false,
-    "disableArea": "---"
-  },
-  {
-    "id": 261002013,
-    "name": "261002_01_3：宴譜面紹介4",
-    "infoType": 0,
-    "alwaysOpen": false,
-    "disableArea": "---"
-  },
-  {
-    "id": 261002014,
-    "name": "261002_01_4：伝導楽曲紹介",
-    "infoType": 0,
-    "alwaysOpen": false,
-    "disableArea": "---"
-  },
-  {
-    "id": 261002021,
-    "name": "261002_02_1：ヒメヒナちほー2 3曲追加《キスキツネ、WWW、うたかたよいかないで》",
-    "infoType": 0,
-    "alwaysOpen": false,
-    "disableArea": "---"
-  },
-  {
-    "id": 261002022,
-    "name": "261002_02_2：宴譜面追加4",
-    "infoType": 0,
-    "alwaysOpen": false,
-    "disableArea": "---"
-  },
-  {
-    "id": 261002023,
-    "name": "261002_02_3：オンゲキちほー9一般開放《ICEBURN、Daredevil Glaive》",
-    "infoType": 0,
-    "alwaysOpen": false,
-    "disableArea": "---"
-  },
-  {
-    "id": 261002024,
-    "name": "261002_02_4：伝導楽曲 1曲(Lock)",
-    "infoType": 0,
-    "alwaysOpen": false,
-    "disableArea": "---"
-  },
-  {
-    "id": 261002041,
-    "name": "261002_04_1：ヒメヒナちほー2 解禁",
-    "infoType": 0,
-    "alwaysOpen": false,
-    "disableArea": "---"
-  },
-  {
-    "id": 261002042,
-    "name": "261002_04_2：ヒメヒナちほー 復刻",
-    "infoType": 0,
-    "alwaysOpen": false,
-    "disableArea": "---"
-  },
-  {
-    "id": 261016011,
-    "name": "261016_01_1：niconico2曲、バラエティ1曲紹介《Intergalactic Bound、LEMON MELON COOKIE、3rd Avenue》",
-    "infoType": 0,
-    "alwaysOpen": false,
-    "disableArea": "---"
-  },
-  {
-    "id": 261016012,
-    "name": "261016_01_2：バラエティ1曲紹介《Cryogenic》",
-    "infoType": 0,
-    "alwaysOpen": false,
-    "disableArea": "---"
-  },
-  {
-    "id": 261016013,
-    "name": "261016_01_3：《Cryogenic》アドバタイズムービー1",
-    "infoType": 0,
-    "alwaysOpen": false,
-    "disableArea": "---"
-  },
-  {
-    "id": 261016014,
-    "name": "261016_01_4：宴譜面紹介3",
-    "infoType": 0,
-    "alwaysOpen": false,
-    "disableArea": "---"
-  },
-  {
-    "id": 261016021,
-    "name": "261016_02_1：niconico2曲、バラエティ1曲追加《Intergalactic Bound、LEMON MELON COOKIE、3rd Avenue》",
-    "infoType": 0,
-    "alwaysOpen": false,
-    "disableArea": "---"
-  },
-  {
-    "id": 261016022,
-    "name": "261016_02_2：バラエティ1曲追加《Cryogenic》",
-    "infoType": 0,
-    "alwaysOpen": false,
-    "disableArea": "---"
-  },
-  {
-    "id": 261016023,
-    "name": "261016_02_3：宴譜面追加3",
     "infoType": 0,
     "alwaysOpen": false,
     "disableArea": "---"

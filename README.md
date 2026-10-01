@@ -161,59 +161,6 @@ data/id_mapping/         # 由 tools/gen_id_mapping.dart 从机台数据包抽�
   `MapTreasure.xml` 里（`DataManager.LoadMaps` / `LoadMapTresures` 从本地数据目录读，
   不经 title server），App 没有这份表，页面里也明写了这个限制。
 
-## ID 映射表
-
-风险页要填的全是裸 ID，而「填了机台表里没有的 ID」是这一类功能最常见的失败方式：
-服务器照样回 `returnCode: 1`，客户端却在建曲池/建角色池时静默跳过，看起来就是
-「上传成功但没生效」。为此把机台数据包里的表抽成可查的映射：
-
-```bash
-# 整合包（自动找 <pkg>/Sinmai_Data/StreamingAssets/A0xx/）
-dart run tools/gen_id_mapping.dart --package G:/Package
-
-# 再叠一层单独导出的数据包，后面的覆盖前面的同 ID 行
-dart run tools/gen_id_mapping.dart --package G:/Package --data-root D:/A031OptDump/Root
-```
-
-产物落在 `data/id_mapping/`：
-
-| 文件 | 内容 |
-| --- | --- |
-| `music.json` | musicId → 曲名 / 艺术家 / 流派 / `AddVersion` / `disable` / `lockType` / `subLockType` / `eventName` |
-| `items.json` | 按 `ItemKind` 分组（1 姓名框 2 称号 3 头像 9 角色 10 搭档 11 背景板 12 功能票）的 id → 名称 |
-| `maps.json` | mapId → 区域名 / `IslandId` / `OpenEventId` / `ColorId` / `BonusMusicId` / `IsInfinity` / `IsCollabo` |
-| `gates.json` | 万花筒三张表：`gateList`（gateId → 门名 / `gateType` / `eventName`）、`courseList`（courseId ↔ gateId ↔ keyId）、`keyList` |
-| `events.json` | eventId → 活动名 / `alwaysOpen` / `infoType` / `disableArea` |
-
-要点：
-
-- 真正的 ID 在 XML 的 `<name><id>` 里，**目录名只是 `dataName`，两者不相等**
-  （`icon/icon550201/Icon.xml` 的 `name.id` 实际是 1；`music/music111537` 的
-  `name.id` 是 111537，属宴曲段）。
-- 数据包按 `Sinmai_Data/StreamingAssets/A0xx/` 分基础包与增补包，抽取时按目录名
-  升序合并、同 ID 后者覆盖前者，与客户端 `DataManager.LoadData` 的语义一致。
-- **本地 event 表没有日期窗口**：开关状态是服务器 `GetGameEventApi` 的
-  `GameEvent{startDate,endDate}` 决定的。`events.json` 只能告诉你某个
-  `eventName.id` 是哪个活动、是否 `alwaysOpen`，判断「现在开没开」得问服务器。
-- 放在 `data/` 而不是 `assets/`：目前还没有代码在运行时读它，进 `assets/` 会被
-  原样打进每个安装包（约 1.2MB）。真要接进 App 时再连同 `pubspec.yaml` 一起挪。
-
-顺手用这份表核出来的几个事实，都能解释此前的「不显示」：
-
-- **musicId 11820 在任何一层数据包里都不存在**（11819、11821 也不在；11814 之后
-  直接跳到 11822，G:\Package 与 D:/A031OptDump 两层都查过）。它不是万花筒锁——
-  `lockType = 4 (KaleidScope)` 的歌整张表只有 6 首（11740 / 11745 / 11749 /
-  11753 / 11809 / 11814）。11820 属于「机台没这首歌」，任何 `UpsertUserAll`
-  都变不出来。
-- `lockType` 的分布是 `Unlock=1347 / Lock=18 / Challenge=5 / Transmission=2 /
-  KaleidScope=6`（合并两层数据包后共 1378 首），所以绝大多数歌根本不查
-  `itemKind 5`（`lockType == Unlock` 时 `IsPlayable` 直接为 true）——这也解释了
-  为什么有些「解歌」包发下去看不出效果：那首歌本来就可玩。
-- **角色（旅行伙伴）1001 不存在**，合法 ID 从 101 起，整表 983 条、上界到 605905。
-  以前页面里「例如 1001」的提示正是这个坑。
-- **万花筒只有 gate 1~6**（蓝/白/紫/黑/黄/红，course 与 key 同为 1~6 一一对应）。
-  客户端 `ForceAddMasterKey` 写死的 `gateId = 7`（万能钥匙门）在这份数据里没有对应行。
-
 ## 构建环境注意事项
 
 以下问题在本仓库已确认，改动依赖或升级 Flutter 时请留意：

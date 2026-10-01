@@ -9,16 +9,16 @@
   "counts": {
     "music": 1378,
     "map": 169,
-    "gate": 6,
-    "course": 6,
-    "key": 6,
+    "gate": 10,
+    "course": 10,
+    "key": 10,
     "event": 824,
-    "itemKind1": 398,
-    "itemKind2": 3001,
-    "itemKind3": 1046,
-    "itemKind9": 983,
+    "itemKind1": 400,
+    "itemKind2": 3031,
+    "itemKind3": 1059,
+    "itemKind9": 987,
     "itemKind10": 25,
-    "itemKind11": 345,
+    "itemKind11": 353,
     "itemKind12": 11
   }
 }

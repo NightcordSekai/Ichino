@@ -47,6 +47,38 @@
       "eventNameName": "260805_03_2：赤のカレイドスコープ解禁",
       "gateType": "Normal",
       "positionId": 4
+    },
+    {
+      "id": 7,
+      "name": "棱镜塔",
+      "eventName": 26100132,
+      "eventNameName": "261001_03_2：虹のカレイドスコープ解禁",
+      "gateType": "CenterTower",
+      "positionId": 7
+    },
+    {
+      "id": 8,
+      "name": "KALEIDXSCOPE",
+      "eventName": 26100133,
+      "eventNameName": "261001_03_3：カレイドスコープ解禁（イベント1）",
+      "gateType": "Boss",
+      "positionId": 7
+    },
+    {
+      "id": 9,
+      "name": "希望之门",
+      "eventName": 26100134,
+      "eventNameName": "261001_03_4：希望の扉解禁",
+      "gateType": "Hope",
+      "positionId": 0
+    },
+    {
+      "id": 10,
+      "name": "KALEIDXSCOPE",
+      "eventName": 26100135,
+      "eventNameName": "261001_03_5：カレイドスコープ解禁（イベント2）",
+      "gateType": "LastBoss",
+      "positionId": 0
     }
   ],
   "courseList": [
@@ -97,6 +129,38 @@
       "gateNameName": "红色之门",
       "keyName": 6,
       "keyNameName": "红色钥匙"
+    },
+    {
+      "id": 7,
+      "name": "虹のカレイドスコープ",
+      "gateName": 7,
+      "gateNameName": "棱镜塔",
+      "keyName": 7,
+      "keyNameName": "万能钥匙"
+    },
+    {
+      "id": 8,
+      "name": "KALEIDXSCOPE",
+      "gateName": 8,
+      "gateNameName": "KALEIDXSCOPE",
+      "keyName": 8,
+      "keyNameName": "なし"
+    },
+    {
+      "id": 9,
+      "name": "希望の扉",
+      "gateName": 9,
+      "gateNameName": "希望之门",
+      "keyName": 9,
+      "keyNameName": "希望钥匙"
+    },
+    {
+      "id": 10,
+      "name": "KALEIDXSCOPE",
+      "gateName": 10,
+      "gateNameName": "KALEIDXSCOPE",
+      "keyName": 10,
+      "keyNameName": "KALEIDXSCOPEの鍵"
     }
   ],
   "keyList": [
@@ -135,6 +199,30 @@
       "name": "红色钥匙",
       "gateName": 6,
       "gateNameName": "红色之门"
+    },
+    {
+      "id": 7,
+      "name": "万能钥匙",
+      "gateName": 7,
+      "gateNameName": "棱镜塔"
+    },
+    {
+      "id": 8,
+      "name": "なし",
+      "gateName": 8,
+      "gateNameName": "KALEIDXSCOPE"
+    },
+    {
+      "id": 9,
+      "name": "希望钥匙",
+      "gateName": 9,
+      "gateNameName": "希望之门"
+    },
+    {
+      "id": 10,
+      "name": "KALEIDXSCOPEの鍵",
+      "gateName": 10,
+      "gateNameName": "KALEIDXSCOPE"
     }
   ]
 }
