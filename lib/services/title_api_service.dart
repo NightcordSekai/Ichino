@@ -530,6 +530,62 @@ class TitleApiService {
     );
     return UserKaleidxScopeBean.listFromResponse(json);
   }
+
+  /// 某一类道具的持有情况，对应 UserItemResponseVO。
+  ///
+  /// `GetUserItemApi` 是**按 itemKind 分页**的：客户端
+  /// `PacketGetUserItem.cs:19` 首次请求把 `nextIndex` 塞成
+  /// `itemKind * 10000000000`（`ConstParameter.ItemKindConvert = 1e10`），
+  /// 之后拿响应里的 `nextIndex` 续拉，直到它为 0。
+  /// 直接发 `nextIndex: 0` 只会拿到空页，所以要照这个编码来。
+  Future<List<Map<String, dynamic>>> getUserItems(
+    int userId,
+    int itemKind,
+  ) async {
+    const apiName = 'GetUserItemApi';
+    final all = <Map<String, dynamic>>[];
+    var nextIndex = itemKind * 10000000000;
+    var pages = 0;
+
+    do {
+      final json = await _callApi(apiName, {
+        'userId': userId,
+        'nextIndex': nextIndex,
+      }, userId);
+
+      final list = json['userItemList'];
+      if (list is List) {
+        all.addAll(list.whereType<Map<String, dynamic>>());
+      }
+      nextIndex = (json['nextIndex'] as num?)?.toInt() ?? 0;
+      pages++;
+    } while (nextIndex != 0 && pages < 40);
+
+    return all;
+  }
+
+  /// 一次读多个 itemKind，返回 `'kind:itemId'` 的键集合。
+  ///
+  /// 用于给 `isNewItemList` 判每一位是 '1'（服务器没有这行、插入）
+  /// 还是 '0'（已有、更新）——`VOExtensions.BuildListData:274` 的
+  /// userItemList 主键是 (itemKind, itemId) 二元组。
+  Future<Set<String>> getUserItemKeys(
+    int userId,
+    Iterable<int> itemKinds,
+  ) async {
+    final keys = <String>{};
+    await Future.wait([
+      for (final kind in itemKinds.toSet())
+        getUserItems(userId, kind).then((rows) {
+          for (final row in rows) {
+            final id = (row['itemId'] as num?)?.toInt();
+            if (id == null) continue;
+            keys.add('$kind:$id');
+          }
+        }),
+    ]);
+    return keys;
+  }
 }
 
 class _RandomHelper {

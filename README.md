@@ -98,6 +98,34 @@ lib/
   `0 ~ 99999`。`ratingList` / `newRatingList` 里每首歌各自的 Rating 原样带回，
   不重排也不改值。占位 playlog 的 `before/afterRating`（及 `DeluxRating`）一起对齐成
   新写的值，否则存档里那条记录与 `playerRating` 自相矛盾。
+- **`isNew*List` 每一位都是插入/更新标志，不能一律发 '1'**：真机
+  `VOExtensions.BuildListData`（:335-355）拿本地新列表与服务器快照做
+  `Except()` 增量，再按「服务器是否已有同主键行」给每位填 '0'（更新）或
+  '1'（新增）。主键分别是 characterId / mapId / gateId /
+  **(itemKind, itemId)** / **(musicId, level)**。所以我们所有 patch 都要先回读
+  服务器状态再算这一串——`userItemList` 那处原先硬写全 '1'，重复解锁一首
+  已存在的歌时会被服务器判成插入冲突丢掉，表现为「上传成功但没生效」，
+  现在改成先 `GetUserItemApi` 回读再算标志位。
+  `GetUserItemApi` 是**按 itemKind 分页**的，首次请求的 `nextIndex` 要按
+  `itemKind * 1e10` 编码（`PacketGetUserItem.cs:19`），发 0 只会拿到空页。
+- **一首歌能不能出现在选曲界面，和用户包无关**：`NotesListManager.cs:70`
+  只在 `IsOpenEvent(musicData.eventName.id) && !IsGameNgMusicId(id)` 时才把这首歌
+  放进全局曲池 `_notesList`。事件窗口来自服务器 `GetGameEventApi`
+  （`EventManager.cs:36` 要求 `startDate < 本机时间 < endDate`，只有 eventId=1
+  是硬编码常驻），曲目本体来自机台 `music/Music.xml`（`disable` 条目在加载时就被
+  Remove）。所以「解歌上传成功但游戏里没有」有三种包根本治不了的原因：
+  表里没这个 musicId、它绑的事件没在开、或它在 NG 名单里。页面上的复查会把
+  「服务器没存这行道具」和「存了但曲目池不给进」分开报。
+- **DX 段（10000~19999）的 Master / Re:Master 不白送**：`IsUnlockMaster`
+  里 `id < 10000` 直接 `return true`，DX 段必须显式带 itemKind 6；
+  `IsUnlockReMaster` 还要 `subLockType == Unlock` 且
+  `IsOpenEvent(subEventName.id)`，缺这一条会早退，压过 `id < 10000` 的捷径。
+  难度解锁查的是 `userItemList` 的 itemKind 5/6/7/8，**不是**
+  `userMusicDetailList`——后者只喂成绩字典，且它的 `level` 是难度序号
+  （`MusicDifficultyID`，0..5），发到 6..9 会让下载侧
+  `ScoreDic` 那个长度固定 6 的数组越界。
+  `musicId >= 100000` 才有 `level → 10` 的重写（宴曲，
+  `ConstParameter.UtageDifficultyId`），与 DX 段无关。
 - **万花筒的门、钥匙、通关在同一行**：`upsertUserAll.userKaleidxScopeList`，
   `UserKaleidxScope` 共 15 个字段、主键 `gateId`，「发现门」是 `isGateFound`、
   「获取钥匙」是 `isKeyFound`、「已通关」是 `isClear`。钥匙**不走**

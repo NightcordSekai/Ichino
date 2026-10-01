@@ -126,6 +126,12 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView>
 
   bool get _isUnlock => widget.mode == MusicRiskFeatureMode.unlockMusic;
 
+  /// ConstParameter.DxScoreBaseID=10000 / StrongScoreBaseID=20000
+  /// （`MAI2System/ConstParameter.cs:168,171`）。这段里的歌 Master 需要
+  /// 显式 itemKind 6，不像 id < 10000 那样在 IsUnlockMaster 里直接放过。
+  bool _isDeluxeRange(_PendingMusic music) =>
+      music.musicId >= 10000 && music.musicId < 20000;
+
   @override
   int? get cooldownLoginDateTime => widget.loginDateTime;
 
@@ -310,7 +316,26 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView>
         generalUserInfo: data,
       );
 
-      builder.applyItemListPatch(packet, items: _buildUserItemList());
+      final items = _buildUserItemList();
+      // isNewItemList 得按 (itemKind, itemId) 主键比对服务器快照来给 0/1，
+      // 不能一律发 '1'：重复解锁一首已经存在的歌时，服务器会把插入冲突的
+      // 行整行丢掉，表现就是「上传成功但没生效」。
+      final existingKeys = await service.getUserItemKeys(
+        widget.userId,
+        items.map((e) => e['itemKind'] as int),
+      );
+      builder.applyItemListPatch(
+        packet,
+        items: items,
+        newFlags: [
+          for (final item in items)
+            existingKeys.contains(
+              '${item['itemKind']}:${item['itemId']}',
+            )
+                ? '0'
+                : '1',
+        ].join(),
+      );
       if (_isUnlock) {
         builder.applyMusicDetailPatch(packet, musicData: musicData);
       }
@@ -320,7 +345,7 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView>
       _updateStep(
         RiskStep.complete,
         _isUnlock
-            ? AppStrings.unlockMusicSuccess
+            ? await _verifyUnlock(service, items)
             : AppStrings.collectiblesSuccess,
       );
 
@@ -340,6 +365,34 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView>
     } finally {
       if (mounted) setState(() => _running = false);
     }
+  }
+
+  /// 上传后回读 GetUserItemApi，把「服务器根本没存这行道具」和「存了但游戏里
+  /// 还是没有这首歌」分开——后者是曲目池门禁（机台 Music.xml 没这个 ID、
+  /// `eventName` 指向的活动不在开放窗口内、或落在 NG 名单里），
+  /// 见 NotesListManager.cs:70，**任何用户数据包都改不动它**。
+  Future<String> _verifyUnlock(
+    TitleApiService service,
+    List<Map<String, dynamic>> items,
+  ) async {
+    final requested = [
+      for (final item in items) '${item['itemKind']}:${item['itemId']}',
+    ];
+    Set<String> saved;
+    try {
+      saved = await service.getUserItemKeys(
+        widget.userId,
+        items.map((e) => e['itemKind'] as int),
+      );
+    } catch (e) {
+      return AppStrings.unlockVerifyFailed('$e');
+    }
+
+    final missing = requested.where((k) => !saved.contains(k)).toList();
+    if (missing.isNotEmpty) {
+      return AppStrings.unlockNotSaved(missing.join('  '));
+    }
+    return AppStrings.unlockVerified(requested.length);
   }
 
   String get _notLoggedInMessage => _isUnlock
@@ -539,6 +592,18 @@ class _MusicRiskFeatureViewState extends State<MusicRiskFeatureView>
                   ),
               ],
             ),
+            // DX 段的 Master / Re:Master 不白送，勾选项里漏一个就开不出来，
+            // 这是这段 ID 最容易踩的坑，只在列表真含 DX 曲时才说明。
+            if (_pendingMusics.any(_isDeluxeRange)) ...[
+              const SizedBox(height: 10),
+              Text(
+                AppStrings.unlockDxRangeNotice,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.error,
+                  height: 1.5,
+                ),
+              ),
+            ],
           ],
         ),
       ),

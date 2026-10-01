@@ -219,7 +219,22 @@ class AppStrings {
   static const unlockRunning = '执行中...';
   static const unlockStepFetch = '拉取用户数据';
   static const unlockStepUpload = '上传解锁数据';
-  static const unlockMusicSuccess = '解锁数据上传完成';
+
+  static String unlockVerified(int count) =>
+      '解锁数据上传完成，复查 GetUserItemApi 已确认 $count 行道具被服务器保存。'
+      '若游戏里还是没有这首歌，卡点在曲目池而不是用户包：机台 Music.xml 没有这个 '
+      'musicId、它绑定的 eventName 活动不在开放窗口内（GetGameEventApi）、'
+      '或者它落在 NG 名单里。这三种情况上传什么都不会显示。';
+  static String unlockNotSaved(String list) =>
+      '数据包已被接受，但复查时服务器上没有 $list 这些行 —— '
+      '服务器没有写入 upsertUserAll.userItemList。';
+  static String unlockVerifyFailed(String error) =>
+      '解锁数据上传完成，但复查道具列表失败，无法确认是否写入：$error';
+  static const unlockDxRangeNotice =
+      '10000 ~ 19999 这段 DX 曲：Master / Re:Master 不像老曲那样白送 —— '
+      '客户端 IsUnlockMaster 里 id < 10000 直接返回 true，DX 段必须显式带上 '
+      'itemKind 6 / 7 的行。Re:Master 还要该曲 subEventName 指向的事件处于开放 '
+      '窗口内，那一条用户包改不动。';
 
   // Collectibles (收藏品获取 / UpsertUserAll 上传收藏品道具)
   // itemKind: 1=姓名框 2=称号 3=头像 10=搭档 11=背景板 12=功能票

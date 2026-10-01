@@ -114,6 +114,44 @@ void main() {
       expect(upsert['userItemList'], hasLength(2));
       expect(upsert['isNewItemList'], '11');
     });
+
+    test('isNewItemList 可按主键比对给出 0/1，而不是一律 1', () {
+      final builder = UserAllPayloadBuilder(_config);
+      final packet = _buildPacket(builder);
+
+      // 11820 的 Master 行服务器已有 -> '0'（更新），5 行是新的 -> '1'。
+      builder.applyItemListPatch(
+        packet,
+        items: [
+          {'itemKind': 6, 'itemId': 11820, 'stock': 1, 'isValid': true},
+          {'itemKind': 5, 'itemId': 11820, 'stock': 1, 'isValid': true},
+        ],
+        newFlags: '01',
+      );
+
+      final upsert = _upsert(packet);
+      expect(upsert['isNewItemList'], '01');
+      expect(
+        (upsert['isNewItemList'] as String).length,
+        (upsert['userItemList'] as List).length,
+      );
+    });
+
+    test('flags 与行数不一致时断言拦住', () {
+      final builder = UserAllPayloadBuilder(_config);
+      final packet = _buildPacket(builder);
+
+      expect(
+        () => builder.applyItemListPatch(
+          packet,
+          items: [
+            {'itemKind': 5, 'itemId': 11820, 'stock': 1, 'isValid': true},
+          ],
+          newFlags: '11',
+        ),
+        throwsA(isA<AssertionError>()),
+      );
+    });
   });
 
   group('总 Rating patch', () {

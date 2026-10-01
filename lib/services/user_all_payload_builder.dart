@@ -398,13 +398,20 @@ class UserAllPayloadBuilder {
 
   /// Generic item patch: replace `userItemList` / `isNewItemList` in the packet.
   /// Used by UnlockMusic (itemKind 5/6/7) and 收藏品获取 (itemKind 1/2/3/10/11/12).
+  ///
+  /// [newFlags] 每一位对应一行：'1' 服务器没有这行（插入）、'0' 已有（更新）。
+  /// 省略时全按 '1' 发。真机 `BuildListData` 是按 (itemKind, itemId) 主键比对
+  /// 服务器快照算出这一位的，所以重复解锁同一首歌时必须发 '0'，否则服务器
+  /// 可能当成插入冲突直接丢掉这一行。
   void applyItemListPatch(
     Map<String, dynamic> packet, {
     required List<Map<String, dynamic>> items,
+    String? newFlags,
   }) {
+    assert(newFlags == null || newFlags.length == items.length);
     final upsert = packet['upsertUserAll'] as Map<String, dynamic>;
     upsert['userItemList'] = items;
-    upsert['isNewItemList'] = List.filled(items.length, '1').join();
+    upsert['isNewItemList'] = newFlags ?? List.filled(items.length, '1').join();
   }
 
   /// 解锁歌曲/谱面时补一条 musicDetail 记录并标记为新增。
