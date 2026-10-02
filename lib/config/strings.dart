@@ -37,6 +37,23 @@ class AppStrings {
   static const connectionShareEmpty = '当前会话既没有 Cookie 也没有令牌，无法导出。';
   static const restoreSession = '恢复会话';
   static const restoringSession = '恢复中...';
+
+  // 账号备份：把服务器可读到的用户数据汇成一个 JSON 字符串
+  static const accountBackupTitle = '账号备份';
+  static const accountBackupDesc =
+      '只读地把服务器上的用户数据汇成一串 JSON：道具清单、舞里程、游玩统计、'
+      '旅行伙伴、区域进度、万花筒进度、Rating 与成绩等。全程只发 GetUser* 接口，'
+      '不会写任何数据。';
+  static const accountBackupRun = '生成备份';
+  static String accountBackupRunning(String section) =>
+      section.isEmpty ? '备份中...' : '备份中：$section';
+  static const accountBackupCopy = '复制到剪贴板';
+  static const accountBackupCopied = '备份内容已复制到剪贴板';
+  static String accountBackupSize(String size) => '共 $size';
+  static String accountBackupPartial(List<String> failures) =>
+      '${failures.length} 段没读到（私服可能未实现该接口），其余照常：'
+      '${failures.join('、')}';
+  static const accountBackupSecurity = '备份含账号标识与进度数据；内容未加密，请勿贴到公开场合。';
   static const sessionShareDetected = '已识别为连接信息（实验性功能），点击「恢复会话」直接续上这次登录。';
   static const sessionRestoreFailed = '会话恢复失败';
   static const sessionRestoreCookie =

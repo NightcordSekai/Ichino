@@ -12,12 +12,13 @@ Android / iOS / Windows / macOS / Linux。
 
 | 入口 | 说明 |
 | --- | --- |
-| 主页 | Aime 登录（QR / 令牌）、Rating 详情、入坑信息、游玩统计、状态 |
+| 主页 | Aime 登录（QR / 令牌）、Rating 详情、入坑信息、游玩统计、状态、账号备份 |
 | 票据 | 功能票查询与使用 |
 | B50 | Best 50 成绩图，可导出 PNG（移植自 Empurple 的 `Best50ImageRenderer`） |
 | 风险 | 歌曲解锁、收藏品获取、旅行伙伴发放与编组（含等级）、修改总 Rating、添加舞里程、一键跑图、万花筒专区 |
 | 设置 | Title Server / Auth Server / 机器参数，支持配置导入导出 |
 | 连接信息（实验性） | 主页导出 uid + JSESSIONID + token 的 Base64 快照，登录页粘贴即可恢复会话；内容未加密，请勿外传 |
+| 账号备份 | 主页只读地把服务器上的用户数据汇成一串 JSON（道具、舞里程、游玩统计、旅行伙伴、区域与万花筒进度、Rating/成绩）。全程只发 `GetUser*Api`，不写任何数据；单段读失败不整体作废，失败段列在结果里 |
 
 ## 开发
 

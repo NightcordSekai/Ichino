@@ -232,30 +232,41 @@ class _Best50PageState extends State<Best50Page> {
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) {
-                // 按视口宽度适配：横屏/桌面下海报占满宽度、竖向拖动看全图，
-                // 而不是被 contain 缩成中间一小块、两侧大片空白。
-                // minScale 再允许缩到整张可见，导出仍是原始 1762x1850。
+                // 海报要按视口整体缩放一档，进来才能看见完整一张（之前的现象是
+                // 「太大且缩不小」）。两处坑：
+                //  1. InteractiveViewer(constrained:false) 给子节点无界约束，
+                //     此时 FittedBox 根本不会缩放，必须先给一个有限大小的盒子。
+                //  2. InteractiveViewer 没有 initialScale，所以「初始就缩到位」
+                //     只能靠把子节点做成 contain 尺寸、minScale 固定 1.0。
+                // RepaintBoundary 放在 FittedBox 内侧：它自身的绘制尺寸仍是
+                // 1762x1850，导出分辨率不受这里缩放影响。
                 final fitWidth =
                     constraints.maxWidth / Best50Poster.canvasWidth;
-                final scaledHeight = Best50Poster.canvasHeight * fitWidth;
-                final containScale = constraints.maxHeight / scaledHeight;
-                final minScale = containScale < 1 ? containScale : 1.0;
+                final fitHeight =
+                    constraints.maxHeight / Best50Poster.canvasHeight;
+                final contain = fitWidth < fitHeight ? fitWidth : fitHeight;
 
-                return InteractiveViewer(
-                  constrained: false,
-                  minScale: minScale,
-                  maxScale: minScale * 6,
-                  boundaryMargin: const EdgeInsets.all(24),
-                  child: FittedBox(
-                    fit: BoxFit.fitWidth,
-                    child: RepaintBoundary(
-                      key: _posterKey,
-                      child: Best50Poster(
-                        userName: widget.userName,
-                        iconId: widget.iconId,
-                        playerRating: widget.playerRating,
-                        best35: best35,
-                        best15: best15,
+                return Center(
+                  child: InteractiveViewer(
+                    constrained: false,
+                    minScale: 1.0,
+                    maxScale: 10.0,
+                    boundaryMargin: const EdgeInsets.all(24),
+                    child: SizedBox(
+                      width: Best50Poster.canvasWidth * contain,
+                      height: Best50Poster.canvasHeight * contain,
+                      child: FittedBox(
+                        fit: BoxFit.fill,
+                        child: RepaintBoundary(
+                          key: _posterKey,
+                          child: Best50Poster(
+                            userName: widget.userName,
+                            iconId: widget.iconId,
+                            playerRating: widget.playerRating,
+                            best35: best35,
+                            best15: best15,
+                          ),
+                        ),
                       ),
                     ),
                   ),

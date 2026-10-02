@@ -16,8 +16,20 @@ List<Best50CardData> _cards(int count, {String tag = 'a'}) => [
       syncStatus: i % 5,
       ra: 50 + i,
       rate: const [
-        'D', 'C', 'B', 'BB', 'BBB', 'A', 'AA',
-        'AAA', 'S', 'Sp', 'SS', 'SSp', 'SSS', 'SSSp',
+        'D',
+        'C',
+        'B',
+        'BB',
+        'BBB',
+        'A',
+        'AA',
+        'AAA',
+        'S',
+        'Sp',
+        'SS',
+        'SSp',
+        'SSS',
+        'SSSp',
       ][i % 14],
     ),
 ];
@@ -71,10 +83,10 @@ void main() {
     test('满 50 张时最后一张不越出底图', () {
       final right =
           Best50Poster.cardLeft(Best50Poster.columnsPerRow - 1) +
-              Best50Poster.cardWidth;
+          Best50Poster.cardWidth;
       final bottom =
           Best50Poster.cardTopBest15(Best50Poster.maxBest15 - 1) +
-              Best50Poster.cardHeight;
+          Best50Poster.cardHeight;
       expect(right, lessThanOrEqualTo(Best50Poster.canvasWidth));
       expect(bottom, lessThanOrEqualTo(Best50Poster.canvasHeight));
     });
@@ -99,7 +111,11 @@ void main() {
     testWidgets('BEST35 未打满时 BEST15 仍固定在第二区块', (tester) async {
       // 回归用例：以前按 35+15 拼接后的全局序号算行，BEST35 不满 35 条时
       // BEST15 会整体上移、混进上半区。
-      await _pumpPoster(tester, best35: _cards(3), best15: _cards(5, tag: 'b'));
+      await _pumpPoster(
+        tester,
+        best35: _cards(3),
+        best15: _cards(5, tag: 'b'),
+      );
 
       expect(tester.takeException(), isNull);
       final firstOf35 = tester.getTopLeft(find.text('a#0')).dy;
@@ -113,10 +129,9 @@ void main() {
       expect(lastOf15, greaterThanOrEqualTo(Best50Poster.gridTopSecondBlock));
     });
 
-    testWidgets('窄视口里海报仍保持底图尺寸（FittedBox 预览）', (tester) async {
-      // 回归用例：InteractiveViewer 的 constrained 默认为 true，直接把固定尺寸的
-      // 海报当子节点会被压成视口大小——底图压扁、Positioned 的卡片掉出画布被裁掉。
-      // 中间垫一层 FittedBox 才是对的：视口拿到的是缩放后的显示，边界录到的仍是原尺寸。
+    testWidgets('constrained:false 下海报仍保持底图原尺寸', (tester) async {
+      // InteractiveViewer(constrained:false) 会给孩子无界约束。不加限定的话
+      // 海报会按 1762x1850 的逻辑尺寸直接铺开，视口里只看得到左上角。
       tester.view.physicalSize = const Size(400, 900);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(tester.view.reset);
@@ -151,15 +166,62 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(
         tester.getSize(find.byType(Best50Poster)),
-        const Size(
-          Best50Poster.canvasWidth,
-          Best50Poster.canvasHeight,
-        ),
+        const Size(Best50Poster.canvasWidth, Best50Poster.canvasHeight),
       );
     });
 
+    testWidgets('缩放到 contain 盒子后海报仍是原尺寸（导出分辨率不受影响）', (tester) async {
+      // 页面现在用「有限大小的盒子 + FittedBox」把海报整体缩到视口内，
+      // RepaintBoundary 在 FittedBox 内侧，所以 toImage 出来的还是
+      // 1762x1850 * pixelRatio。这条守的是：别把 RepaintBoundary 挪到盒子外面。
+      tester.view.physicalSize = const Size(400, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      // 视口 400x900，宽度是限制边，所以 contain 按宽算——和页面里的取法一致。
+      const contain = 400 / Best50Poster.canvasWidth;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: SizedBox(
+                width: Best50Poster.canvasWidth * contain,
+                height: Best50Poster.canvasHeight * contain,
+                child: const FittedBox(
+                  fit: BoxFit.fill,
+                  child: Best50Poster(
+                    userName: 'Test Player',
+                    iconId: 0,
+                    playerRating: 12345,
+                    best35: [],
+                    best15: [],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(tester.takeException(), isNull);
+      expect(
+        tester.getSize(find.byType(Best50Poster)),
+        const Size(Best50Poster.canvasWidth, Best50Poster.canvasHeight),
+      );
+      // 显示盒子确实缩到视口内，所以一进来能看到完整一张。
+      final boxSize = tester.getSize(find.byType(FittedBox).first);
+      expect(boxSize.width, closeTo(400, 0.5));
+      expect(boxSize.height, closeTo(Best50Poster.canvasHeight * contain, 0.5));
+      expect(boxSize.height, lessThan(900));
+    });
+
     testWidgets('超出上限的条目被裁剪到 35+15', (tester) async {
-      await _pumpPoster(tester, best35: _cards(60), best15: _cards(40, tag: 'b'));
+      await _pumpPoster(
+        tester,
+        best35: _cards(60),
+        best15: _cards(40, tag: 'b'),
+      );
 
       expect(tester.takeException(), isNull);
       // BEST35 只保留前 35 条，BEST15 只保留前 15 条。

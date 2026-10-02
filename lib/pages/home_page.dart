@@ -10,6 +10,7 @@ import '../models/session_model.dart';
 import '../models/user_data.dart';
 import '../models/user_preview.dart';
 import '../services/title_api_service.dart';
+import '../widgets/account_backup_card.dart';
 import '../widgets/app_notice.dart';
 import '../widgets/connection_share_card.dart';
 import 'about_page.dart';
@@ -539,6 +540,8 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 12),
             ConnectionShareCard(userId: widget.userId, token: widget.token),
+            const SizedBox(height: 12),
+            AccountBackupCard(userId: widget.userId, cookies: _session.cookies),
             if (TitleApiService.lastRawResponse != null) ...[
               const SizedBox(height: 12),
               _DebugRawJsonCard(
